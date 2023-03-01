@@ -35,7 +35,7 @@ class ApplicationController extends Controller
     }
     public function update(ApplicationUpdateRequest $request)
     {
-        $request->update(\Auth::user()->applications);
+        $request->update();
         return \Redirect::route('applications.edit')->with('save-successful');
     }
 

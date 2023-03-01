@@ -29,7 +29,7 @@ Route::get('/', function () {
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout');
 
-    Route::get('join',[\App\Http\Controllers\Applications\JoinDealerController::class,'view'])->name('join');
+    Route::get('join',[\App\Http\Controllers\Applications\InvitationController::class,'view'])->name('join');
 
 
     Route::get('applications/create',[\App\Http\Controllers\Applications\ApplicationController::class, 'create'])->name('applications.create');
@@ -43,7 +43,7 @@ Route::middleware(['auth:web'])->group(function () {
     Route::delete('applications/invitees',[\App\Http\Controllers\Applications\InviteesController::class,'destroy'])->name('applications.invitees.destroy');
     Route::post('applications/invitees/regenerate-keys',[\App\Http\Controllers\Applications\InviteesController::class,'regenerateKeys'])->name('applications.invitees.regenerate-keys');
 
-    Route::post('join',[\App\Http\Controllers\Applications\JoinDealerController::class,'submit'])->name('join.submit');
+    Route::post('join',[\App\Http\Controllers\Applications\InvitationController::class,'store'])->name('join.submit');
 
     Route::get('table/verify', \App\Http\Controllers\TableVerifyController::class)->name('table.verify');
     Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');

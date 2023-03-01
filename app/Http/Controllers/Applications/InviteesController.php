@@ -19,16 +19,16 @@ class InviteesController extends Controller
          * Create invite codes if not existing yet
          */
         if(is_null($application->invite_code_shares)) {
-            $application->update(['invite_code_shares' => \Str::random()]);
+            $application->update(['invite_code_shares' => "dealers-".\Str::random()]);
         }
         if(is_null($application->invite_code_assistants)) {
-            $application->update(['invite_code_assistants' => \Str::random()]);
+            $application->update(['invite_code_assistants' => "assistant-".\Str::random()]);
         }
 
 
         return view('application.invitees',[
             'application' => $application,
-            'currentSeats' => $application->children()->whereNotNull('canceled_at')->count(),
+            'currentSeats' => $application->children()->whereNotNull('canceled_at')->count() + 1,
             'maxSeats' => $application->requestedTable->seats,
             "assistants" => $application->children()->where('type',ApplicationType::Assistant)->with('user')->get(),
             "shares" =>  $application->children()->where('type',ApplicationType::Share)->with('user')->get()
@@ -48,8 +48,8 @@ class InviteesController extends Controller
     public function regenerateKeys()
     {
         $user = \Auth::user()->applications->update([
-            'invite_code_assistants' => \Str::random(),
-            'invite_code_shares' => \Str::random()
+            'invite_code_assistants' => "assistant-".\Str::random(),
+            'invite_code_shares' => "dealers-".\Str::random()
         ]);
         return \Redirect::route('applications.invitees.view');
     }

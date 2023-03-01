@@ -77,7 +77,6 @@ class ApplicationCreateRequest extends FormRequest
 
     public function store()
     {
-        $data = $this->validationData();
         Application::updateOrCreate([
             "user_id" => \Auth::id()
         ],[
