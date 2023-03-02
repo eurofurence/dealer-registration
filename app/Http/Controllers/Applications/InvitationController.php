@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Application;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
@@ -24,24 +25,18 @@ class InvitationController extends Controller
                     ->orWhere('invite_code_shares', $request->get('code'));
             })->get();
 
-        if($applications->count() === 0) {
+        if ($applications->count() === 0) {
             throw ValidationException::withMessages([
-                "code" => "Invalid code, please ask your dealer for a new code."
+                "code" => "Invalid code, please ask your dealer for a new code.",
             ]);
         }
 
-        abort_if($applications->first()->user_id === \Auth::id(),403,"Cannot add to own application.");
+        abort_if($applications->first()->user_id === \Auth::id(), 403, "Cannot add to own application.");
 
-        if($applications->first()->invite_code_assistants === $request->get('code')) {
-            return view('application.create')->with([
-                "invite_code" => $request->get('code')
-            ]);
-        }
+        $action = (\Auth::user()->applications()->exists() === ApplicationType::Dealer) ? "edit" : "create";
 
-        if($applications->first()->invite_code_shares === $request->get('code')) {
-            return view('application.create')->with([
-                "invite_code" => $request->get('code')
-            ]);
-        }
+        return Redirect::route('applications.' . $action, [
+            "code" => $request->get('code'),
+        ]);
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="">
-        <h1>Apply as a Dealer</h1>
+        <h1>Apply as a {{ $applicationType->value }}</h1>
         <p>Please fill out this application form to apply for your participation in the Dealers' Den. You
             may edit your application by coming back here, until the application deadline on
             <b>{{ config('dates.reg_end_date',now())->format('d.m.Y H:i') }}</b>.

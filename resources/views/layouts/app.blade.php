@@ -21,7 +21,6 @@
         </div>
     </div>
 
-
     <div class="container">
         <footer class="py-3 my-4">
             <img class="d-block mx-auto" width="150px" src="{{ Vite::asset('resources/assets/dd-logo.png') }}" alt="Dealers Den Logo">

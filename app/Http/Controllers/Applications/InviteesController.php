@@ -25,7 +25,6 @@ class InviteesController extends Controller
             $application->update(['invite_code_assistants' => "assistant-".\Str::random()]);
         }
 
-
         return view('application.invitees',[
             'application' => $application,
             'currentSeats' => $application->children()->whereNotNull('canceled_at')->count() + 1,

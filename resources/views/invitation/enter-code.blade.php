@@ -25,7 +25,7 @@
                         @csrf
                         <div class="col-md-6 mx-auto">
                             <div class="input-group input-group-lg">
-                                <input type="text" class="form-control @error('code') is-invalid @enderror" placeholder="Invite Code">
+                                <input type="text" name="code" class="form-control @error('code') is-invalid @enderror" placeholder="Invite Code">
                                 <button class="btn btn-primary" type="submit" id="button-addon2">Submit
                                 </button>
                                 @error('code')
