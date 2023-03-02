@@ -9,8 +9,9 @@ use App\Models\TableType;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 
-class ApplicationCreateRequest extends FormRequest
+class ApplicationRequest extends FormRequest
 {
     public function rules(): array
     {
@@ -65,14 +66,19 @@ class ApplicationCreateRequest extends FormRequest
                 "nullable",
             ],
             "comment" => "nullable",
-            "tos" => "required",
+            "tos" => [
+                new RequiredIf($this->routeIs('applications.store'))
+            ],
         ];
     }
 
     public function authorize(): bool
     {
         $application = \Auth::user()->applications;
-        return is_null($application) || $application->getStatus() === ApplicationStatus::Canceled;
+        if($this->routeIs('applications.store')) {
+            return is_null($application) || $application->getStatus() === ApplicationStatus::Canceled;
+        }
+        return !is_null($application) && $application->getStatus() !== ApplicationStatus::Canceled;
     }
 
     public function store()
@@ -96,6 +102,25 @@ class ApplicationCreateRequest extends FormRequest
             "accepted_at" => null,
             "allocated_at" => null,
             "table_number" => null
+        ]);
+    }
+
+    public function update()
+    {
+        $data = $this->validationData();
+        \Auth::user()->applications->update([
+            "table_type_requested" => $this->get('space'),
+            "type" => ApplicationType::Dealer,
+            "display_name" => $this->get('displayName'),
+            "website" => $this->get('website'),
+            "merchandise" => $this->get('merchandise'),
+            "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
+            "is_mature" => $this->get('mature') === "on",
+            "is_power" => $this->get('power') === "on",
+            "is_wallseat" => $this->get('wallseat') === "on",
+            "wanted_neighbors" => $this->get('wanted'),
+            "unwanted_neighbors" => $this->get('unwanted'),
+            "comment" => $this->get('comment'),
         ]);
     }
 }

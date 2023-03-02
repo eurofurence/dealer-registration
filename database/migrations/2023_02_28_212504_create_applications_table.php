@@ -33,9 +33,10 @@ return new class extends Migration {
             $table->boolean('is_power')->nullable();
             $table->boolean('is_wallseat')->nullable();
 
+            $table->timestamp('waiting_at')->nullable();
+            $table->timestamp('offer_sent_at')->nullable();
+            $table->timestamp('offer_accepted_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
-            $table->timestamp('accepted_at')->nullable();
-            $table->timestamp('allocated_at')->nullable();
 
             $table->timestamps();
         });

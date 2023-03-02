@@ -13,17 +13,10 @@
         </div>
     </div>
     @if(isset($application))
-        @if($application->type === \App\Enums\ApplicationType::Dealer && $application->getStatus() === \App\Enums\ApplicationStatus::Open)
+        @if($application->type === \App\Enums\ApplicationType::Dealer && ($application->getStatus() === \App\Enums\ApplicationStatus::Open && $application->getStatus() === \App\Enums\ApplicationStatus::Accepted))
             <div class="alert alert-info text-center">
                 <h3>Your registration as a dealer is currently being reviewed.</h3>
                 <span>Please wait for our team to process your application. You will be notified via email if your application status changes.</span>
-            </div>
-        @endif
-
-        @if($application->type === \App\Enums\ApplicationType::Dealer && $application->getStatus() === \App\Enums\ApplicationStatus::Accepted)
-            <div class="alert alert-success text-center">
-                <h3>Your registration has been successfully reviewed.</h3>
-                <span>Our staff approved your registration. You are now able to invite other dealers to your table or invite assistants.</span>
             </div>
         @endif
 

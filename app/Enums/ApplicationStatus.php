@@ -5,7 +5,8 @@ namespace App\Enums;
 enum ApplicationStatus
 {
     case Open;
-    case Accepted;
-    case Allocated;
     case Canceled;
+    case Accepted;
+    case TableOffered;
+    case TableAccepted;
 }
