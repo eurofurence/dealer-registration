@@ -56,7 +56,11 @@ class ApplicationController extends Controller
 
     public function destroy()
     {
-        \Auth::user()->application->cancel();
+        \Auth::user()->application->update([
+            'canceled_at' => now(),
+            'parent' => null,
+            'type' => 'dealer'
+        ]);
         return \Redirect::route('dashboard');
     }
 
