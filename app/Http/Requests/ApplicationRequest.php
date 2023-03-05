@@ -41,6 +41,7 @@ class ApplicationRequest extends FormRequest
             "website" => [
                 "nullable",
                 "exclude_if:applicationType,assistant",
+                "url",
             ],
             "merchandise" => [
                 "exclude_if:applicationType,assistant",
