@@ -38,4 +38,4 @@ jobs:
           DB_DATABASE: dealers
           DB_USERNAME: root
           DB_PASSWORD: ""
-        run: vendor/bin/pest
+        run: vendor/bin/phpunit
