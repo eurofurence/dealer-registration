@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('title')
+    Apply as a {{ $applicationType->value }}
+@endsection
 @section('content')
     <div class="">
         <h1>Apply as a {{ $applicationType->value }}</h1>

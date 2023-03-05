@@ -17,6 +17,6 @@ class InviteeRemovalRequest extends FormRequest
     public function authorize(): bool
     {
         $inviteeApplication = Application::findOrFail($this->get('invitee_id'));
-        return  \Auth::user()->applications->id === $inviteeApplication->parent;
+        return  \Auth::user()->application->id === $inviteeApplication->parent;
     }
 }

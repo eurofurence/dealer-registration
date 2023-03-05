@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(\App\Models\TableType::class,'table_type_requested')->constrained('table_types')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\TableType::class,'table_type_requested')->nullable()->constrained('table_types')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(\App\Models\TableType::class,'table_type_assigned')->nullable()->constrained('table_types')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('type'); // Dealer, Share, Assistant
@@ -36,6 +36,7 @@ return new class extends Migration {
             $table->timestamp('waiting_at')->nullable();
             $table->timestamp('offer_sent_at')->nullable();
             $table->timestamp('offer_accepted_at')->nullable();
+            $table->timestamp('checked_in_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
 
             $table->timestamps();

@@ -8,19 +8,31 @@ use App\Models\Application;
 use App\Models\TableType;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\ExcludeIf;
 use Illuminate\Validation\Rules\RequiredIf;
 
 class ApplicationRequest extends FormRequest
 {
     public function rules(): array
     {
+        /**
+         * This is a multi request, it is accessed in the following circumstances
+         * User Creates Application
+         * User Updates Application
+         * User joins another Application as share/assistant (code required)
+         * User updates another Application as share (code not required aslong user does not change role)
+         */
+        $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
+        $parentApplication = Application::findByCode($this->get('code'));
+        $application = \Auth::user()->application;
         return [
             "applicationType" => [
                 Rule::enum(ApplicationType::class),
             ],
-            "invitationCode" => [
-                "required_unless:applicationType,dealer",
+            "code" => [
+                new RequiredIf($this->isCodeRequired()),
             ],
             "displayName" => [
                 "nullable",
@@ -67,27 +79,66 @@ class ApplicationRequest extends FormRequest
             ],
             "comment" => "nullable",
             "tos" => [
-                new RequiredIf($this->routeIs('applications.store'))
+                new RequiredIf($this->routeIs('applications.store')),
             ],
         ];
     }
 
+    private function isCodeRequired(): bool
+    {
+        $isRequestForFullDealership = ApplicationType::tryFrom($this->get('applicationType')) === ApplicationType::Dealer;
+        // Case 1: User does not have any Application and applies for full dalership -> No Code Required
+        if ($isRequestForFullDealership) {
+            return false;
+        }
+
+        $userApplication = Auth::user()->application;
+        // Case 2:
+        // wishes to update their application to the same type
+        $userDoesNotChangeType = $userApplication?->type === ApplicationType::tryFrom($this->get('applicationType'));
+        // User is already in another dealership
+        $alreadyPartOfDealership = $userApplication?->parent !== null;
+        // User did not supply a new code
+        if ($alreadyPartOfDealership && $userDoesNotChangeType) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function authorize(): bool
     {
-        $application = \Auth::user()->applications;
-        if($this->routeIs('applications.store')) {
+        $application = \Auth::user()->application;
+        if ($this->routeIs('applications.store')) {
             return is_null($application) || $application->getStatus() === ApplicationStatus::Canceled;
         }
         return !is_null($application) && $application->getStatus() !== ApplicationStatus::Canceled;
     }
 
-    public function store()
+    public function act()
     {
-        Application::updateOrCreate([
-            "user_id" => \Auth::id()
-        ],[
+        // Determine Application Type
+        $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
+
+        $application = \Auth::user()->application;
+
+        // If an the application is not for a dealer
+        if ($newApplicationType !== ApplicationType::Dealer) {
+            $newParent = Application::findByCode($this->get('code'))->id;
+            $parentId = $newParent ?? $application->parent;
+            return $this->update($newApplicationType, $parentId);
+        }
+
+        return $this->update($newApplicationType);
+    }
+
+    public function update(ApplicationType $applicationType, int|null $parentId = null)
+    {
+        return Application::updateOrCreate([
+            "user_id" => \Auth::id(),
+        ], [
             "table_type_requested" => $this->get('space'),
-            "type" => ApplicationType::Dealer,
+            "type" => $applicationType,
             "display_name" => $this->get('displayName'),
             "website" => $this->get('website'),
             "merchandise" => $this->get('merchandise'),
@@ -98,29 +149,13 @@ class ApplicationRequest extends FormRequest
             "wanted_neighbors" => $this->get('wanted'),
             "unwanted_neighbors" => $this->get('unwanted'),
             "comment" => $this->get('comment'),
+            "waiting_at" => null,
+            "offer_sent_at" => null,
+            "offer_accepted_at" => null,
             "canceled_at" => null,
-            "accepted_at" => null,
-            "allocated_at" => null,
-            "table_number" => null
+            "table_number" => null,
+            "parent" => $parentId,
         ]);
     }
 
-    public function update()
-    {
-        $data = $this->validationData();
-        \Auth::user()->applications->update([
-            "table_type_requested" => $this->get('space'),
-            "type" => ApplicationType::Dealer,
-            "display_name" => $this->get('displayName'),
-            "website" => $this->get('website'),
-            "merchandise" => $this->get('merchandise'),
-            "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
-            "is_mature" => $this->get('mature') === "on",
-            "is_power" => $this->get('power') === "on",
-            "is_wallseat" => $this->get('wallseat') === "on",
-            "wanted_neighbors" => $this->get('wanted'),
-            "unwanted_neighbors" => $this->get('unwanted'),
-            "comment" => $this->get('comment'),
-        ]);
-    }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Enums;
 
-enum ApplicationStatus
+enum ApplicationStatus: string
 {
-    case Open;
-    case Canceled;
-    case Accepted;
-    case TableOffered;
-    case TableAccepted;
+    case Canceled = 'canceled';
+    case Open = 'open';
+    case Waiting = 'waiting';
+    case TableOffered = 'table_offered';
+    case TableAccepted = 'table_accepted';
+    case CheckedIn = 'checked_in';
 }

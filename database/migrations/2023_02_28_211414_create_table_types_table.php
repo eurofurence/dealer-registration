@@ -11,7 +11,9 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name');
-            $table->integer('seats');
+            $table->integer('spaces'); // Spaces
+            $table->integer('seats'); // Seats in your space
+            $table->integer('price');
 
             $table->timestamps();
         });

@@ -26,7 +26,7 @@ Route::get('/', function () {
     return \Illuminate\Support\Facades\Redirect::route('dashboard');
 });
 
-Route::middleware(['auth:web'])->group(function () {
+Route::middleware(['auth:web',\App\Http\Middleware\ForceOverseatingRedirectMiddleware::class])->group(function () {
     Route::get('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout');
 
     Route::get('join',[\App\Http\Controllers\Applications\InvitationController::class,'view'])->name('join');

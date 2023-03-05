@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('title')
+    Shares and Assistants
+@endsection
 @section('content')
     <div class="">
         <div class="col-md-6 mx-auto">
@@ -11,26 +14,23 @@
             <div class="alert alert-success text-center fw-bold">The user has been removed.</div>
         @endif
 
-        <div class="mx-auto text-center mb-4">
-            <a href="{{ route('dashboard') }}" class="btn btn-sm btn-primary">Return to dashboard</a>
-        </div>
-        <div class="row mb-5">
-            <div class="col-md-3 mx-auto">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="text-center display-6">Seats ({{ $currentSeats }}/{{ $maxSeats }})</div>
-                    </div>
-                </div>
+        @if($assistants_active_count <= $assistants_count && $shares_active_count <= $shares_count)
+            <div class="mx-auto text-center mb-4">
+                <a href="{{ route('dashboard') }}" class="btn btn-sm btn-primary">Return to dashboard</a>
             </div>
-        </div>
+        @endif
         <div class="row">
             <div class="col-md-6">
-                <div class="card">
+                @if($shares_active_count > $shares_count)
+                    <div class="alert alert-danger fw-bold">You have too many dealers for your table size. <br>Please remove dealers.</div>
+                @endif
+
+                <div class="card mb-2 @if($shares_active_count > $shares_count) bg-danger-subtle @endif">
                     <div class="card-body">
-                        <div class="card-title"><h5>Share your space with other dealers</h5></div>
+                        <div class="card-title h5 mb-0"><span class="badge bg-secondary">{{ $shares_active_count }}/{{ $shares_count }}</span> Share your space with other dealers</div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if($currentSeats < $maxSeats)
+                        @if($shares_active_count < $shares_count)
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.regenerate-keys') }}">
                                     @csrf
@@ -58,12 +58,15 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card">
+                @if($assistants_active_count > $assistants_count)
+                    <div class="alert alert-danger fw-bold">You have too many assistants for your table size. <br>Please remove assistants.</div>
+                @endif
+                <div class="card mb-2 @if($assistants_active_count > $assistants_count) bg-danger-subtle @endif">
                     <div class="card-body">
-                        <div class="card-title"><h5>Invite assistants to your space</h5></div>
+                        <div class="card-title h5 mb-0"><span class="badge bg-secondary">{{ $assistants_active_count }}/{{ $assistants_count }}</span> Invite assistants to your space</div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if($currentSeats < $maxSeats)
+                        @if($assistants_active_count < $assistants_count)
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.regenerate-keys') }}">
                                     @csrf

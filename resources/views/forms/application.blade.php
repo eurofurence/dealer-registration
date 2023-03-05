@@ -7,6 +7,29 @@
         <!-- Hidden --->
         <input type="hidden" name="code" value="{{ $code }}">
         <input type="hidden" name="applicationType" value="{{ $applicationType->value }}">
+        @if(!is_null($application->type) && $application->type !== $applicationType)
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="alert alert-warning">
+                        You are changing your Role away from
+                        <b>Dealer</b> this means you will loose your previous application as a dealer and join another dealer as a {{ $applicationType->value }}.
+                    </div>
+                </div>
+            </div>
+        @endif
+        <!-- ROLE --->
+        <div class="row mb-3">
+            <label for="email" class="col-sm-2 col-form-label fw-bold">Role</label>
+            <div class="col-sm-10 col-form-label">
+                @if(!is_null($application->type) && $application->type !== $applicationType)
+                    Updates
+                    <span
+                        class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
+                    to
+                @endif
+                <span class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($applicationType->value) }}</span>
+            </div>
+        </div>
         <!-- EMAIL --->
         <div class="row mb-3">
             <label for="email" class="col-sm-2 col-form-label fw-bold">Email</label>
@@ -67,7 +90,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input @error('mature') is-invalid @enderror" name="mature"
-                               @checked(old('mature') ?? $application?->is_mature))
+                               @checked(($application?->mature === "on" && empty(old('mature'))) || (!empty(old('mature')) && old('mature') === "on"))
                                type="checkbox" id="mature">
                         <label class="form-check-label" for="mature">
                             Tick this checkbox if you are planning to sell art or merchandise with
@@ -94,7 +117,7 @@
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
                                name="denType" id="denTypeRegular"
                                value="denTypeRegular"
-                               @checked(old('denType') === "denTypeRegular" ?? $application?->is_afterdark === false))>
+                            @checked(($application?->is_afterdark === false && empty(old('denType'))) || (!empty(old('denType')) && old('denType') === "denTypeRegular"))>
                         <label class="form-check-label" for="denTypeRegular">
                             Regular Dealers' Den
                         </label>
@@ -103,7 +126,7 @@
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
                                name="denType" id="denTypeAfterDark"
                                value="denTypeAfterDark"
-                            @checked(old('denType') === "denTypeAfterDark" ?? $application?->is_afterdark === true) >
+                            @checked(($application?->is_afterdark === true && empty(old('denType'))) || (!empty(old('denType')) && old('denType') === "denTypeAfterDark")) >
                         <label class="form-check-label" for="denTypeAfterDark">
                             After Dark Dealers' Den
                         </label>
@@ -122,7 +145,8 @@
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror">
                         @foreach($table_types as $type)
                             <option
-                                value="{{ $type['id'] }}" @selected(old('space',$type['id'] === 2) ?? $application?->table_type_requested === $type['id']) >{{ $type['name'] }}</option>
+                                value="{{ $type['id'] }}"
+                            @selected(($application?->table_type_requested === $type['id'] && empty(old('space'))) || (!empty(old('denType')) && old('space',$type['id'] === 2)))>{{ $type['name'] }}</option>
                         @endforeach
                     </select>
                     @error('space')
@@ -163,9 +187,7 @@
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted"
                               class="form-control @error('wanted') is-invalid @enderror"
-                              id="wanted">
-                        {{ old('wanted') ?? $application?->unwanted_neighbors }}
-                    </textarea>
+                              id="wanted">{{ old('wanted') ?? $application?->unwanted_neighbors }}</textarea>
                     @error('wanted')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -208,8 +230,8 @@
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
                     <input class="form-check-input @error('tos') is-invalid @enderror" name="tos"
-                           @checked(!is_null($application->merchandise))
-                           @disabled(!is_null($application->merchandise))
+                           @checked(old('tos') ?? Route::is('applications.edit'))
+                           @disabled(Route::is('applications.edit'))
                            type="checkbox"
                            id="tos">
                     <label class="form-check-label" for="tos">

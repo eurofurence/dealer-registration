@@ -31,9 +31,14 @@ class InvitationController extends Controller
             ]);
         }
 
-        abort_if($applications->first()->user_id === \Auth::id(), 403, "Cannot add to own application.");
+        if ($applications->first()->user_id === \Auth::id()) {
+            throw ValidationException::withMessages([
+                "code" => "Cannot add to own application.",
+            ]);
+        }
 
-        $action = (\Auth::user()->applications()->exists() === ApplicationType::Dealer) ? "edit" : "create";
+        $application = \Auth::user()->application;
+        $action = (!is_null($application) && $application?->type === ApplicationType::Dealer && $application->isActive()) ? "edit" : "create";
 
         return Redirect::route('applications.' . $action, [
             "code" => $request->get('code'),

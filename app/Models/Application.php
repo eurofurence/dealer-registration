@@ -4,12 +4,25 @@ namespace App\Models;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Helper\Table;
 
 class Application extends Model
 {
+    use HasFactory;
     protected $guarded = [];
+
+    protected $appends = [
+      "status"
+    ];
+
+    protected $with = [
+      'requestedTable',
+      'assignedTable',
+    ];
+
     protected $casts = [
       "type" => ApplicationType::class,
       "is_power" => "boolean",
@@ -19,6 +32,10 @@ class Application extends Model
       "canceled_at" => "datetime",
       "allocated_at" => "datetime",
       "accepted_at" => "datetime",
+      "waiting_at" => "datetime",
+      "checked_in_at" => "datetime",
+      "offer_sent_at" => "datetime",
+      "offer_accepted_at" => "datetime",
 
     ];
     public function user()
@@ -51,11 +68,17 @@ class Application extends Model
         if(!is_null($this->canceled_at)) {
             return ApplicationStatus::Canceled;
         }
-        if(!is_null($this->allocated_at) && !is_null($this->accepted_at)) {
-            return ApplicationStatus::Allocated;
+        if(!is_null($this->checked_in_at)) {
+            return ApplicationStatus::CheckedIn;
         }
-        if(!is_null($this->accepted_at)) {
-            return ApplicationStatus::Accepted;
+        if(!is_null($this->waiting_at)) {
+            return ApplicationStatus::Waiting;
+        }
+        if(!is_null($this->offer_accepted_at)) {
+            return ApplicationStatus::TableAccepted;
+        }
+        if(!is_null($this->offer_sent_at)) {
+            return ApplicationStatus::TableOffered;
         }
         return ApplicationStatus::Open;
     }
@@ -69,5 +92,129 @@ class Application extends Model
     {
         $this->canceled_at = now();
         $this->save();
+    }
+
+    public function getActiveShares(): int
+    {
+        return $this->children()->whereNull('canceled_at')->where('type',ApplicationType::Share)->count();
+    }
+
+    public function getActiveAssistants(): int
+    {
+        return $this->children()->whereNull('canceled_at')->where('type',ApplicationType::Assistant)->count();
+    }
+
+    public function getAvailableShares(): int
+    {
+        return max($this->requestedTable->seats - 1 - $this->getActiveAssistants(), 0);
+    }
+
+    public function getAvailableAssistants(): int
+    {
+        return max(1, $this->requestedTable->seats - 1 - $this->getActiveShares());
+    }
+
+    public function getFreeShares(): int
+    {
+        return $this->requestedTable->seats - 1 - $this->getActiveShares() - $this->getActiveAssistants();
+    }
+
+    public function getFreeAssistants(): int
+    {
+        return $this->getAvailableAssistants() - $this->children()->whereNotNull('canceled_at')->where('type',ApplicationType::Assistant)->count();
+    }
+
+    public static function determineApplicationTypeByCode(string|null $code): ApplicationType
+    {
+        $applicationType = ApplicationType::Dealer;
+        if (!is_null($code)) {
+            $application = self::findByCode($code);
+            if($application === null) {
+                return $applicationType;
+            }
+
+            if ($application->invite_code_shares === $code) {
+                $applicationType = ApplicationType::Share;
+            }
+            if ($application->invite_code_assistants === $code) {
+                $applicationType = ApplicationType::Assistant;
+            }
+        }
+        return $applicationType;
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->getStatus();
+    }
+
+    public function setStatusAttribute(ApplicationStatus|string $status)
+    {
+        if(is_string($status)) {
+            $status = ApplicationStatus::tryFrom($status);
+        }
+        if($status === ApplicationStatus::Canceled) {
+            $this->update([
+                'offer_accepted_at' => null,
+                'offer_sent_at' => null,
+                'table_number' => null,
+                'parent' => null,
+                'waiting_at' => null,
+                'type' => ApplicationType::Dealer,
+                'canceled_at' => now(),
+            ]);
+        }
+
+        if($status === ApplicationStatus::Open) {
+            $this->update([
+                'offer_accepted_at' => null,
+                'offer_sent_at' => null,
+                'table_number' => null,
+                'waiting_at' => null,
+                'canceled_at' => null,
+            ]);
+        }
+
+        if($status === ApplicationStatus::Waiting) {
+            $this->update([
+                'offer_accepted_at' => null,
+                'offer_sent_at' => null,
+                'waiting_at' => now(),
+                'canceled_at' => null,
+            ]);
+        }
+
+        if($status === ApplicationStatus::TableOffered) {
+            $this->update([
+                'offer_accepted_at' => null,
+                'offer_sent_at' => now(),
+                'waiting_at' => null,
+                'canceled_at' => null,
+            ]);
+        }
+
+        if($status === ApplicationStatus::TableAccepted) {
+            $this->update([
+                'offer_accepted_at' => now(),
+                'waiting_at' => null,
+                'canceled_at' => null,
+            ]);
+        }
+
+        if($status === ApplicationStatus::CheckedIn) {
+            $this->update([
+                'checked_in_at' => now(),
+                'canceled_at' => null,
+            ]);
+        }
+    }
+
+    public static function findByCode(string|null $code): Application|null
+    {
+        return self::where('type', ApplicationType::Dealer)
+            ->where(function ($q) use ($code) {
+                return $q->where('invite_code_assistants', $code)
+                    ->orWhere('invite_code_shares', $code);
+            })->first();
     }
 }

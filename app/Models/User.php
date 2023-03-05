@@ -43,7 +43,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function applications(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function application(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Application::class);
     }

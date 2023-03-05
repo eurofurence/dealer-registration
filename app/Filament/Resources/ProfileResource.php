@@ -17,7 +17,7 @@ class ProfileResource extends Resource
 {
     protected static ?string $model = Profile::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-annotation';
 
     public static function form(Form $form): Form
     {
@@ -98,14 +98,14 @@ class ProfileResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -113,5 +113,5 @@ class ProfileResource extends Resource
             'create' => Pages\CreateProfile::route('/create'),
             'edit' => Pages\EditProfile::route('/{record}/edit'),
         ];
-    }    
+    }
 }

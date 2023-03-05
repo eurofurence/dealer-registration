@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('title')
+    Update your {{ $applicationType->value }} application
+@endsection
 @section('content')
     <div class="">
         <h1>Update your application</h1>
@@ -34,12 +37,18 @@
             </div>
         </div>
 
-        @if($application->type === \App\Enums\ApplicationType::Dealer)
             <div class="mx-auto text-center mb-4">
-                <a href="{{ route('applications.invitees.view') }}" class="btn btn-lg btn-outline-primary">Assistants & Shares</a>
-                <a href="{{ route('applications.delete') }}" class="btn btn-lg btn-outline-danger">Cancel Registration</a>
+                @if($application->type === \App\Enums\ApplicationType::Dealer)
+                <a href="{{ route('applications.invitees.view') }}" class="btn btn-lg btn-outline-primary mb-2">Assistants & Shares</a>
+                @endif
+                <a href="{{ route('applications.delete') }}" class="btn btn-lg btn-outline-danger mb-2">
+                    @if($application->type === \App\Enums\ApplicationType::Dealer)
+                        Cancel Registration
+                    @else
+                        Leave Dealership
+                    @endif
+                </a>
             </div>
-        @endif
 
         @if($errors->all())
             <div class="alert alert-danger text-center fw-bold">There were some issues saving your application, please see below.</div>

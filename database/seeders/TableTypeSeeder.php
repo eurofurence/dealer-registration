@@ -14,6 +14,8 @@ class TableTypeSeeder extends Seeder
         ], [
             "id" => 1,
             "seats" => 1,
+            "spaces" => 1,
+            "price" => 5000,
             "name" => "Half (65cm x 65cm)",
         ]);
         TableType::firstOrCreate([
@@ -21,6 +23,8 @@ class TableTypeSeeder extends Seeder
         ], [
             "id" => 2,
             "seats" => 2,
+            "spaces" => 1,
+            "price" => 10000,
             "name" => "Full (130cm x 65cm) [recommended]",
         ]);
         TableType::firstOrCreate([
@@ -28,6 +32,8 @@ class TableTypeSeeder extends Seeder
         ], [
             "id" => 3,
             "seats" => 4,
+            "spaces" => 1,
+            "price" => 20000,
             "name" => "Double Length (260cm x 65cm)",
         ]);
         TableType::firstOrCreate([
@@ -35,6 +41,8 @@ class TableTypeSeeder extends Seeder
         ], [
             "id" => 4,
             "seats" => 2,
+            "spaces" => 1,
+            "price" => 20000,
             "name" => "Double Width (130cm x 130cm)",
         ]);
         TableType::firstOrCreate([
@@ -42,6 +50,8 @@ class TableTypeSeeder extends Seeder
         ], [
             "id" => 5,
             "seats" => 4,
+            "spaces" => 1,
+            "price" => 40000,
             "name" => "Quad (260cm x 130cm)",
         ]);
 
