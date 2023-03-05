@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use App\Models\Application;
+use App\Models\Profile;
 use App\Models\TableType;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
@@ -135,7 +136,7 @@ class ApplicationRequest extends FormRequest
 
     public function update(ApplicationType $applicationType, int|null $parentId = null)
     {
-        return Application::updateOrCreate([
+        $result = Application::updateOrCreate([
             "user_id" => \Auth::id(),
         ], [
             "table_type_requested" => $this->get('space'),
@@ -156,7 +157,30 @@ class ApplicationRequest extends FormRequest
             "canceled_at" => null,
             "table_number" => null,
             "parent" => $parentId,
-        ]);
-    }
+           ]);
 
+        Profile::updateOrCreate([
+           "application_id" => $result->id,
+        ], [
+            "short_desc" => $this->get('short_desc'),
+            "artist_desc" => $this->get('artist_desc'),
+            "art_desc" => $this->get('art_desc'),
+            "website" => $this->get('profile_website'),
+            "twitter" => $this->get('twitter'),
+            "telegram" => $this->get('telegram'),
+            "discord" => $this->get('discord'),
+            "tweet" => $this->get('tweet'),
+            "art_preview_caption" => $this->get('art_preview_caption'),
+            "is_print" => $this->get('is_print') === "on",
+            "is_artwork" => $this->get('is_artwork') === "on",
+            "is_fursuit" => $this->get('is_fursuit') === "on",
+            "is_commissions" => $this->get('is_commissions') === "on",
+            "is_misc" => $this->get('is_misc') === "on",
+            "attends_thu" => $this->get('attends_thu') === "on",
+            "attends_fri" => $this->get('attends_fri') === "on",
+            "attends_sat" => $this->get('attends_sat') === "on",
+           ]);
+
+        return $result;
+    }
 }
