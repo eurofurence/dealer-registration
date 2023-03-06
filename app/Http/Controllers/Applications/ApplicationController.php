@@ -15,13 +15,14 @@ class ApplicationController extends Controller
 {
     public function create(Request $request)
     {
+        $application = \Auth::user()->application ?? new Application();
         $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
         return view('application.create',[
             'table_types' => TableType::all(['id','name']),
-            'application' => \Auth::user()->application ?? new Application(),
+            'application' => $application,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
-            'profile' => Profile::findByApplicationId(\Auth::user()->application->id) ?? new Profile()
+            'profile' => Profile::findByApplicationId($application->id) ?? new Profile()
         ]);
     }
 
