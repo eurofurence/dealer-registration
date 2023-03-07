@@ -58,7 +58,7 @@
             <div class="alert alert-success text-center fw-bold">Your data has been successfully saved.</div>
         @endif
 
-        <form class="needs-validation" method="POST" action="{{ route('applications.update') }}">
+        <form class="needs-validation" method="POST" action="{{ route('applications.update') }}" enctype="multipart/form-data">
             @method('PUT')
             @include('forms.application')
         </form>

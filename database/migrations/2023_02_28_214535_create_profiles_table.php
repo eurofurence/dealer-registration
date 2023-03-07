@@ -21,6 +21,10 @@ return new class extends Migration {
             $table->text('tweet')->nullable();
             $table->text('art_preview_caption')->nullable();
 
+            $table->string('image_thumbnail')->nullable();
+            $table->string('image_art')->nullable();
+            $table->string('image_artist')->nullable();
+
             $table->boolean('is_print')->nullable();
             $table->boolean('is_artwork')->nullable();
             $table->boolean('is_fursuit')->nullable();

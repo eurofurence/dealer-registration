@@ -159,8 +159,26 @@ class ApplicationRequest extends FormRequest
             "parent" => $parentId,
            ]);
 
+        $imgThumbnailName = NULL;
+        $imgArtistName = NULL;
+        $imgArtName = NULL;
+        $application_id = $result->id;
+
+        if($this->hasFile('image_thumbnail')){
+            $imgThumbnailName = 'thumbnail_'.$application_id.'.'.$this->file('image_thumbnail')->getClientOriginalExtension();
+            $this->file('image_thumbnail')->move(public_path('images/upload'), $imgThumbnailName);
+        }
+        if($this->hasFile('image_artist')){
+            $imgArtistName = 'artist_'.$application_id.'.'.$this->file('image_artist')->getClientOriginalExtension();
+            $this->file('image_artist')->move(public_path('images/upload'), $imgArtistName);
+        }
+        if($this->hasFile('image_art')){
+            $imgArtName = 'art_'.$application_id.'.'.$this->file('image_art')->getClientOriginalExtension();
+            $this->file('image_art')->move(public_path('images/upload'), $imgArtName);
+        }
+
         Profile::updateOrCreate([
-           "application_id" => $result->id,
+           "application_id" => $application_id,
         ], [
             "short_desc" => $this->get('short_desc'),
             "artist_desc" => $this->get('artist_desc'),
@@ -179,6 +197,9 @@ class ApplicationRequest extends FormRequest
             "attends_thu" => $this->get('attends_thu') === "on",
             "attends_fri" => $this->get('attends_fri') === "on",
             "attends_sat" => $this->get('attends_sat') === "on",
+            "image_thumbnail" => $imgThumbnailName,
+            "image_artist" => $imgArtistName,
+            "image_art" => $imgArtName,
            ]);
 
         return $result;

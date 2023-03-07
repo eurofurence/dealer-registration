@@ -41,7 +41,7 @@
             <div class="alert alert-danger text-center fw-bold">There were some issues saving your application, please see below.</div>
         @endif
 
-        <form class="needs-validation" method="POST" action="{{ route('applications.store') }}">
+        <form class="needs-validation" method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
             @include('forms.application')
         </form>
     </div>

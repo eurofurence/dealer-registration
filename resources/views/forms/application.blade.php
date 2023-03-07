@@ -213,9 +213,6 @@
             </div>
         @endif
 
-
-
-
         @if($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
             <div class="card-title">
                 <h4>Profile</h4>
@@ -268,8 +265,6 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label fw-bold">Categories</label>
              </div>
@@ -340,7 +335,23 @@
                     </div>
                 </div>
             </div>
-
+            <div class="row mb-3">
+                <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold">Thumbnail</label>
+                <div class="col-sm-10">
+                    <input id="image_thumbnail" type="file" class="form-control @error('image_thumbnail') is-invalid @enderror" name="image_thumbnail" value="{{ old('image_thumbnail') ?? $profile?->image_thumbnail }}">
+                    <div id="image_thumbnailHelp"
+                        class="form-text">Upload an image to be shown next to your name in the dealer list. This image should have a size of 60&times;60 pixels.
+                    </div>
+                    @if ($profile?->image_thumbnail != NULL && file_exists(public_path('/images/upload/'.$profile?->image_thumbnail)))
+                        <img src="{{ asset('/images/upload/'.$profile?->image_thumbnail)}}" style="height: 100px;">
+                    @endif
+                    @error('image_thumbnail')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+             </div>
             <div class="row mb-3">
                 <label for="short_desc" class="col-sm-2 col-form-label fw-bold">Short&nbsp;Description</label>
                 <div class="col-sm-10">
@@ -350,6 +361,23 @@
                     <div id="short_descHelp" class="form-text">
                         A short description, 1 - 3 sentences, to appear in the dealer list next to your thumbnail image.
                     </div>
+                </div>
+             </div>
+             <div class="row mb-3">
+                <label for="image_artist" class="col-sm-2 col-form-label fw-bold">Artist Image</label>
+                <div class="col-sm-10">
+                    <input id="image_artist" type="file" class="form-control @error('image_artist') is-invalid @enderror" name="image_artist" value="{{ old('image_artist') ?? $profile?->image_artist }}">
+                    <div id="image_artistHelp"
+                        class="form-text">You can upload a preview image of your art or merchandise, which will be shown on a separate page in the EF app. The size of this image should be 400&times;400 pixels.
+                    </div>
+                    @if ($profile?->image_artist != NULL && file_exists(public_path('/images/upload/'.$profile?->image_artist)))
+                        <img src="{{ asset('/images/upload/'.$profile?->image_artist)}}" style="height: 100px;">
+                    @endif
+                    @error('image_artist')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
                 </div>
             </div>
             <div class="row mb-3">
@@ -364,6 +392,34 @@
                 </div>
             </div>
             <div class="row mb-3">
+                <label for="image_art" class="col-sm-2 col-form-label fw-bold">Art Preview</label>
+                <div class="col-sm-10">
+                    <input id="image_art" type="file" class="form-control @error('image_art') is-invalid @enderror" name="image_art" value="{{ old('image_art') ?? $profile?->image_art }}">
+                    <div id="image_artHelp"
+                        class="form-text">This image is shown on your dedicated page in the EF app. Aim for a size of 400&times;450 pixels.
+                    </div>
+                    @if ($profile?->image_art != NULL && file_exists(public_path('/images/upload/'.$profile?->image_art)))
+                        <img src="{{ asset('/images/upload/'.$profile?->image_art)}}" style="height: 100px;">
+                    @endif
+                    @error('image_art')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="art_preview_caption" class="col-sm-2 col-form-label fw-bold">Art Preview Caption</label>
+                <div class="col-sm-10">
+                    <textarea rows="1" type="text" name="art_preview_caption"
+                              class="form-control @error('art_preview_caption') is-invalid @enderror"
+                              id="art_preview_caption">{{ old('art_preview_caption') ?? $profile?->art_preview_caption }}</textarea>
+                    <div id="art_preview_captionHelp" class="form-text">
+                        If you have uploaded an art/merchandise preview image above, you can enter a description that is displayed beneath it.
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
                 <label for="art_desc" class="col-sm-2 col-form-label fw-bold">About&nbsp;the&nbsp;Art</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="art_desc"
@@ -374,7 +430,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row mb-3">
                 <label for="profile_website" class="col-sm-2 col-form-label fw-bold">Website</label>
                 <div class="col-sm-10">
@@ -419,9 +474,8 @@
                     </div>
                 </div>
             </div>
-
             <div class="row mb-3">
-                <label for="tweet" class="col-sm-2 col-form-label fw-bold">Advertisement text:</label>
+                <label for="tweet" class="col-sm-2 col-form-label fw-bold">Advertisement text</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="tweet"
                               class="form-control @error('tweet') is-invalid @enderror"
@@ -433,12 +487,8 @@
                     </div>
                 </div>
             </div>
+
         @endif
-
-
-
-
-
 
         <div class="row mb-3">
             <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
