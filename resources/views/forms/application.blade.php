@@ -213,11 +213,27 @@
             </div>
         @endif
 
+        <div class="row mb-3">
+            <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
+            <div class="col-sm-10">
+                    <textarea rows="5" type="text" name="comment"
+                              class="form-control @error('comment') is-invalid @enderror"
+                              id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
+                @error('comment')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                <div id="commentHelp" class="form-text">
+                    If you have any additional things to tell us, please write them down here.
+                </div>
+            </div>
+        </div>
+
         @if($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
             <div class="card-title">
                 <h4>Profile</h4>
                 <p>The following information will be used to present you and your merchandise in the EF App,
-                   			as well as possibly other media in the context of Eurofurence.</p>
+                   			as well as possibly other media in the context of Eurofurence.
+                   			You will still be able to edit this information after the registration phase has ended.</p>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-2 col-form-label fw-bold">Attendance</label>
@@ -338,9 +354,11 @@
             <div class="row mb-3">
                 <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold">Thumbnail</label>
                 <div class="col-sm-10">
-                    <input id="image_thumbnail" type="file"
+                    <input id="image_thumbnail"
+                        type="file"
                         class="form-control @error('image_thumbnail') is-invalid @enderror"
-                        name="image_thumbnail" value="{{ old('image_thumbnail') ?? $profile?->image_thumbnail }}"
+                        name="image_thumbnail"
+                        accept="image/jpeg, image/png"
                         onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview').hidden=''">
                     <div id="image_thumbnailHelp"
                         class="form-text">Upload an image to be shown next to your name in the dealer list. This image should have a size of 60&times;60 pixels.
@@ -371,9 +389,11 @@
              <div class="row mb-3">
                 <label for="image_artist" class="col-sm-2 col-form-label fw-bold">Artist Image</label>
                 <div class="col-sm-10">
-                    <input id="image_artist" type="file"
+                    <input id="image_artist"
+                        type="file"
                         class="form-control @error('image_artist') is-invalid @enderror"
-                        name="image_artist" value="{{ old('image_artist') ?? $profile?->image_artist }}"
+                        name="image_artist"
+                        accept="image/jpeg, image/png"
                         onchange="document.getElementById('image_artist_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_artist_preview').hidden=''">
                     <div id="image_artistHelp"
                         class="form-text">You can upload a preview image of your art or merchandise, which will be shown on a separate page in the EF app. The size of this image should be 400&times;400 pixels.
@@ -383,6 +403,7 @@
                     @else
                         <img id='image_artist_preview' src="{{ asset('/images/profile/placeholder.png')}}" style="height: 100px;" hidden='hidden'>
                     @endif
+
                     @error('image_artist')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
@@ -404,15 +425,18 @@
             <div class="row mb-3">
                 <label for="image_art" class="col-sm-2 col-form-label fw-bold">Art Preview</label>
                 <div class="col-sm-10">
-                    <input id="image_art" type="file"
+                    <input id="image_art"
+                        type="file"
                         class="form-control @error('image_art') is-invalid @enderror"
-                        name="image_art" value="{{ old('image_art') ?? $profile?->image_art }}"
+                        name="image_art"
+                        accept="image/jpeg, image/png"
                         onchange="document.getElementById('image_art_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_art_preview').hidden=''">
                     <div id="image_artHelp"
                         class="form-text">This image is shown on your dedicated page in the EF app. Aim for a size of 400&times;450 pixels.
                     </div>
                     @if ($profile?->image_art != NULL && file_exists(public_path('/images/upload/'.$profile?->image_art)))
                         <img id='image_art_preview' src="{{ asset('/images/upload/'.$profile?->image_art)}}" style="height: 100px;">
+
                     @else
                         <img id='image_art_preview' src="{{ asset('/images/profile/placeholder.png')}}" style="height: 100px;" hidden='hidden'>
                     @endif
@@ -505,20 +529,6 @@
 
         @endif
 
-        <div class="row mb-3">
-            <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
-            <div class="col-sm-10">
-                    <textarea rows="5" type="text" name="comment"
-                              class="form-control @error('comment') is-invalid @enderror"
-                              id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
-                @error('comment')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-                <div id="commentHelp" class="form-text">
-                    If you have any additional things to tell us, please write them down here.
-                </div>
-            </div>
-        </div>
         <div class="row mb-3">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
