@@ -338,12 +338,17 @@
             <div class="row mb-3">
                 <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold">Thumbnail</label>
                 <div class="col-sm-10">
-                    <input id="image_thumbnail" type="file" class="form-control @error('image_thumbnail') is-invalid @enderror" name="image_thumbnail" value="{{ old('image_thumbnail') ?? $profile?->image_thumbnail }}">
+                    <input id="image_thumbnail" type="file"
+                        class="form-control @error('image_thumbnail') is-invalid @enderror"
+                        name="image_thumbnail" value="{{ old('image_thumbnail') ?? $profile?->image_thumbnail }}"
+                        onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview').hidden=''">
                     <div id="image_thumbnailHelp"
                         class="form-text">Upload an image to be shown next to your name in the dealer list. This image should have a size of 60&times;60 pixels.
                     </div>
                     @if ($profile?->image_thumbnail != NULL && file_exists(public_path('/images/upload/'.$profile?->image_thumbnail)))
-                        <img src="{{ asset('/images/upload/'.$profile?->image_thumbnail)}}" style="height: 100px;">
+                        <img id='image_thumbnail_preview' src="{{ asset('/images/upload/'.$profile?->image_thumbnail)}}" style="height: 100px;">
+                    @else
+                        <img id='image_thumbnail_preview' src="{{ asset('/images/profile/placeholder.png')}}" style="height: 100px;" hidden='hidden'>
                     @endif
                     @error('image_thumbnail')
                         <span class="invalid-feedback" role="alert">
@@ -366,12 +371,17 @@
              <div class="row mb-3">
                 <label for="image_artist" class="col-sm-2 col-form-label fw-bold">Artist Image</label>
                 <div class="col-sm-10">
-                    <input id="image_artist" type="file" class="form-control @error('image_artist') is-invalid @enderror" name="image_artist" value="{{ old('image_artist') ?? $profile?->image_artist }}">
+                    <input id="image_artist" type="file"
+                        class="form-control @error('image_artist') is-invalid @enderror"
+                        name="image_artist" value="{{ old('image_artist') ?? $profile?->image_artist }}"
+                        onchange="document.getElementById('image_artist_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_artist_preview').hidden=''">
                     <div id="image_artistHelp"
                         class="form-text">You can upload a preview image of your art or merchandise, which will be shown on a separate page in the EF app. The size of this image should be 400&times;400 pixels.
                     </div>
                     @if ($profile?->image_artist != NULL && file_exists(public_path('/images/upload/'.$profile?->image_artist)))
-                        <img src="{{ asset('/images/upload/'.$profile?->image_artist)}}" style="height: 100px;">
+                        <img id='image_artist_preview' src="{{ asset('/images/upload/'.$profile?->image_artist)}}" style="height: 100px;">
+                    @else
+                        <img id='image_artist_preview' src="{{ asset('/images/profile/placeholder.png')}}" style="height: 100px;" hidden='hidden'>
                     @endif
                     @error('image_artist')
                         <span class="invalid-feedback" role="alert">
@@ -394,12 +404,17 @@
             <div class="row mb-3">
                 <label for="image_art" class="col-sm-2 col-form-label fw-bold">Art Preview</label>
                 <div class="col-sm-10">
-                    <input id="image_art" type="file" class="form-control @error('image_art') is-invalid @enderror" name="image_art" value="{{ old('image_art') ?? $profile?->image_art }}">
+                    <input id="image_art" type="file"
+                        class="form-control @error('image_art') is-invalid @enderror"
+                        name="image_art" value="{{ old('image_art') ?? $profile?->image_art }}"
+                        onchange="document.getElementById('image_art_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_art_preview').hidden=''">
                     <div id="image_artHelp"
                         class="form-text">This image is shown on your dedicated page in the EF app. Aim for a size of 400&times;450 pixels.
                     </div>
                     @if ($profile?->image_art != NULL && file_exists(public_path('/images/upload/'.$profile?->image_art)))
-                        <img src="{{ asset('/images/upload/'.$profile?->image_art)}}" style="height: 100px;">
+                        <img id='image_art_preview' src="{{ asset('/images/upload/'.$profile?->image_art)}}" style="height: 100px;">
+                    @else
+                        <img id='image_art_preview' src="{{ asset('/images/profile/placeholder.png')}}" style="height: 100px;" hidden='hidden'>
                     @endif
                     @error('image_art')
                         <span class="invalid-feedback" role="alert">
