@@ -28,7 +28,8 @@ class ApplicationRequest extends FormRequest
         $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
         $parentApplication = Application::findByCode($this->get('code'));
         $application = \Auth::user()->application;
-        return [
+
+        $appValidation = [
             "applicationType" => [
                 Rule::enum(ApplicationType::class),
             ],
@@ -82,7 +83,10 @@ class ApplicationRequest extends FormRequest
             "comment" => "nullable",
             "tos" => [
                 new RequiredIf($this->routeIs('applications.store')),
-            ],
+            ],    
+        ];
+
+        $profileValidation = [
             "image_thumbnail" => [
                 'mimes:jpeg,png',
                 'max:1024',
@@ -102,6 +106,14 @@ class ApplicationRequest extends FormRequest
                 'exclude_if:applicationType,assistant',
             ],
         ];
+
+        $validation = array();
+        if (now() < config('dates.reg_end_date')) {
+            $validation = array_merge($appValidation, $appValidation);
+        } else {
+            $validation = $profileValidation;
+        }
+        return $validation;
     }
 
     private function isCodeRequired(): bool
@@ -154,72 +166,82 @@ class ApplicationRequest extends FormRequest
 
     public function update(ApplicationType $applicationType, int|null $parentId = null)
     {
-        $result = Application::updateOrCreate([
-            "user_id" => \Auth::id(),
-        ], [
-            "table_type_requested" => $this->get('space'),
-            "type" => $applicationType,
-            "display_name" => $this->get('displayName'),
-            "website" => $this->get('website'),
-            "merchandise" => $this->get('merchandise'),
-            "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
-            "is_mature" => $this->get('mature') === "on",
-            "is_power" => $this->get('power') === "on",
-            "is_wallseat" => $this->get('wallseat') === "on",
-            "wanted_neighbors" => $this->get('wanted'),
-            "unwanted_neighbors" => $this->get('unwanted'),
-            "comment" => $this->get('comment'),
-            "waiting_at" => null,
-            "offer_sent_at" => null,
-            "offer_accepted_at" => null,
-            "canceled_at" => null,
-            "table_number" => null,
-            "parent" => $parentId,
-           ]);
+        $result = null;
+        if (now() < config('dates.reg_end_date')) {
+            $result = Application::updateOrCreate([
+                "user_id" => \Auth::id(),
+            ], [
+                    "table_type_requested" => $this->get('space'),
+                    "type" => $applicationType,
+                    "display_name" => $this->get('displayName'),
+                    "website" => $this->get('website'),
+                    "merchandise" => $this->get('merchandise'),
+                    "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
+                    "is_mature" => $this->get('mature') === "on",
+                    "is_power" => $this->get('power') === "on",
+                    "is_wallseat" => $this->get('wallseat') === "on",
+                    "wanted_neighbors" => $this->get('wanted'),
+                    "unwanted_neighbors" => $this->get('unwanted'),
+                    "comment" => $this->get('comment'),
+                    "waiting_at" => null,
+                    "offer_sent_at" => null,
+                    "offer_accepted_at" => null,
+                    "canceled_at" => null,
+                    "table_number" => null,
+                    "parent" => $parentId,
+                ]);
 
-        $application_id = $result->id;
+            $this->updateProfile($result->id);
+        } else {
+            $application = Application::findByUserId(\Auth::id());
+            if ($application) {
+                $result = $this->updateProfile($application->id);
+            }
+        }
+        return $result;
+    }
 
+    public function updateProfile(int $application_id)
+    {
         $profileData = [
-           "short_desc" => $this->get('short_desc'),
-           "artist_desc" => $this->get('artist_desc'),
-           "art_desc" => $this->get('art_desc'),
-           "website" => $this->get('profile_website'),
-           "twitter" => $this->get('twitter'),
-           "telegram" => $this->get('telegram'),
-           "discord" => $this->get('discord'),
-           "tweet" => $this->get('tweet'),
-           "art_preview_caption" => $this->get('art_preview_caption'),
-           "is_print" => $this->get('is_print') === "on",
-           "is_artwork" => $this->get('is_artwork') === "on",
-           "is_fursuit" => $this->get('is_fursuit') === "on",
-           "is_commissions" => $this->get('is_commissions') === "on",
-           "is_misc" => $this->get('is_misc') === "on",
-           "attends_thu" => $this->get('attends_thu') === "on",
-           "attends_fri" => $this->get('attends_fri') === "on",
-           "attends_sat" => $this->get('attends_sat') === "on",
-          ];
+            "short_desc" => $this->get('short_desc'),
+            "artist_desc" => $this->get('artist_desc'),
+            "art_desc" => $this->get('art_desc'),
+            "website" => $this->get('profile_website'),
+            "twitter" => $this->get('twitter'),
+            "telegram" => $this->get('telegram'),
+            "discord" => $this->get('discord'),
+            "tweet" => $this->get('tweet'),
+            "art_preview_caption" => $this->get('art_preview_caption'),
+            "is_print" => $this->get('is_print') === "on",
+            "is_artwork" => $this->get('is_artwork') === "on",
+            "is_fursuit" => $this->get('is_fursuit') === "on",
+            "is_commissions" => $this->get('is_commissions') === "on",
+            "is_misc" => $this->get('is_misc') === "on",
+            "attends_thu" => $this->get('attends_thu') === "on",
+            "attends_fri" => $this->get('attends_fri') === "on",
+            "attends_sat" => $this->get('attends_sat') === "on",
+        ];
 
         // Keep old images if no new data is sent with the request
-        if($this->hasFile('image_thumbnail')){
-            $imgThumbnailName = 'thumbnail_'.$application_id.'.'.$this->file('image_thumbnail')->getClientOriginalExtension();
+        if ($this->hasFile('image_thumbnail')) {
+            $imgThumbnailName = 'thumbnail_' . $application_id . '.' . $this->file('image_thumbnail')->getClientOriginalExtension();
             $this->file('image_thumbnail')->move(public_path('images/upload'), $imgThumbnailName);
             $profileData["image_thumbnail"] = $imgThumbnailName;
         }
-        if($this->hasFile('image_artist')){
-            $imgArtistName = 'artist_'.$application_id.'.'.$this->file('image_artist')->getClientOriginalExtension();
+        if ($this->hasFile('image_artist')) {
+            $imgArtistName = 'artist_' . $application_id . '.' . $this->file('image_artist')->getClientOriginalExtension();
             $this->file('image_artist')->move(public_path('images/upload'), $imgArtistName);
             $profileData["image_artist"] = $imgArtistName;
         }
-        if($this->hasFile('image_art')){
-            $imgArtName = 'art_'.$application_id.'.'.$this->file('image_art')->getClientOriginalExtension();
+        if ($this->hasFile('image_art')) {
+            $imgArtName = 'art_' . $application_id . '.' . $this->file('image_art')->getClientOriginalExtension();
             $this->file('image_art')->move(public_path('images/upload'), $imgArtName);
             $profileData["image_art"] = $imgArtName;
         }
 
-        Profile::updateOrCreate([
-           "application_id" => $application_id,
-        ],  $profileData);
-
-        return $result;
+        return Profile::updateOrCreate([
+            "application_id" => $application_id,
+        ], $profileData);
     }
 }
