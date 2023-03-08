@@ -74,6 +74,11 @@
         <form class="needs-validation" method="POST" action="{{ route('applications.update') }}" enctype="multipart/form-data">
             @method('PUT')
             @include('forms.application')
+            @if ($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
+                @include('forms.profile')
+            @endif  
+            @csrf
+            <button class="w-100 btn btn-primary btn-lg mt-4" type="submit">Update your application</button>            
         </form>
     </div>
 @endsection
