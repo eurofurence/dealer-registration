@@ -199,7 +199,7 @@
                 <label for="wanted" class="col-sm-2 col-form-label fw-bold">Preferred&nbsp;Neighbors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted" class="form-control @error('wanted') is-invalid @enderror"
-                        @disabled(now() >= config('dates.reg_end_date')) id="wanted">{{ old('wanted') ?? $application?->unwanted_neighbors }}</textarea>
+                        @disabled(now() >= config('dates.reg_end_date')) id="wanted">{{ old('wanted') ?? $application?->wanted_neighbors }}</textarea>
                     @error('wanted')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

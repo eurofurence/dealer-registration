@@ -123,10 +123,10 @@
                     onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview').hidden=''">
                 <div id="image_thumbnailHelp" class="form-text">Upload an image to be shown next to your name in
                     the dealer list. This image should have a size of 60&times;60 pixels.
-                </div>
-                @if ($profile?->image_thumbnail != null && file_exists(public_path('/images/upload/' . $profile?->image_thumbnail)))
-                    <img id='image_thumbnail_preview' src="{{ asset('/images/upload/' . $profile?->image_thumbnail) }}"
-                        style="height: 100px;">
+                </div>                
+                @if ($profile?->image_thumbnail != null && file_exists("storage/$profile?->image_thumbnail"))
+                    <img id='image_thumbnail_preview' src="{{ asset("storage/$profile?->image_thumbnail") }}"
+                        style="height: 100px;" onclick="window.open(this.src)">
                 @else
                     <img id='image_thumbnail_preview' src="{{ asset('/images/profile/placeholder.png') }}"
                         style="height: 100px;" hidden='hidden'>
@@ -159,9 +159,9 @@
                     merchandise, which will be shown on a separate page in the EF app. The size of this image should
                     be 400&times;400 pixels.
                 </div>
-                @if ($profile?->image_artist != null && file_exists(public_path('/images/upload/' . $profile?->image_artist)))
-                    <img id='image_artist_preview' src="{{ asset('/images/upload/' . $profile?->image_artist) }}"
-                        style="height: 100px;">
+                @if ($profile?->image_artist != null && file_exists("storage/$profile?->image_artist"))
+                    <img id='image_artist_preview' src="{{ asset("storage/$profile?->image_artist") }}"
+                        style="height: 100px;" onclick="window.open(this.src)">
                 @else
                     <img id='image_artist_preview' src="{{ asset('/images/profile/placeholder.png') }}"
                         style="height: 100px;" hidden='hidden'>
@@ -193,9 +193,9 @@
                 <div id="image_artHelp" class="form-text">This image is shown on your dedicated page in the EF
                     app. Aim for a size of 400&times;450 pixels.
                 </div>
-                @if ($profile?->image_art != null && file_exists(public_path('/images/upload/' . $profile?->image_art)))
-                    <img id='image_art_preview' src="{{ asset('/images/upload/' . $profile?->image_art) }}"
-                        style="height: 100px;">
+                @if ($profile?->image_art != null && file_exists("storage/$profile?->image_art"))
+                    <img id='image_art_preview' src="{{ asset("storage/$profile?->image_art")  }}"
+                        style="height: 100px;" onclick="window.open(this.src)">
                 @else
                     <img id='image_art_preview' src="{{ asset('/images/profile/placeholder.png') }}"
                         style="height: 100px;" hidden='hidden'>
