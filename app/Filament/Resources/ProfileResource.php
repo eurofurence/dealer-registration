@@ -42,6 +42,9 @@ class ProfileResource extends Resource
                     ->maxLength(65535),
                 Forms\Components\Textarea::make('art_preview_caption')
                     ->maxLength(65535),
+                Forms\Components\FileUpload::make('image_thumbnail'),
+                Forms\Components\FileUpload::make('image_artist'),
+                Forms\Components\FileUpload::make('image_art'),
                 Forms\Components\Toggle::make('is_print'),
                 Forms\Components\Toggle::make('is_artwork'),
                 Forms\Components\Toggle::make('is_fursuit'),
@@ -50,6 +53,7 @@ class ProfileResource extends Resource
                 Forms\Components\Toggle::make('attends_thu'),
                 Forms\Components\Toggle::make('attends_fri'),
                 Forms\Components\Toggle::make('attends_sat'),
+
             ]);
     }
 
@@ -67,6 +71,9 @@ class ProfileResource extends Resource
                 Tables\Columns\TextColumn::make('discord'),
                 Tables\Columns\TextColumn::make('tweet'),
                 Tables\Columns\TextColumn::make('art_preview_caption'),
+                Tables\Columns\TextColumn::make('image_thumbnail'),
+                Tables\Columns\TextColumn::make('image_artist'),
+                Tables\Columns\TextColumn::make('image_art'),
                 Tables\Columns\IconColumn::make('is_print')
                     ->boolean(),
                 Tables\Columns\IconColumn::make('is_artwork')

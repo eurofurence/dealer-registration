@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Applications;
 
-use App\Enums\ApplicationType;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
-use App\Http\Requests\ApplicationUpdateRequest;
 use App\Models\Application;
 use App\Models\TableType;
 use Illuminate\Http\Request;
@@ -14,12 +13,14 @@ class ApplicationController extends Controller
 {
     public function create(Request $request)
     {
+        $application = \Auth::user()->application ?? new Application();
         $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
         return view('application.create',[
             'table_types' => TableType::all(['id','name']),
-            'application' => \Auth::user()->application ?? new Application(),
+            'application' => $application,
             'applicationType' => $applicationType,
-            'code' => $request->get('code')
+            'code' => $request->get('code'),
+            'profile' => ProfileController::getOrCreate($application->id)
         ]);
     }
 
@@ -39,6 +40,7 @@ class ApplicationController extends Controller
             "application" => $application,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
+            'profile' => ProfileController::getByApplicationId($application->id)
         ]);
     }
     public function update(ApplicationRequest $request)
@@ -50,7 +52,7 @@ class ApplicationController extends Controller
     public function delete()
     {
         return view('application.delete',[
-            "application" => \Auth::user()->application
+            "application" => \Auth::user()->application,
         ]);
     }
 

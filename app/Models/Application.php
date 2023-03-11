@@ -217,4 +217,9 @@ class Application extends Model
                     ->orWhere('invite_code_shares', $code);
             })->first();
     }
+
+    public static function findByUserId(int|null $user_id): Application|null
+    {
+        return self::where('user_id', $user_id)->first();
+    }
 }

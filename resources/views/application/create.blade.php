@@ -41,8 +41,13 @@
             <div class="alert alert-danger text-center fw-bold">There were some issues saving your application, please see below.</div>
         @endif
 
-        <form class="needs-validation" method="POST" action="{{ route('applications.store') }}">
+        <form class="needs-validation" method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
             @include('forms.application')
+            @if ($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
+                @include('forms.profile')
+            @endif  
+            @csrf            
+            <button class="w-100 btn btn-primary btn-lg mt-4" type="submit">Submit your application</button>            
         </form>
     </div>
 @endsection
