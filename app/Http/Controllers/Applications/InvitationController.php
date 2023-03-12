@@ -27,13 +27,13 @@ class InvitationController extends Controller
 
         if ($applications->count() === 0) {
             throw ValidationException::withMessages([
-                "code" => "Invalid code, please ask your dealer for a new code.",
+                "code" => "Invalid code, please ask the dealership you are trying to join for a new code.",
             ]);
         }
 
         if ($applications->first()->user_id === \Auth::id()) {
             throw ValidationException::withMessages([
-                "code" => "Cannot add to own application.",
+                "code" => "You cannot join your own dealership.",
             ]);
         }
 

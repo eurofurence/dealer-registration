@@ -36,8 +36,8 @@
                                     @csrf
                                     <label for="invite-code-assistants">Invite code for shares</label>
                                     <button class="btn btn-sm btn-link" type="submit">Regenerate Keys</button>
-                                    <input id="invite-code-assistants" disabled class="form-control"
-                                           value="{{ $application->invite_code_shares }}">
+                                    <input id="invite-code-assistants" readonly class="form-control"
+                                           value="{{ $application->invite_code_shares }}" onclick="this.select()">
                                     <span
                                         class="form-text">Ask your share to go to dealers.eurofurence.org and click on Join, after that they need to enter the above code.</span>
                                 </form>
@@ -72,8 +72,8 @@
                                     @csrf
                                     <label for="invite-code-assistants">Invite code for assistants</label>
                                     <button class="btn btn-sm btn-link" type="submit">Regenerate Keys</button>
-                                    <input id="invite-code-assistants" disabled class="form-control"
-                                           value="{{ $application->invite_code_assistants }}">
+                                    <input id="invite-code-assistants" readonly class="form-control"
+                                           value="{{ $application->invite_code_assistants }}" onclick="this.select()">
                                     <span
                                         class="form-text">Ask your assistant to go to dealers.eurofurence.org and click on Join, after that they need to enter the above code.</span>
                                 </form>
