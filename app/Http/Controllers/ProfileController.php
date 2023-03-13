@@ -6,6 +6,7 @@ use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use ZipArchive;
 
 class ProfileController extends Controller
 {
@@ -57,15 +58,17 @@ class ProfileController extends Controller
         ], $profileData);
     }
 
-    private static function storeImage(Request $request, String $fileName, int|null $width, int|null $height) {
+    private static function storeImage(Request $request, string $fileName, int|null $width, int|null $height)
+    {
         $imagePath = $request->file($fileName)->store('public');
         $image = Image::make(Storage::get($imagePath))->resize($width, $height)->encode();
         Storage::put($imagePath, $image);
-        $imagePath = explode('/',$imagePath);
-        return $imagePath[1];                    
+        $imagePath = explode('/', $imagePath);
+        return $imagePath[1];
     }
 
-    public static function getImage(String $fileName) {
+    public static function getImage(string $fileName)
+    {
         Storage::get($fileName);
     }
 
@@ -123,5 +126,50 @@ class ProfileController extends Controller
                 'exclude_if:applicationType,assistant',
             ],
         ];
+    }
+
+    public function exportCsv()
+    {
+        $headers = [
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=profiles.csv',
+            'Expires' => '0',
+            'Pragma' => 'public'
+        ];
+
+        $list = Profile::getAllProfilesForExport()->toArray();
+
+        if (!empty($list)) {
+            # add headers for each column in the CSV download
+            array_unshift($list, array_keys($list[0]));
+        }
+
+        $callback = function () use ($list) {
+            $FH = fopen('php://output', 'w');
+            foreach ($list as $row) {
+                fputcsv($FH, $row);
+            }
+            fclose($FH);
+        };
+
+        return response()->stream($callback, 200, $headers)->sendContent();
+    }
+
+    public function exportImages()
+    {
+        $zip = new ZipArchive;
+
+        if (true === ($zip->open('storage/profileImages.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
+            foreach (Storage::allFiles('public') as $file) {
+                $name = basename($file);
+                if ($name !== '.gitignore') {
+                    $zip->addFile(public_path('storage/' . $name), $name);
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download(public_path('storage/profileImages.zip'), 'profileImages.zip');
     }
 }
