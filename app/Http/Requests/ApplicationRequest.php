@@ -85,7 +85,7 @@ class ApplicationRequest extends FormRequest
 
         $profileValidations = ProfileController::getValidations();
 
-        if (now() < config('dates.reg_end_date')) {
+        if (now() < config('ef.reg_end_date')) {
             return array_merge($appValidations, $profileValidations);
         } else {
             return $profileValidations;
@@ -142,7 +142,7 @@ class ApplicationRequest extends FormRequest
 
     public function update(ApplicationType $applicationType, int|null $parentId = null)
     {
-        if (now() < config('dates.reg_end_date')) {
+        if (now() < config('ef.reg_end_date')) {
             $result = Application::updateOrCreate([
                 "user_id" => \Auth::id(),
             ], [

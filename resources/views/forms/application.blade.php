@@ -52,7 +52,7 @@
                     <input type="text" name="displayName"
                         value="{{ old('displayName') ?? $application?->display_name }}"
                         class="form-control @error('displayName') is-invalid @enderror" id="displayName"
-                        @disabled(now() >= config('dates.reg_end_date'))>
+                        @disabled(now() >= config('ef.reg_end_date'))>
                     @error('displayName')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -69,7 +69,7 @@
                 <div class="col-sm-10">
                     <input type="text" name="website" value="{{ old('website') ?? $application?->website }}"
                         class="form-control @error('website') is-invalid @enderror" id="website"
-                        @disabled(now() >= config('dates.reg_end_date'))>
+                        @disabled(now() >= config('ef.reg_end_date'))>
                     @error('website')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -85,7 +85,7 @@
                     <input type="text" name="merchandise"
                         value="{{ old('merchandise') ?? $application?->merchandise }}"
                         class="form-control @error('merchandise') is-invalid @enderror" id="merchandise"
-                        @disabled(now() >= config('dates.reg_end_date'))>
+                        @disabled(now() >= config('ef.reg_end_date'))>
                     @error('merchandise')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -99,7 +99,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input @error('mature') is-invalid @enderror" name="mature"
-                            @checked(($application?->mature === 'on' && empty(old('mature'))) || (!empty(old('mature')) && old('mature') === 'on')) type="checkbox" id="mature" @disabled(now() >= config('dates.reg_end_date'))>
+                            @checked(($application?->mature === 'on' && empty(old('mature'))) || (!empty(old('mature')) && old('mature') === 'on')) type="checkbox" id="mature" @disabled(now() >= config('ef.reg_end_date'))>
                         <label class="form-check-label" for="mature">
                             Tick this checkbox if you are planning to sell art or merchandise with
                             <b>mature</b> content.
@@ -119,7 +119,7 @@
                 </p>
             </div>
 
-            <fieldset class="row mb-4" @disabled(now() >= config('dates.reg_end_date'))>
+            <fieldset class="row mb-4" @disabled(now() >= config('ef.reg_end_date'))>
                 <legend class="col-form-label fw-bold col-sm-2 pt-0">Location</legend>
                 <div class="col-sm-10">
                     <div class="form-check">
@@ -153,7 +153,7 @@
                 <label for="space" class="col-sm-2 col-form-label fw-bold">Required Space</label>
                 <div class="col-sm-10">
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
-                        @disabled(now() >= config('dates.reg_end_date'))>
+                        @disabled(now() >= config('ef.reg_end_date'))>
                         @foreach ($table_types as $type)
                             <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested === $type['id'] && empty(old('space'))) || (!empty(old('denType')) && old('space', $type['id'] === 2)))>{{ $type['name'] }}
                             </option>
@@ -175,7 +175,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="wallseat" @checked(old('wallseat') ?? $application?->is_wallseat === true) type="checkbox"
-                            id="wallseat" @disabled(now() >= config('dates.reg_end_date'))>
+                            id="wallseat" @disabled(now() >= config('ef.reg_end_date'))>
                         <label class="form-check-label" for="wallseat">
                             <b>Wall preferred:</b> Tick this checkbox if you would prefer to sit at a table in front of
                             a wall.
@@ -187,7 +187,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="power" @checked(old('power') ?? $application?->is_power === true) type="checkbox"
-                            id="power" @disabled(now() >= config('dates.reg_end_date'))>
+                            id="power" @disabled(now() >= config('ef.reg_end_date'))>
                         <label class="form-check-label" for="power">
                             <b>Power&nbsp;Socket&nbsp;Needed:</b> Tick this checkbox if you need a german 230V power
                             socket at your table.
@@ -199,7 +199,7 @@
                 <label for="wanted" class="col-sm-2 col-form-label fw-bold">Preferred&nbsp;Neighbors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted" class="form-control @error('wanted') is-invalid @enderror"
-                        @disabled(now() >= config('dates.reg_end_date')) id="wanted">{{ old('wanted') ?? $application?->wanted_neighbors }}</textarea>
+                        @disabled(now() >= config('ef.reg_end_date')) id="wanted">{{ old('wanted') ?? $application?->wanted_neighbors }}</textarea>
                     @error('wanted')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -213,7 +213,7 @@
                 <label for="unwanted" class="col-sm-2 col-form-label fw-bold">Avoid&nbsp;As&nbsp;Neighbors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="unwanted" class="form-control @error('unwanted') is-invalid @enderror"
-                        @disabled(now() >= config('dates.reg_end_date')) id="unwanted">{{ old('unwanted') ?? $application?->unwanted_neighbors }}</textarea>
+                        @disabled(now() >= config('ef.reg_end_date')) id="unwanted">{{ old('unwanted') ?? $application?->unwanted_neighbors }}</textarea>
                     @error('unwanted')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -229,7 +229,7 @@
             <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
-                    @disabled(now() >= config('dates.reg_end_date')) id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
+                    @disabled(now() >= config('ef.reg_end_date')) id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
                 @error('comment')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -250,7 +250,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="unwantedHelp" class="form-text">
-                        Click <a href="https://www.eurofurence.org/EF27/dealersden/" target="_blank"
+                        Click <a href="{{ config('ef.dealers_tos_url') }}" target="_blank"
                             onclick="window.open(this.href, 'toswin', 'width=600,toolbar=0,resizable=1,scrollbars=1'); return false;">this
                             link</a> to open the Dealers' Den Terms of Service in a new window or a new tab.
                     </div>

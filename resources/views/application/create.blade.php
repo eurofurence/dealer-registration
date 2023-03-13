@@ -7,7 +7,7 @@
         <h1>Apply as a {{ $applicationType->value }}</h1>
         <p>Please fill out this application form to apply for your participation in the Dealers' Den. You
             may edit your application by coming back here, until the application deadline on
-            <b>{{ config('dates.reg_end_date',now())->format('d.m.Y H:i') }}</b>.
+            <b>{{ config('ef.reg_end_date',now())->format('d.m.Y H:i') }}</b>.
             Please read the help texts carefully, and enter your information to the best of your ability.</p>
         <p>
             As always, you can tell us what you'd like your table to be called, and

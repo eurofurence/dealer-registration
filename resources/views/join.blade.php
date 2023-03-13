@@ -7,7 +7,7 @@
                 Your can register as a dealer yourself, be invited by a dealer to either share a table or be an assistant to them.
             </p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <a target="_blank" href="https://www.eurofurence.org/EF27/dealersden/" class="text-secondary small">Rules and Information</a>
+                <a target="_blank" href="{{ config('ef.dealers_tos_url') }}" class="text-secondary small">Rules and Information</a>
             </div>
         </div>
     </div>
