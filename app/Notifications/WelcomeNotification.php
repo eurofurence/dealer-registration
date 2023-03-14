@@ -23,11 +23,11 @@ class WelcomeNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hey ".$notifiable->name.",")
-            ->subject('Application confirmation')
-            ->line('We have received your application, ')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+            ->greeting("Dear ".$notifiable->name.",")
+            ->subject('Application confirmed')
+            ->line('Thank you for your application for a Dealership at the upcoming Eurofurence. Your interest in being a part of this year\'s Dealers\' Den is very much appreciated.')
+            ->line('We have received your application and will review it once the Dealership application period has ended. We understand that waiting can be difficult, but please know that we are working hard to review all applications in a timely manner. Once we have reviewed all the applications, we will get in touch with you to provide you with all the necessary information about the next steps.')
+            ->line('Thank you in advance for your patience. The Dealers\' Den management is looking forward to reviewing your application.');            
     }
 
     public function toArray($notifiable): array

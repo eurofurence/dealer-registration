@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\TableType;
+use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
@@ -27,6 +28,7 @@ class ApplicationController extends Controller
     public function store(ApplicationRequest $request)
     {
         $request->act();
+        \Auth::user()->notify(new WelcomeNotification());
         return \Redirect::route('dashboard')->with('save-successful');
     }
 
