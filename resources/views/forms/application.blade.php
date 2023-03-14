@@ -215,7 +215,7 @@
                     @error('tos')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <div id="unwantedHelp" class="form-text">
+                    <div id="tosHelp" class="form-text">
                         Click <a href="{{ config('ef.dealers_tos_url') }}" target="_blank"
                             onclick="window.open(this.href, 'toswin', 'width=600,toolbar=0,resizable=1,scrollbars=1'); return false;">this
                             link</a> to open the Dealers' Den Terms of Service in a new window or a new tab.

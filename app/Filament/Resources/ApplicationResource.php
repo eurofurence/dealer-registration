@@ -35,7 +35,6 @@ class ApplicationResource extends Resource
                         Forms\Components\TextInput::make('merchandise')
                             ->maxLength(65535),
                         Forms\Components\Fieldset::make('Checks')->columnSpan(1)->columns(4)->schema([
-                            Forms\Components\Toggle::make('is_mature')->label('Mature'),
                             Forms\Components\Toggle::make('is_afterdark')->label('Afterdark'),
                             Forms\Components\Toggle::make('is_power')->label('Power'),
                             Forms\Components\Toggle::make('is_wallseat')->label('Wallseat'),
@@ -45,10 +44,7 @@ class ApplicationResource extends Resource
                     Forms\Components\Grid::make()->columns()->schema([
                         Forms\Components\Textarea::make('wanted_neighbors')
                             ->label('Wanted')
-                            ->maxLength(65535),
-                        Forms\Components\Textarea::make('unwanted_neighbors')
-                            ->label('Unwanted')
-                            ->maxLength(65535),
+                            ->maxLength(65535),                       
                     ]),
                     Forms\Components\Textarea::make('comment')
                         ->columnSpanFull()
@@ -119,12 +115,7 @@ class ApplicationResource extends Resource
                 Tables\Columns\TextColumn::make('display_name')->searchable(),
                 Tables\Columns\TextColumn::make('table_number')->sortable()->searchable(),
                 Tables\Columns\IconColumn::make('wanted_neighbors')->label('N Wanted')->default(false)->boolean(),
-                Tables\Columns\IconColumn::make('unwanted_neighbors')->label('N Unwanted')->default(false)->boolean(),
-                Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),
-                Tables\Columns\IconColumn::make('is_mature')
-                    ->label('Mature')
-                    ->sortable()
-                    ->boolean(),
+                Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),                
                 Tables\Columns\IconColumn::make('is_afterdark')
                     ->label('AD')
                     ->sortable()

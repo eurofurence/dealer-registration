@@ -50,11 +50,7 @@ class ApplicationRequest extends FormRequest
             "denType" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
-            ],
-            "mature" => [
-                "nullable",
-                "exclude_if:applicationType,assistant",
-            ],
+            ],            
             "space" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
@@ -72,11 +68,7 @@ class ApplicationRequest extends FormRequest
             "wanted" => [
                 "exclude_unless:applicationType,dealer",
                 "nullable",
-            ],
-            "unwanted" => [
-                "exclude_unless:applicationType,dealer",
-                "nullable",
-            ],
+            ],            
             "comment" => "nullable",
             "tos" => [
                 new RequiredIf($this->routeIs('applications.store')),
@@ -152,11 +144,9 @@ class ApplicationRequest extends FormRequest
                 "website" => $this->get('website'),
                 "merchandise" => $this->get('merchandise'),
                 "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
-                "is_mature" => $this->get('mature') === "on",
                 "is_power" => $this->get('power') === "on",
                 "is_wallseat" => $this->get('wallseat') === "on",
                 "wanted_neighbors" => $this->get('wanted'),
-                "unwanted_neighbors" => $this->get('unwanted'),
                 "comment" => $this->get('comment'),
                 "waiting_at" => null,
                 "offer_sent_at" => null,

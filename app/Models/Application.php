@@ -28,7 +28,6 @@ class Application extends Model
       "is_power" => "boolean",
       "is_afterdark" => "boolean",
       "is_wallseat" => "boolean",
-      "is_mature" => "boolean",
       "canceled_at" => "datetime",
       "waiting_at" => "datetime",
       "checked_in_at" => "datetime",

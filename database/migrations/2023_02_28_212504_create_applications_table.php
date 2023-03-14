@@ -25,10 +25,8 @@ return new class extends Migration {
 
             $table->text('merchandise')->nullable();
             $table->text('wanted_neighbors')->nullable();
-            $table->text('unwanted_neighbors')->nullable();
             $table->text('comment')->nullable();
 
-            $table->boolean('is_mature')->nullable();
             $table->boolean('is_afterdark')->nullable();
             $table->boolean('is_power')->nullable();
             $table->boolean('is_wallseat')->nullable();
