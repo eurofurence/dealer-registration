@@ -52,7 +52,7 @@
                     <input type="text" name="displayName"
                         value="{{ old('displayName') ?? $application?->display_name }}"
                         class="form-control @error('displayName') is-invalid @enderror" id="displayName"
-                        @disabled(now() >= config('ef.reg_end_date'))>
+                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('displayName')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -66,7 +66,7 @@
                 <div class="col-sm-10">
                     <input type="text" name="website" value="{{ old('website') ?? $application?->website }}"
                         class="form-control @error('website') is-invalid @enderror" id="website"
-                        @disabled(now() >= config('ef.reg_end_date'))>
+                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('website')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -81,7 +81,7 @@
                     <input type="text" name="merchandise"
                         value="{{ old('merchandise') ?? $application?->merchandise }}"
                         class="form-control @error('merchandise') is-invalid @enderror" id="merchandise"
-                        @disabled(now() >= config('ef.reg_end_date'))>
+                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('merchandise')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -100,7 +100,7 @@
                 </p>
             </div>
 
-            <fieldset class="row mb-4" @disabled(now() >= config('ef.reg_end_date'))>
+            <fieldset class="row mb-4" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                 <legend class="col-form-label fw-bold col-sm-2 pt-0">Location</legend>
                 <div class="col-sm-10">
                     <div class="form-check">
@@ -133,7 +133,7 @@
                 <label for="space" class="col-sm-2 col-form-label fw-bold">Table size</label>
                 <div class="col-sm-10">
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
-                        @disabled(now() >= config('ef.reg_end_date'))>
+                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         @foreach ($table_types as $type)
                             <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested === $type['id'] && empty(old('space'))) || (!empty(old('denType')) && old('space', $type['id'] === 2)))>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
                             </option>
@@ -152,7 +152,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="wallseat" @checked(old('wallseat') ?? $application?->is_wallseat === true) type="checkbox"
-                            id="wallseat" @disabled(now() >= config('ef.reg_end_date'))>
+                            id="wallseat" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         <label class="form-check-label" for="wallseat">
                             <b>Wall preferred</b>
                         </label>
@@ -166,7 +166,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="power" @checked(old('power') ?? $application?->is_power === true) type="checkbox"
-                            id="power" @disabled(now() >= config('ef.reg_end_date'))>
+                            id="power" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         <label class="form-check-label" for="power">
                             <b>Increased power demand</b>
                         </label>
@@ -180,7 +180,7 @@
                 <label for="wanted" class="col-sm-2 col-form-label fw-bold">Preferred&nbsp;Neighbors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted" class="form-control @error('wanted') is-invalid @enderror"
-                        @disabled(now() >= config('ef.reg_end_date')) id="wanted">{{ old('wanted') ?? $application?->wanted_neighbors }}</textarea>
+                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="wanted">{{ old('wanted') ?? $application?->wanted_neighbors }}</textarea>
                     @error('wanted')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -195,7 +195,7 @@
             <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
-                    @disabled(now() >= config('ef.reg_end_date')) id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
+                    @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
                 @error('comment')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

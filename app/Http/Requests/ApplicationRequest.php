@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use App\Http\Controllers\ProfileController;
 use App\Models\Application;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -77,7 +78,7 @@ class ApplicationRequest extends FormRequest
 
         $profileValidations = ProfileController::getValidations();
 
-        if (now() < config('ef.reg_end_date')) {
+        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) { 
             return array_merge($appValidations, $profileValidations);
         } else {
             return $profileValidations;
@@ -134,7 +135,7 @@ class ApplicationRequest extends FormRequest
 
     public function update(ApplicationType $applicationType, int|null $parentId = null)
     {
-        if (now() < config('ef.reg_end_date')) {
+        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
             $result = Application::updateOrCreate([
                 "user_id" => \Auth::id(),
             ], [

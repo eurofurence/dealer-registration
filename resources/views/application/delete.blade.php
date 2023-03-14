@@ -38,7 +38,7 @@
                             <h1 class="display-5 fw-bold">You are leaving another dealer!</h1>
                             <div class="col-lg-6 mx-auto">
                                 <p class="lead mb-4">
-                                    This action will cause you to be completly removed as a {{ $application->type }} from the dealership.
+                                    This action will cause you to be completely removed as a {{ $application->type }} from the dealership.
                                     The owner of the dealership will be notified that you have left their application.
                                 </p>
                                 <p>

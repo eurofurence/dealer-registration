@@ -6,10 +6,15 @@
     <div class="px-4 py-5 my-5 text-center">
         <h1 class="display-5 fw-bold">Register</h1>
         <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">
-                Application for a Dealership is open until
-                <b>{{ config('ef.reg_end_date', now())->format('d.m.Y H:i') }}</b>.
-            </p>
+            @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+                <p class="lead mb-4">
+                    Application for a Dealership is open until
+                    <b>{{ Carbon\Carbon::parse(config('ef.reg_end_date'))->format('d.m.Y H:i') }}</b>.
+                </p>
+            @else
+                <p class="lead mb-4">The registration period has ended. You can still update your profile data which will be
+                    displayed in the EF app.</p>
+            @endif
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a target="_blank" href="{{ config('ef.dealers_tos_url') }}" class="text-secondary small">Rules and
                     Information</a>
@@ -64,8 +69,10 @@
                         <p class="card-text lead">As a Dealers' Den dealership owner, you are responsible for managing your
                             space. While you may choose to share your table with other dealers if space permits, you will be
                             the primary point of contact for your business.</p>
-                        <a href="{{ route('applications.create') }}" class="btn btn-lg btn-primary">Submit your Dealership
-                            application</a>
+                        @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+                            <a href="{{ route('applications.create') }}" class="btn btn-lg btn-primary">Submit your
+                                Dealership application</a>
+                        @endif
                     </div>
                 @endif
             </div>
