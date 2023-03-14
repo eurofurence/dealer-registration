@@ -16,7 +16,7 @@ class ApplicationController extends Controller
         $application = \Auth::user()->application ?? new Application();
         $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
         return view('application.create',[
-            'table_types' => TableType::all(['id','name']),
+            'table_types' => TableType::all(['id','name','price']),
             'application' => $application,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
@@ -36,7 +36,7 @@ class ApplicationController extends Controller
         $applicationType = ($request->get('code')) ? Application::determineApplicationTypeByCode($request->get('code')) : $application->type;
         abort_if(is_null($application),403,'No Registration');
         return view('application.edit',[
-            'table_types' => TableType::all(['id','name']),
+            'table_types' => TableType::all(['id','name','price']),
             "application" => $application,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),

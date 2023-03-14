@@ -23,7 +23,7 @@
                             <div class="col-lg-6 mx-auto">
                                 <p class="lead mb-4">
                                     Please note that this action means that you are giving your space to another dealer.
-                                    If a table has already been assigned to you, you will loose it.<br>
+                                    If a table has already been assigned to you, you will lose it.<br>
                                     <b>Please only continue if you are sure that you want to cancel your application.</b>
                                 </p>
                                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">

@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="card-title">
             <h4>General Info</h4>
-            <p>This will be used for contact, display or notification purposes.</p>
+            <p>This information will be used to contact you, display your information, or send you notifications as needed.</p>
         </div>
         <!-- Hidden --->
         <input type="hidden" name="code" value="{{ $code }}">
@@ -57,15 +57,12 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="displayNameHelp" class="form-text">
-                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the
-                        Dealer's Den, please enter this name here. Leave the field blank to appear under your nickname.
-                        <b>Hint: If you and your must-have neighbor enter the same display name, it will show up as one
-                            large table in the seating plan.</b>
+                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the Dealer's Den, please enter this name here. Leave the field blank to appear under your nickname. 
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="website" class="col-sm-2 col-form-label fw-bold">Website</label>
+                <label for="website" class="col-sm-2 col-form-label fw-bold">Website/Portfolio</label>
                 <div class="col-sm-10">
                     <input type="text" name="website" value="{{ old('website') ?? $application?->website }}"
                         class="form-control @error('website') is-invalid @enderror" id="website"
@@ -74,8 +71,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="websiteHelp" class="form-text">
-                        If you have a website or preferred gallery, please tell us the the link so we can learn a bit
-                        more about you.
+                        We would be delighted to explore your website, gallery, or portfolio! Please share the link so that we can appreciate your work and gain a deeper understanding of your unique style and offerings.
                     </div>
                 </div>
             </div>
@@ -90,32 +86,17 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="merchandiseHelp" class="form-text">
-                        Please explain what kind of merchandise you are planning to sell, or what kind of services you
-                        are going to provide; i.e., prints, badge commissions, comics, etc.
+                        Please provide details about the merchandise or services you plan to offer at the Dealers' Den. Examples of items may include prints, badge commissions, comics, or other related goods or services. This information will assist us in better understanding your offerings and assist with placement within the Dealer’s Den.
                     </div>
                 </div>
-            </div>
-            <div class="row mb-5">
-                <div class="col-sm-10 offset-sm-2">
-                    <div class="form-check">
-                        <input class="form-check-input @error('mature') is-invalid @enderror" name="mature"
-                            @checked(($application?->mature === 'on' && empty(old('mature'))) || (!empty(old('mature')) && old('mature') === 'on')) type="checkbox" id="mature" @disabled(now() >= config('ef.reg_end_date'))>
-                        <label class="form-check-label" for="mature">
-                            Tick this checkbox if you are planning to sell art or merchandise with
-                            <b>mature</b> content.
-                        </label>
-                        @error('mature')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            </div>
+            </div>            
         @endif
 
         @if ($applicationType === \App\Enums\ApplicationType::Dealer)
             <div class="card-title">
-                <h4>Your space</h4>
-                <p>Please let us know what kind of space you would like. This info will be used for table assignment.
+                <h4>Your Dealership Package</h4>
+                <p>
+                    Please choose your preferred location and table size in the Dealers' Den. You can customize your Dealership Package with additional options. This information will be used to assign your table.
                 </p>
             </div>
 
@@ -128,7 +109,7 @@
                                 ($application?->is_afterdark === false && empty(old('denType'))) ||
                                     (!empty(old('denType')) && old('denType') === 'denTypeRegular'))>
                         <label class="form-check-label" for="denTypeRegular">
-                            Regular Dealers' Den
+                            Dealers’ Den (Rated PG-13 with natural nudity)
                         </label>
                     </div>
                     <div class="form-check">
@@ -137,25 +118,24 @@
                                 ($application?->is_afterdark === true && empty(old('denType'))) ||
                                     (!empty(old('denType')) && old('denType') === 'denTypeAfterDark'))>
                         <label class="form-check-label" for="denTypeAfterDark">
-                            After Dark Dealers' Den
+                            After Dark Dealers’ Den (Rated R)
                         </label>
                         @error('denType')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div id="denTypeHelp" class="form-text">
-                        Please choose if you would like a table in the regular Dealers' Den or if you would like to
-                        display adult material openly in an After Dark Dealers' Den.
+                        Please choose if you would like to be placed in the regular Dealers' Den or if you would like to display adult material openly in the After Dark Dealers' Den.       
                     </div>
                 </div>
             </fieldset>
             <div class="row mb-3">
-                <label for="space" class="col-sm-2 col-form-label fw-bold">Required Space</label>
+                <label for="space" class="col-sm-2 col-form-label fw-bold">Table size</label>
                 <div class="col-sm-10">
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
                         @disabled(now() >= config('ef.reg_end_date'))>
                         @foreach ($table_types as $type)
-                            <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested === $type['id'] && empty(old('space'))) || (!empty(old('denType')) && old('space', $type['id'] === 2)))>{{ $type['name'] }}
+                            <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested === $type['id'] && empty(old('space'))) || (!empty(old('denType')) && old('space', $type['id'] === 2)))>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
                             </option>
                         @endforeach
                     </select>
@@ -163,11 +143,8 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="spaceHelp" class="form-text">
-                        Select your preferred dealership package - how much space you'll likely need to sell your wares.
-                        Please don't request more than you really need, and note that anything larger than a Full
-                        package will require a reasonable explanation in the comments field.
-                        <b>If you plan to share a table, request the amount of space you and your partners need, after
-                            your submitted your application you can invite your partner!</b>
+                        Please select the Dealership package that best suits your needs for selling your wares. We kindly ask that you avoid requesting more space than necessary, as packages larger than Full require additional information in the comments section.
+                        <b>If you plan to share a table with one or more partners, please request the appropriate amount of space needed for all individuals. After submitting your application, you will be able to invite your partner(s) to join you.</b>
                     </div>
                 </div>
             </div>
@@ -177,9 +154,11 @@
                         <input class="form-check-input" name="wallseat" @checked(old('wallseat') ?? $application?->is_wallseat === true) type="checkbox"
                             id="wallseat" @disabled(now() >= config('ef.reg_end_date'))>
                         <label class="form-check-label" for="wallseat">
-                            <b>Wall preferred:</b> Tick this checkbox if you would prefer to sit at a table in front of
-                            a wall.
+                            <b>Wall preferred</b>
                         </label>
+                        <div id="wallseatHelp" class="form-text">
+                            If you would prefer to sit at a table in front of a wall, please select this option.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -189,9 +168,11 @@
                         <input class="form-check-input" name="power" @checked(old('power') ?? $application?->is_power === true) type="checkbox"
                             id="power" @disabled(now() >= config('ef.reg_end_date'))>
                         <label class="form-check-label" for="power">
-                            <b>Power&nbsp;Socket&nbsp;Needed:</b> Tick this checkbox if you need a german 230V power
-                            socket at your table.
+                            <b>Increased power demand</b>
                         </label>
+                        <div id="powerHelp" class="form-text">
+                            If you require more electrical power than the average 100 Watts per dealer provided by the Dealer's Den for low-power devices (i.e. laptop or phone charger), please select this option to let us know about your increased energy needs.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -204,25 +185,10 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="wantedHelp" class="form-text">
-                        Please list the nicknames and (ideally) registration numbers of other dealers who you'd prefer
-                        to sit close to.
+                        Please provide us with the <b>nicknames</b> and/or <b>dealership names</b> of any other dealers or dealerships that you would prefer to have your table placed next to. This will help us to accommodate your preferences and make your experience at the Dealers' Den as enjoyable as possible.
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <label for="unwanted" class="col-sm-2 col-form-label fw-bold">Avoid&nbsp;As&nbsp;Neighbors</label>
-                <div class="col-sm-10">
-                    <textarea rows="5" type="text" name="unwanted" class="form-control @error('unwanted') is-invalid @enderror"
-                        @disabled(now() >= config('ef.reg_end_date')) id="unwanted">{{ old('unwanted') ?? $application?->unwanted_neighbors }}</textarea>
-                    @error('unwanted')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    <div id="unwantedHelp" class="form-text">
-                        Please list the nicknames and (ideally) registration numbers of other dealers who you'd rather
-                        keep your distance to. Don't worry, it's kept confidential.
-                    </div>
-                </div>
-            </div>
+            </div>            
         @endif
 
         <div class="row mb-3">
@@ -234,7 +200,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 <div id="commentHelp" class="form-text">
-                    If you have any additional things to tell us, please write them down here.
+                    If you have any further information you would like to share with Dealers' Den Management, please use the space provided below. This can include requests for special accommodations, questions about the application process, or any other relevant details. 
                 </div>
             </div>
         </div>
