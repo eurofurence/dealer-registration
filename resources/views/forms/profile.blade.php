@@ -2,9 +2,9 @@
     <div class="card-body">
         <div class="card-title">
             <h4>Profile</h4>
-            <p>The following information will be used to present you and your merchandise in the EF App,
-                as well as possibly other media in the context of Eurofurence.
-                You will still be able to edit this information after the registration phase has ended.</p>
+            <p>The following information will be used to present you and your goods in the official Eurofurence App, as
+                well as in other media associated with Eurofurence. You will be able to edit this information even after
+                the registration period has ended.</p>
         </div>
         <div class="row mb-3">
             <label class="col-sm-2 col-form-label fw-bold">Attendance</label>
@@ -15,7 +15,7 @@
                     <input class="form-check-input" name="attends_thu" @checked(old('attends_thu') ?? $profile?->attends_thu === true) type="checkbox"
                         id="attends_thu">
                     <label class="form-check-label" for="attends_thu">
-                        Day 1
+                        Monday
                     </label>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     <input class="form-check-input" name="attends_fri" @checked(old('attends_fri') ?? $profile?->attends_fri === true) type="checkbox"
                         id="attends_fri">
                     <label class="form-check-label" for="attends_fri">
-                        Day 2
+                        Tuesday
                     </label>
                 </div>
             </div>
@@ -37,15 +37,15 @@
                     <input class="form-check-input" name="attends_sat" @checked(old('attends_sat') ?? $profile?->attends_sat === true) type="checkbox"
                         id="attends_sat">
                     <label class="form-check-label" for="attends_sat">
-                        Day 3
+                        Wednesday
                     </label>
                 </div>
             </div>
         </div>
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
-                <div id="attendanceHelp" class="form-text">Please check all days on which you plan to attend the
-                    Dealer' Den.
+                <div id="attendanceHelp" class="form-text">Please select all days when our Attendees can meet you at
+                    your Dealers' Den table.
                 </div>
             </div>
         </div>
