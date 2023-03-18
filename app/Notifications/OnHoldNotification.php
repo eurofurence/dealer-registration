@@ -27,7 +27,7 @@ class OnHoldNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->greeting("Dear " . $notifiable->name . ",")
-            ->subject('Application on hold')
+            ->subject('Approval Phase: On Hold')
             ->line('Thank you for your interest in a Dealership at Eurofurence. We appreciate your application and are excited to have you as a potential dealer at the convention.')
             ->line('Unfortunately, we regret to inform you that the table size you have applied for is no longer available. However, we have some alternative table sizes we would like to offer that may be suitable for your needs.')
             ->line('Currently, the following table size is available:')

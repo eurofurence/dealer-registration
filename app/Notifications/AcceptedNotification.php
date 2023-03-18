@@ -28,7 +28,7 @@ class AcceptedNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->greeting("Dear " . $notifiable->name . ",")
-            ->subject('Application accepted')
+            ->subject('Approval Phase: Accepted')
             ->line('We are thrilled to inform you that your application for a Dealership at Eurofurence has been accepted! Congratulations!')
             ->line('To confirm your placement as a dealer at Eurofurence, please click on the approval button below. By clicking on this button, you are confirming to abide by the Dealers\' Den\'s terms and conditions (' . config('ef.dealers_tos_url') . ') and the Dealership fee will be added to your Eurofurence Registration.')
             ->line($this->tableAssigned)

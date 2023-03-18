@@ -56,6 +56,5 @@ RUN composer install --no-dev --optimize-autoloader \
     && chmod 777 -R bootstrap storage \
     && rm -rf .env bootstrap/cache/*.php auth.json \
     && chown -R www-data:www-data /app \
-    && rm -rf ~/.composer \
-    && php artisan storage:link
+    && rm -rf ~/.composer
 CMD sh -c "php artisan octane:start --host=0.0.0.0 --port=80"

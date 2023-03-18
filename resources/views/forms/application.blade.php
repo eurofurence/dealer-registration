@@ -93,7 +93,7 @@
         @endif
 
         @if ($applicationType === \App\Enums\ApplicationType::Dealer)
-            <div class="card-title">
+            <div class="card-title mt-5">
                 <h4>Your Dealership Package</h4>
                 <p>
                     Please choose your preferred location and table size in the Dealers' Den. You can customize your Dealership Package with additional options. This information will be used to assign your table.

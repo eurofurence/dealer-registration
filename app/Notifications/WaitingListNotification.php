@@ -25,7 +25,7 @@ class WaitingListNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
         ->greeting("Dear ".$notifiable->name.",")
-        ->subject('Waiting list')
+        ->subject('Approval Phase: Waiting List')
         ->line('Thank you for submitting your application to sell your amazing art and items at the upcoming Eurofurence and your patience while we have been reviewing the dealer applications.')
         ->line('Unfortunately, all of our available tables have been filled, and we regret to inform you that we cannot accommodate your application at this time. However, we would like to inform you that your application has been put on the waiting list. Should any slots become available before the convention, we will contact you as soon as possible. Also, there might be last-minute sales of canceled Dealership spaces on a first-come, first-served basis at the convention itself, starting 12:00 (noon) on Monday for unclaimed Dealerships. We highly encourage you to drop by in case a spot opens up.')
         ->line('If you are also interested in other table sizes, please let us know in time. You can find our offered Dealership Packages at ' . config('ef.dealers_tos_url'))
