@@ -46,7 +46,7 @@
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Manage your Registration</h5>
                         <p class="card-text lead">You may update your registration, update it or cancel your registration
-                            aslong the registration has not closed yet. You can also invite other dealers and assistants to
+                            as long as the registration has not closed yet. You can also invite other dealers and assistants to
                             your slot.</p>
                         <a href="{{ route('applications.edit') }}" class="btn btn-lg btn-primary">Manage your
                             Registration</a>
