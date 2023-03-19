@@ -52,7 +52,7 @@ class OidcClientController extends Controller
             Session::remove("login.oauth2state");
             return Redirect::route('auth.login');
         }
-
+        Session::flush();
         /**
          * Get Tokens
          */

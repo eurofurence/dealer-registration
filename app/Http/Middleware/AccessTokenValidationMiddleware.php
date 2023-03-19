@@ -37,7 +37,7 @@ class AccessTokenValidationMiddleware
         /**
          * If token expired, refresh using refresh token.
          */
-        if (!$token->hasExpired()) {
+        if ($token->hasExpired()) {
             $provider = (new OpenIDService())->setupOIDC($request, false);
             try {
                 $token = $provider->getAccessToken('refresh_token', [
