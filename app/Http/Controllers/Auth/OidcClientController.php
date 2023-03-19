@@ -70,8 +70,6 @@ class OidcClientController extends Controller
             throw new UnexpectedValueException("Could not request user id from freshly fetched token.");
         }
 
-        $guard = "web";
-
         $userid = $userinfo['sub'];
         $user = User::updateOrCreate([
             "identity_id" => $userinfo['sub']
@@ -80,8 +78,9 @@ class OidcClientController extends Controller
             "name" => $userinfo['name'],
             "email" => $userinfo['email'],
         ]);
-        Auth::guard($guard)->loginUsingId($user->id);
-        Session::put($guard . '.token', $accessToken);
+        $user = $user->fresh();
+        Auth::loginUsingId($user->id);
+        Session::put('access_token', $accessToken);
         Session::put("avatar" , $userinfo['avatar']);
         return $this->redirectDestination($request);
     }

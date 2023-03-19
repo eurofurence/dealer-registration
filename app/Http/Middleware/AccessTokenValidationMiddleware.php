@@ -23,10 +23,7 @@ class AccessTokenValidationMiddleware
             return $next($request);
         }
 
-        $isAdmin = $request->routeIs('filament.*');
-        $prefix = ($isAdmin) ? "admin" : "web";
-
-        $token = Session::get($prefix . '.token');
+        $token = Session::get('access_token');
 
         /**
          * Logout if token does not exist
@@ -34,14 +31,14 @@ class AccessTokenValidationMiddleware
 
         if ($token === null) {
             Auth::logout();
-            return Redirect::route('auth.oidc.login');
+            return Redirect::route('auth.login');
         }
 
         /**
          * If token expired, refresh using refresh token.
          */
         if (!$token->hasExpired()) {
-            $provider = (new OpenIDService())->setupOIDC($request, Route::is('filament.*'));
+            $provider = (new OpenIDService())->setupOIDC($request, false);
             try {
                 $token = $provider->getAccessToken('refresh_token', [
                     'refresh_token' => $token->getRefreshToken(),
@@ -52,7 +49,7 @@ class AccessTokenValidationMiddleware
                 return Redirect::route('auth.oidc.login');
             }
 
-            Session::put($prefix . '.token', $token);
+            Session::put('access_token', $token);
             return $next($request);
         }
 

@@ -66,6 +66,8 @@ class ApplicationResource extends Resource
                             "table_accepted" => "Table accepted",
                             "checked_in" => "Checked in (Onsite)"
                         ])->required(),
+                        Forms\Components\TextInput::make('table_number')
+                            ->maxLength(255),
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
@@ -82,8 +84,6 @@ class ApplicationResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')->required(),
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')->nullable(),
-                        Forms\Components\TextInput::make('table_number')
-                            ->maxLength(255),
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
@@ -112,12 +112,11 @@ class ApplicationResource extends Resource
                     'danger' => ApplicationStatus::Canceled->value
                 ]),
                 Tables\Columns\TextColumn::make('requestedTable.name'),
-                Tables\Columns\TextColumn::make('assignedTable.name'),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
                     return ucfirst($state);
                 })->sortable(),
                 Tables\Columns\TextColumn::make('display_name')->searchable(),
-                Tables\Columns\TextColumn::make('table_number')->sortable()->searchable(),
+                Tables\Columns\TextInputColumn::make('table_number')->sortable()->searchable(),
                 Tables\Columns\IconColumn::make('wanted_neighbors')->label('N Wanted')->default(false)->boolean(),
                 Tables\Columns\IconColumn::make('unwanted_neighbors')->label('N Unwanted')->default(false)->boolean(),
                 Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),
@@ -141,7 +140,10 @@ class ApplicationResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('parent')->query(fn (Builder $query): Builder => $query->whereNull('parent'))->label('Only Full Dealerships')
+                Tables\Filters\Filter::make('parent')->query(fn (Builder $query): Builder => $query->where('type','dealer'))->label('Only Dealerships'),
+                Tables\Filters\Filter::make('assignedTable')->query(fn (Builder $query): Builder => $query->whereNull('table_type_assigned'))->label('Missing assigned table'),
+                Tables\Filters\Filter::make('table_number')->query(fn (Builder $query): Builder => $query->whereNull('table_number'))->label('Missing table number'),
+                Tables\Filters\Filter::make('is_afterdark')->query(fn (Builder $query): Builder => $query->where('is_afterdark','=','1'))->label('Is Afterdark'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

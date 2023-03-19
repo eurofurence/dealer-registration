@@ -22,16 +22,14 @@ Route::middleware('guest')->group(function () {
     ])->name('auth.callback');
 });
 
+Route::get('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout');
+
 Route::get('/', function () {
     return \Illuminate\Support\Facades\Redirect::route('dashboard');
 });
 
-Route::middleware(['auth:web',\App\Http\Middleware\ForceOverseatingRedirectMiddleware::class])->group(function () {
-    Route::get('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout');
-
+Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddleware::class,\App\Http\Middleware\ForceOverseatingRedirectMiddleware::class])->group(function () {
     Route::get('join',[\App\Http\Controllers\Applications\InvitationController::class,'view'])->name('join');
-
-
     Route::get('applications/create',[\App\Http\Controllers\Applications\ApplicationController::class, 'create'])->name('applications.create');
     Route::post('applications',[\App\Http\Controllers\Applications\ApplicationController::class, 'store'])->name('applications.store');
     Route::get('applications/edit',[\App\Http\Controllers\Applications\ApplicationController::class, 'edit'])->name('applications.edit');

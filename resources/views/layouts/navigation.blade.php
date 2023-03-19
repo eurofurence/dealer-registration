@@ -21,7 +21,7 @@
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     <li><a class="dropdown-item" href="https://identity.eurofurence.org/settings/profile">Your Account</a></li>
-                    <li><a class="dropdown-item" href="https://identity.eurofurence.org/oauth2/sessions/logout?id_token_hint={{Session::get('web.token')->getValues()['id_token']}}">Logout</a></li>
+                    <li><a class="dropdown-item" href="https://identity.eurofurence.org/oauth2/sessions/logout?id_token_hint={{Session::get('access_token')->getValues()['id_token']}}">Logout</a></li>
                 </ul>
             </div>
         </ul>

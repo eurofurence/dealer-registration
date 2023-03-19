@@ -29,7 +29,7 @@
     @endif
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card mb-2">
                 @if(isset($application) && $application->isActive())
                     <div class="card-body text-center">
@@ -61,10 +61,19 @@
                 @endif
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card mb-2">
                 <div class="card-body text-center">
-                    <h5 class="card-title display-6">Join a dealer</h5>
+                    <h5 class="card-title display-6">Join as dealer</h5>
+                    <p class="card-text lead">A dealer may choose to invite you, invitations can be for two reasons either as a assistant which is not selling items but rather working for a dealer or can choose to share their space with another dealer.</p>
+                    <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have a invitation code</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-2">
+                <div class="card-body text-center">
+                    <h5 class="card-title display-6">Join as assistant</h5>
                     <p class="card-text lead">A dealer may choose to invite you, invitations can be for two reasons either as a assistant which is not selling items but rather working for a dealer or can choose to share their space with another dealer.</p>
                     <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have a invitation code</a>
                 </div>
