@@ -4,13 +4,12 @@ namespace App\Http\Requests;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use App\Http\Controllers\ProfileController;
 use App\Models\Application;
-use App\Models\TableType;
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\ExcludeIf;
 use Illuminate\Validation\Rules\RequiredIf;
 
 class ApplicationRequest extends FormRequest
@@ -27,7 +26,8 @@ class ApplicationRequest extends FormRequest
         $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
         $parentApplication = Application::findByCode($this->get('code'));
         $application = \Auth::user()->application;
-        return [
+
+        $appValidations = [
             "applicationType" => [
                 Rule::enum(ApplicationType::class),
             ],
@@ -41,7 +41,6 @@ class ApplicationRequest extends FormRequest
             "website" => [
                 "nullable",
                 "exclude_if:applicationType,assistant",
-                "url",
             ],
             "merchandise" => [
                 "exclude_if:applicationType,assistant",
@@ -51,11 +50,7 @@ class ApplicationRequest extends FormRequest
             "denType" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
-            ],
-            "mature" => [
-                "nullable",
-                "exclude_if:applicationType,assistant",
-            ],
+            ],            
             "space" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
@@ -73,16 +68,20 @@ class ApplicationRequest extends FormRequest
             "wanted" => [
                 "exclude_unless:applicationType,dealer",
                 "nullable",
-            ],
-            "unwanted" => [
-                "exclude_unless:applicationType,dealer",
-                "nullable",
-            ],
+            ],            
             "comment" => "nullable",
             "tos" => [
                 new RequiredIf($this->routeIs('applications.store')),
             ],
         ];
+
+        $profileValidations = ProfileController::getValidations();
+
+        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) { 
+            return array_merge($appValidations, $profileValidations);
+        } else {
+            return $profileValidations;
+        }
     }
 
     private function isCodeRequired(): bool
@@ -135,28 +134,33 @@ class ApplicationRequest extends FormRequest
 
     public function update(ApplicationType $applicationType, int|null $parentId = null)
     {
-        return Application::updateOrCreate([
-            "user_id" => \Auth::id(),
-        ], [
-            "table_type_requested" => $this->get('space'),
-            "type" => $applicationType,
-            "display_name" => $this->get('displayName'),
-            "website" => $this->get('website'),
-            "merchandise" => $this->get('merchandise'),
-            "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
-            "is_mature" => $this->get('mature') === "on",
-            "is_power" => $this->get('power') === "on",
-            "is_wallseat" => $this->get('wallseat') === "on",
-            "wanted_neighbors" => $this->get('wanted'),
-            "unwanted_neighbors" => $this->get('unwanted'),
-            "comment" => $this->get('comment'),
-            "waiting_at" => null,
-            "offer_sent_at" => null,
-            "offer_accepted_at" => null,
-            "canceled_at" => null,
-            "table_number" => null,
-            "parent" => $parentId,
-        ]);
+        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
+            $result = Application::updateOrCreate([
+                "user_id" => \Auth::id(),
+            ], [
+                "table_type_requested" => $this->get('space'),
+                "type" => $applicationType,
+                "display_name" => $this->get('displayName'),
+                "website" => $this->get('website'),
+                "merchandise" => $this->get('merchandise'),
+                "is_afterdark" => $this->get('denType') === "denTypeAfterDark",
+                "is_power" => $this->get('power') === "on",
+                "is_wallseat" => $this->get('wallseat') === "on",
+                "wanted_neighbors" => $this->get('wanted'),
+                "comment" => $this->get('comment'),
+                "waiting_at" => null,
+                "offer_sent_at" => null,
+                "offer_accepted_at" => null,
+                "canceled_at" => null,
+                "table_number" => null,
+                "parent" => $parentId,
+                ]);
+            ProfileController::createOrUpdate($this, $result->id);
+        } else {
+            $application = Application::findByUserId(\Auth::id());
+            if ($application) {
+                ProfileController::createOrUpdate($this, $application->id);
+            }
+        }
     }
-
 }

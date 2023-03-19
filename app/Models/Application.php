@@ -28,10 +28,7 @@ class Application extends Model
       "is_power" => "boolean",
       "is_afterdark" => "boolean",
       "is_wallseat" => "boolean",
-      "is_mature" => "boolean",
       "canceled_at" => "datetime",
-      "allocated_at" => "datetime",
-      "accepted_at" => "datetime",
       "waiting_at" => "datetime",
       "checked_in_at" => "datetime",
       "offer_sent_at" => "datetime",
@@ -216,5 +213,10 @@ class Application extends Model
                 return $q->where('invite_code_assistants', $code)
                     ->orWhere('invite_code_shares', $code);
             })->first();
+    }
+
+    public static function findByUserId(int|null $user_id): Application|null
+    {
+        return self::where('user_id', $user_id)->first();
     }
 }
