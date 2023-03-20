@@ -105,18 +105,21 @@ class ProfileController extends Controller
     {
         return [
             "image_thumbnail" => [
+                'image',
                 'mimes:jpeg,png',
                 'max:1024',
                 'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000',
                 'exclude_if:applicationType,assistant',
             ],
             "image_artist" => [
+                'image',
                 'mimes:jpeg,png',
                 'max:1024',
                 'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000',
                 'exclude_if:applicationType,assistant',
             ],
             "image_art" => [
+                'image',
                 'mimes:jpeg,png',
                 'max:1024',
                 'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000',

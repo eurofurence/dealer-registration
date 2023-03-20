@@ -37,15 +37,17 @@ class ApplicationRequest extends FormRequest
             "displayName" => [
                 "nullable",
                 "exclude_if:applicationType,assistant",
+                "max:255",
             ],
             "website" => [
                 "nullable",
                 "exclude_if:applicationType,assistant",
+                "max:255",
             ],
             "merchandise" => [
                 "exclude_if:applicationType,assistant",
                 "required_unless:applicationType,assistant",
-                "min:3",
+                "min:3",                
             ],
             "denType" => [
                 "required_if:applicationType,dealer",
