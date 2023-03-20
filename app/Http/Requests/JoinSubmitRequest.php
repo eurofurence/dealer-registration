@@ -9,7 +9,7 @@ class JoinSubmitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "code" => "exists:applications,"
+            "code" => "required|min:1|exists:applications,"
         ];
     }
 
