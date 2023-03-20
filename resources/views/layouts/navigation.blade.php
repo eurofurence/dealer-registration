@@ -34,7 +34,7 @@
 <header class="py-3 px-2 mb-4 border-bottom bg-white">
     <div class="container">
         <div class="d-flex align-items-baseline mb-3 mb-lg-0 me-lg-auto text-dark text-decoration-none">
-            <span class="fs-4 px-2">Eurofurence Dealer’s Den Registration System</span>
+            <span class="fs-4 px-2">Eurofurence Dealers' Den Registration System</span>
             <span class="small">v1</span>
         </div>
     </div>

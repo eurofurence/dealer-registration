@@ -137,7 +137,7 @@
                                                         style="font-size: 14px; mso-line-height-alt: 16.8px; color: #555555; line-height: 1.2; font-family: Arial, Helvetica Neue, Helvetica, sans-serif;">
                                                         <p dir="ltr"
                                                            style="margin: 0; font-size: 14px; text-align: left;"><span
-                                                                style="font-size:12px;color:#8f8d8d;">Yours,<br/>Eurofurence Dealers Team<br/><br/>Any help required? Shoot us an email to: <a
+                                                                style="font-size:12px;color:#8f8d8d;">Any help required? Shoot us an email to: <a
                                                                     href="mailto:dealers@eurofurence.org">dealers@eurofurence.org</a></span>
                                                         </p>
                                                         <p dir="ltr"
@@ -145,8 +145,8 @@
                                                              </p>
                                                         <p dir="ltr"
                                                            style="margin: 0; font-size: 14px; text-align: left;"><span
-                                                                style="font-size:12px;color:#8f8d8d;">Eurofurence e.V. - Am Kielshof 21a - 51105 Köln</span><br/><span
-                                                                style="font-size:12px;color:#8f8d8d;">Vereinsregister AG Berlin-Charlottenburg, Nr. 2087 Nz</span><br/><span
+                                                                style="font-size:12px;color:#8f8d8d;">Eurofurence e.V. - Am Kielshof 21a - 51105 Köln</span><br/><span
+                                                                style="font-size:12px;color:#8f8d8d;">Vereinsregister AG Köln, Nr. 19784</span><br/><span
                                                                 style="font-size:12px;color:#8f8d8d;">1. Vorsitzender: Sven Tegethoff</span><br/><br/><span
                                                                 style="font-size:12px;color:#8f8d8d;">Legal information according to §5 TMG obtainable at <a
                                                                     href="http://www.eurofurence.de/index.php?impressum"

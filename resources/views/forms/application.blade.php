@@ -57,7 +57,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="displayNameHelp" class="form-text">
-                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the Dealer's Den, please enter this name here. Leave the field blank to appear under your nickname. 
+                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the Dealers' Den, please enter this name here. Leave the field blank to appear under your nickname. 
                     </div>
                 </div>
             </div>
@@ -171,7 +171,7 @@
                             <b>Increased power demand</b>
                         </label>
                         <div id="powerHelp" class="form-text">
-                            If you require more electrical power than the average 100 Watts per dealer provided by the Dealer's Den for low-power devices (i.e. laptop or phone charger), please select this option to let us know about your increased energy needs.
+                            If you require more electrical power than the average 100 Watts per dealer provided by the Dealers' Den for low-power devices (i.e. laptop or phone charger), please select this option to let us know about your increased energy needs.
                         </div>
                     </div>
                 </div>

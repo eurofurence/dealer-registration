@@ -10,16 +10,6 @@
         </td>
     </tr>
 </table>
-<table border="0" cellpadding="0" cellspacing="0" class="heading_block"
-       role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;"
-       width="100%">
-    <tr>
-        <td style="width:100%;text-align:center;padding-top:20px;">
-            <h1 style="margin: 0; color: #00504b; font-size: 23px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; line-height: 120%; text-align: center; direction: ltr; font-weight: normal; letter-spacing: normal; margin-top: 0; margin-bottom: 0;">
-                <strong>Eurofurence Dealers</strong></h1>
-        </td>
-    </tr>
-</table>
 <table border="0" cellpadding="0" cellspacing="0" class="divider_block"
        role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;"
        width="100%">
