@@ -122,7 +122,7 @@
                     accept="image/jpeg, image/png"
                     onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview_large').src = window.URL.createObjectURL(this.files[0]);">
                 <div id="image_thumbnailHelp" class="form-text">Upload an image to be shown next to your name in
-                    the dealer list. This image should have a size of 60&times;60 pixels.
+                    the dealer list. This image should have a size of 60&times;60 pixels (max file size is 1 MB).
                 </div>
                 @error('image_thumbnail')
                     <span class="invalid-feedback" role="alert">
@@ -176,7 +176,7 @@
                     onchange="document.getElementById('image_artist_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_artist_preview_large').src = window.URL.createObjectURL(this.files[0]);">
                 <div id="image_artistHelp" class="form-text">You can upload a preview image of your art or
                     merchandise, which will be shown on a separate page in the EF app. The size of this image should
-                    be 400&times;400 pixels.
+                    be 400&times;400 pixels (max file size is 1 MB).
                 </div>
                 @error('image_artist')
                     <span class="invalid-feedback" role="alert">
@@ -226,7 +226,7 @@
                     name="image_art" accept="image/jpeg, image/png"
                     onchange="document.getElementById('image_art_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_art_preview_large').src = window.URL.createObjectURL(this.files[0]);">
                 <div id="image_artHelp" class="form-text">This image is shown on your dedicated page in the EF
-                    app. Aim for a size of 400&times;450 pixels.
+                    app. Aim for a size of 400&times;450 pixels (max file size is 1 MB).
                 </div>
                 @error('image_art')
                     <span class="invalid-feedback" role="alert">

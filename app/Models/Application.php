@@ -103,17 +103,17 @@ class Application extends Model
 
     public function getAvailableShares(): int
     {
-        return max($this->requestedTable->seats - 1 - $this->getActiveAssistants(), 0);
+        return !is_null($this->requestedTable) ? max($this->requestedTable->seats - 1 - $this->getActiveAssistants(), 0) : 0;        
     }
 
     public function getAvailableAssistants(): int
     {
-        return max(1, $this->requestedTable->seats - 1 - $this->getActiveShares());
+        return !is_null($this->requestedTable) ? max(1, $this->requestedTable->seats - 1 - $this->getActiveShares()) : 0;
     }
 
     public function getFreeShares(): int
     {
-        return $this->requestedTable->seats - 1 - $this->getActiveShares() - $this->getActiveAssistants();
+        return !is_null($this->requestedTable) ?  $this->requestedTable->seats - 1 - $this->getActiveShares() - $this->getActiveAssistants() : 0;
     }
 
     public function getFreeAssistants(): int

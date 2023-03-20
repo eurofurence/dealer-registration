@@ -12,7 +12,7 @@
                 <div class="col-md-12 text-center">
                     <div class="alert alert-warning">
                         You are changing your Role away from
-                        <b>Dealer</b> this means you will loose your previous application as a dealer and join another
+                        <b>Dealer</b> this means you will lose your previous application as a dealer and join another
                         dealer as a {{ $applicationType->value }}.
                     </div>
                 </div>
