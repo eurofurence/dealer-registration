@@ -284,8 +284,9 @@
         <div class="row mb-3">
             <label for="profile_website" class="col-sm-2 col-form-label fw-bold">Website</label>
             <div class="col-sm-10">
-                <textarea rows="1" type="text" name="profile_website"
-                    class="form-control @error('profile_website') is-invalid @enderror" id="profile_website">{{ old('profile_website') ?? $profile?->website }}</textarea>
+                <input type="text" name="profile_website" placeholder="https://yourprofile.example.com/itsme"
+                    class="form-control @error('profile_website') is-invalid @enderror" id="profile_website"
+                    value="{{ old('profile_website') ?? $profile?->website }}">
                 <div id="websiteHelp" class="form-text">
                     The address of your homepage.
                 </div>
@@ -294,8 +295,9 @@
         <div class="row mb-3">
             <label for="twitter" class="col-sm-2 col-form-label fw-bold">Twitter</label>
             <div class="col-sm-10">
-                <textarea rows="1" type="text" name="twitter" class="form-control @error('twitter') is-invalid @enderror"
-                    id="twitter">{{ old('twitter') ?? $profile?->twitter }}</textarea>
+                <input type="text" name="twitter" placeholder="@@YourTwitterHandle"
+                    class="form-control @error('twitter') is-invalid @enderror" id="twitter"
+                    value="{{ old('twitter') ?? $profile?->twitter }}">
                 <div id="twitterHelp" class="form-text">
                     Your Twitter handle.
                 </div>
@@ -304,8 +306,9 @@
         <div class="row mb-3">
             <label for="telegram" class="col-sm-2 col-form-label fw-bold">Telegram</label>
             <div class="col-sm-10">
-                <textarea rows="1" type="text" name="telegram" class="form-control @error('telegram') is-invalid @enderror"
-                    id="telegram">{{ old('telegram') ?? $profile?->telegram }}</textarea>
+                <input type="text" name="telegram" placeholder="@@YourTelegramHandle"
+                    class="form-control @error('telegram') is-invalid @enderror" id="telegram"
+                    value="{{ old('telegram') ?? $profile?->telegram }}">
                 <div id="telegramHelp" class="form-text">
                     Your Telegram handle.
                 </div>
@@ -314,8 +317,8 @@
         <div class="row mb-3">
             <label for="discord" class="col-sm-2 col-form-label fw-bold">Discord</label>
             <div class="col-sm-10">
-                <textarea rows="1" type="text" name="discord" class="form-control @error('discord') is-invalid @enderror"
-                    id="discord">{{ old('discord') ?? $profile?->discord }}</textarea>
+                <input type="text" name="discord" placeholder="YourDiscordHandle#0000" class="form-control @error('discord') is-invalid @enderror"
+                    id="discord" value="{{ old('discord') ?? $profile?->discord }}">
                 <div id="discordHelp" class="form-text">
                     Your Discord handle.
                 </div>

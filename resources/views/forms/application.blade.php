@@ -64,7 +64,8 @@
             <div class="row mb-3">
                 <label for="website" class="col-sm-2 col-form-label fw-bold">Website/Portfolio</label>
                 <div class="col-sm-10">
-                    <input type="text" name="website" value="{{ old('website') ?? $application?->website }}"
+                    <input type="text" name="website" placeholder="https://yourprofile.example.com/itsme"
+                        value="{{ old('website') ?? $application?->website }}"
                         class="form-control @error('website') is-invalid @enderror" id="website"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('website')
@@ -222,6 +223,6 @@
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 </div>
