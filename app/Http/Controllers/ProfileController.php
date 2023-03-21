@@ -57,15 +57,17 @@ class ProfileController extends Controller
         ], $profileData);
     }
 
-    private static function storeImage(Request $request, String $fileName, int|null $width, int|null $height) {
+    private static function storeImage(Request $request, string $fileName, int|null $width, int|null $height)
+    {
         $imagePath = $request->file($fileName)->store('public');
         $image = Image::make(Storage::get($imagePath))->resize($width, $height)->encode();
         Storage::put($imagePath, $image);
-        $imagePath = explode('/',$imagePath);
-        return $imagePath[1];                    
+        $imagePath = explode('/', $imagePath);
+        return $imagePath[1];
     }
 
-    public static function getImage(String $fileName) {
+    public static function getImage(string $fileName)
+    {
         Storage::get($fileName);
     }
 
@@ -108,22 +110,46 @@ class ProfileController extends Controller
                 'image',
                 'mimes:jpeg,png',
                 'max:1024',
-                'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000',
-                'exclude_if:applicationType,assistant',
+                'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000'
             ],
             "image_artist" => [
                 'image',
                 'mimes:jpeg,png',
                 'max:1024',
-                'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000',
-                'exclude_if:applicationType,assistant',
+                'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000'
             ],
             "image_art" => [
                 'image',
                 'mimes:jpeg,png',
                 'max:1024',
-                'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000',
-                'exclude_if:applicationType,assistant',
+                'dimensions:min_width=60,min_height=60,max_width=2000,max_height=2000'
+            ],
+            "short_desc" => [
+                'max:1024',
+            ],
+            "artist_desc" => [
+                'max:2048',
+            ],
+            "art_desc" => [
+                'max:2048',
+            ],
+            "website" => [
+                'max:255',
+            ],
+            "twitter" => [
+                'max:255',
+            ],
+            "telegram" => [
+                'max:255',
+            ],
+            "discord" => [
+                'max:255',
+            ],
+            "tweet" => [
+                'max:280',
+            ],
+            "art_preview_caption" => [
+                'max:255',
             ],
         ];
     }

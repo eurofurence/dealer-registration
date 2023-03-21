@@ -48,6 +48,7 @@ class ApplicationRequest extends FormRequest
                 "exclude_if:applicationType,assistant",
                 "required_unless:applicationType,assistant",
                 "min:3",                
+                "max:4096",
             ],
             "denType" => [
                 "required_if:applicationType,dealer",
@@ -70,8 +71,12 @@ class ApplicationRequest extends FormRequest
             "wanted" => [
                 "exclude_unless:applicationType,dealer",
                 "nullable",
+                "max:4096",
             ],            
-            "comment" => "nullable",
+            "comment" => [                
+                "nullable",
+                "max:4096",
+            ], 
             "tos" => [
                 new RequiredIf($this->routeIs('applications.store')),
             ],
