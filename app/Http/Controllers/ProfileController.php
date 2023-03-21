@@ -152,13 +152,16 @@ class ProfileController extends Controller
                 'max:255',
             ],
             "attends_thu" => [
-                'required_without_all:attends_fri,attends_sat'
+                'exclude_if:applicationType,assistant',
+                'required_without_all:attends_fri,attends_sat',
             ],
             "attends_fri" => [
-                'required_without_all:attends_thu,attends_sat'
+                'exclude_if:applicationType,assistant',
+                'required_without_all:attends_thu,attends_sat',
             ],
             "attends_sat" => [
-                'required_without_all:attends_thu,attends_fri'
+                'exclude_if:applicationType,assistant',
+                'required_without_all:attends_thu,attends_fri',
             ]
         ];
     }
