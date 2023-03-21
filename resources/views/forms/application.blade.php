@@ -50,14 +50,14 @@
                 <label for="displayName" class="col-sm-2 col-form-label fw-bold">Display Name</label>
                 <div class="col-sm-10">
                     <input type="text" name="displayName"
-                        value="{{ old('displayName') ?? $application?->display_name }}"
+                        value="{{ old('_token') ? old('displayName') : $application?->display_name }}"
                         class="form-control @error('displayName') is-invalid @enderror" id="displayName"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('displayName')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="displayNameHelp" class="form-text">
-                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the Dealers' Den, please enter this name here. Leave the field blank to appear under your nickname. 
+                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the Dealers' Den, please enter this name here. Leave the field blank to appear under your nickname.
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                 <label for="website" class="col-sm-2 col-form-label fw-bold">Website/Portfolio</label>
                 <div class="col-sm-10">
                     <input type="text" name="website" placeholder="https://yourprofile.example.com/itsme"
-                        value="{{ old('website') ?? $application?->website }}"
+                        value="{{ old('_token') ? old('website') : $application?->website }}"
                         class="form-control @error('website') is-invalid @enderror" id="website"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('website')
@@ -80,7 +80,7 @@
                 <label for="merchandise" class="col-sm-2 col-form-label fw-bold">Merchandise/Service</label>
                 <div class="col-sm-10">
                     <input type="text" name="merchandise"
-                        value="{{ old('merchandise') ?? $application?->merchandise }}"
+                        value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
                         class="form-control @error('merchandise') is-invalid @enderror" id="merchandise"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('merchandise')
@@ -90,7 +90,7 @@
                         Please provide details about the merchandise or services you plan to offer at the Dealers' Den. Examples of items may include prints, badge commissions, comics, or other related goods or services. This information will assist us in better understanding your offerings and assist with placement within the Dealer’s Den.
                     </div>
                 </div>
-            </div>            
+            </div>
         @endif
 
         @if ($applicationType === \App\Enums\ApplicationType::Dealer)
@@ -107,8 +107,7 @@
                     <div class="form-check">
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
                             name="denType" id="denTypeRegular" value="denTypeRegular" @checked(
-                                ($application?->is_afterdark === false && empty(old('denType'))) ||
-                                    (!empty(old('denType')) && old('denType') === 'denTypeRegular'))>
+                                old('_token') ?  old('denType') === 'denTypeRegular' : $application?->is_afterdark === false)>
                         <label class="form-check-label" for="denTypeRegular">
                             Dealers’ Den (Rated PG-13 with natural nudity)
                         </label>
@@ -116,8 +115,7 @@
                     <div class="form-check">
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
                             name="denType" id="denTypeAfterDark" value="denTypeAfterDark" @checked(
-                                ($application?->is_afterdark === true && empty(old('denType'))) ||
-                                    (!empty(old('denType')) && old('denType') === 'denTypeAfterDark'))>
+                                old('_token') ?  old('denType') === 'denTypeAfterDark' : $application?->is_afterdark === true)>
                         <label class="form-check-label" for="denTypeAfterDark">
                             After Dark Dealers’ Den (Rated R)
                         </label>
@@ -126,7 +124,7 @@
                         @enderror
                     </div>
                     <div id="denTypeHelp" class="form-text">
-                        Please choose if you would like to be placed in the regular Dealers' Den or if you would like to display adult material openly in the After Dark Dealers' Den.       
+                        Please choose if you would like to be placed in the regular Dealers' Den or if you would like to display adult material openly in the After Dark Dealers' Den.
                     </div>
                 </div>
             </fieldset>
@@ -136,7 +134,7 @@
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         @foreach ($table_types as $type)
-                            <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested ?? old('space')) === $type['id'])>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
+                            <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested) == $type['id'])>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
                             </option>
                         @endforeach
                     </select>
@@ -152,7 +150,7 @@
             <div class="row mb-1">
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
-                        <input class="form-check-input" name="wallseat" @checked(old('wallseat') ?? $application?->is_wallseat === true) type="checkbox"
+                        <input class="form-check-input" name="wallseat" @checked(old('_token') ? old('wallseat') : $application?->is_wallseat === true) type="checkbox"
                             id="wallseat" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         <label class="form-check-label" for="wallseat">
                             <b>Wall preferred</b>
@@ -166,7 +164,7 @@
             <div class="row mb-3">
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
-                        <input class="form-check-input" name="power" @checked(old('power') ?? $application?->is_power === true) type="checkbox"
+                        <input class="form-check-input" name="power" @checked(old('_token') ? old('power') : $application?->is_power === true) type="checkbox"
                             id="power" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         <label class="form-check-label" for="power">
                             <b>Increased power demand</b>
@@ -181,7 +179,7 @@
                 <label for="wanted" class="col-sm-2 col-form-label fw-bold">Preferred&nbsp;Neighbors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted" class="form-control @error('wanted') is-invalid @enderror"
-                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="wanted">{{ old('wanted') ?? $application?->wanted_neighbors }}</textarea>
+                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="wanted">{{ old('_token') ? old('wanted') : $application?->wanted_neighbors }}</textarea>
                     @error('wanted')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -189,19 +187,19 @@
                         Please provide us with the <b>nicknames</b> and/or <b>dealership names</b> of any other dealers or dealerships that you would prefer to have your table placed next to. This will help us to accommodate your preferences and make your experience at the Dealers' Den as enjoyable as possible.
                     </div>
                 </div>
-            </div>            
+            </div>
         @endif
 
         <div class="row mb-3">
             <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
-                    @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="comment">{{ old('comment') ?? $application?->comment }}</textarea>
+                    @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="comment">{{ old('_token') ? old('comment') : $application?->comment }}</textarea>
                 @error('comment')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 <div id="commentHelp" class="form-text">
-                    If you have any further information you would like to share with Dealers' Den Management, please use the space provided below. This can include requests for special accommodations, questions about the application process, or any other relevant details. 
+                    If you have any further information you would like to share with Dealers' Den Management, please use the space provided below. This can include requests for special accommodations, questions about the application process, or any other relevant details.
                 </div>
             </div>
         </div>

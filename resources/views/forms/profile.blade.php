@@ -12,7 +12,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input @error('attends_thu') is-invalid @enderror" name="attends_thu" @checked(old('attends_thu') ?? $profile?->attends_thu === true) type="checkbox"
+                    <input class="form-check-input @error('attends_thu') is-invalid @enderror" name="attends_thu" @checked(old('_token') ? old('attends_thu') : $profile?->attends_thu === true) type="checkbox"
                         id="attends_thu">
                     <label class="form-check-label" for="attends_thu">
                         Monday
@@ -23,7 +23,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input @error('attends_fri') is-invalid @enderror" name="attends_fri" @checked(old('attends_fri') ?? $profile?->attends_fri === true) type="checkbox"
+                    <input class="form-check-input @error('attends_fri') is-invalid @enderror" name="attends_fri" @checked(old('_token') ? old('attends_fri') : $profile?->attends_fri === true) type="checkbox"
                         id="attends_fri">
                     <label class="form-check-label" for="attends_fri">
                         Tuesday
@@ -34,7 +34,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input @error('attends_sat') is-invalid @enderror" name="attends_sat" @checked(old('attends_sat') ?? $profile?->attends_sat === true) type="checkbox"
+                    <input class="form-check-input @error('attends_sat') is-invalid @enderror" name="attends_sat" @checked(old('_token') ? old('attends_sat') : $profile?->attends_sat === true) type="checkbox"
                         id="attends_sat">
                     <label class="form-check-label" for="attends_sat">
                         Wednesday
@@ -55,7 +55,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="is_print" @checked(old('is_print') ?? $profile?->is_print === true) type="checkbox"
+                    <input class="form-check-input" name="is_print" @checked(old('_token') ? old('is_print') : $profile?->is_print === true) type="checkbox"
                         id="is_print">
                     <label class="form-check-label" for="is_print">
                         Printed goods (books, magazines, comics, ...)
@@ -66,7 +66,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="is_artwork" @checked(old('is_artwork') ?? $profile?->is_artwork === true) type="checkbox"
+                    <input class="form-check-input" name="is_artwork" @checked(old('_token') ? old('is_artwork') : $profile?->is_artwork === true) type="checkbox"
                         id="is_artwork">
                     <label class="form-check-label" for="is_artwork">
                         Artwork (sketches, originals, prints, ...)
@@ -77,7 +77,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="is_fursuit" @checked(old('is_fursuit') ?? $profile?->is_fursuit === true) type="checkbox"
+                    <input class="form-check-input" name="is_fursuit" @checked(old('_token') ? old('is_fursuit') : $profile?->is_fursuit === true) type="checkbox"
                         id="is_fursuit">
                     <label class="form-check-label" for="is_fursuit">
                         Fursuit (suits, parts, accessories, ...)
@@ -88,7 +88,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="is_commissions" @checked(old('is_commissions') ?? $profile?->is_commissions === true) type="checkbox"
+                    <input class="form-check-input" name="is_commissions" @checked(old('_token') ? old('is_commissions') : $profile?->is_commissions === true) type="checkbox"
                         id="is_commissions">
                     <label class="form-check-label" for="is_commissions">
                         Commissions
@@ -99,7 +99,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="is_misc" @checked(old('is_misc') ?? $profile?->is_misc === true) type="checkbox"
+                    <input class="form-check-input" name="is_misc" @checked(old('_token') ? old('is_misc') : $profile?->is_misc === true) type="checkbox"
                         id="is_misc">
                     <label class="form-check-label" for="is_misc">
                         Miscellaneous merchandise
@@ -160,7 +160,7 @@
             <label for="short_desc" class="col-sm-2 col-form-label fw-bold">Short&nbsp;Description</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="short_desc"
-                    class="form-control @error('short_desc') is-invalid @enderror" id="short_desc">{{ old('short_desc') ?? $profile?->short_desc }}</textarea>
+                    class="form-control @error('short_desc') is-invalid @enderror" id="short_desc">{{ old('_token') ? old('short_desc') : $profile?->short_desc }}</textarea>
                 <div id="short_descHelp" class="form-text">
                     A short description, 1 - 3 sentences, to appear in the dealer list next to your thumbnail image.
                 </div>
@@ -213,7 +213,7 @@
             <label for="artist_desc" class="col-sm-2 col-form-label fw-bold">About&nbsp;the&nbsp;Artist</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="artist_desc"
-                    class="form-control @error('artist_desc') is-invalid @enderror" id="artist_desc">{{ old('artist_desc') ?? $profile?->artist_desc }}</textarea>
+                    class="form-control @error('artist_desc') is-invalid @enderror" id="artist_desc">{{ old('_token') ? old('artist_desc') : $profile?->artist_desc }}</textarea>
                 <div id="artist_descHelp" class="form-text">
                     Information about yourself; e.g., your background, how you became an artist,...
                 </div>
@@ -263,7 +263,7 @@
             <label for="art_preview_caption" class="col-sm-2 col-form-label fw-bold">Art Preview Caption</label>
             <div class="col-sm-10">
                 <textarea rows="1" type="text" name="art_preview_caption"
-                    class="form-control @error('art_preview_caption') is-invalid @enderror" id="art_preview_caption">{{ old('art_preview_caption') ?? $profile?->art_preview_caption }}</textarea>
+                    class="form-control @error('art_preview_caption') is-invalid @enderror" id="art_preview_caption">{{ old('_token') ? old('art_preview_caption') : $profile?->art_preview_caption }}</textarea>
                 <div id="art_preview_captionHelp" class="form-text">
                     If you have uploaded an art/merchandise preview image above, you can enter a description that is
                     displayed beneath it.
@@ -274,7 +274,7 @@
             <label for="art_desc" class="col-sm-2 col-form-label fw-bold">About&nbsp;the&nbsp;Art</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="art_desc" class="form-control @error('art_desc') is-invalid @enderror"
-                    id="art_desc">{{ old('art_desc') ?? $profile?->art_desc }}</textarea>
+                    id="art_desc">{{ old('_token') ? old('art_desc') : $profile?->art_desc }}</textarea>
                 <div id="art_descHelp" class="form-text">
                     Information about your art or other merchandise. This is also the place for details about
                     commissions, prices, and other things worthwhile to know.
@@ -286,7 +286,7 @@
             <div class="col-sm-10">
                 <input type="text" name="profile_website" placeholder="https://yourprofile.example.com/itsme"
                     class="form-control @error('profile_website') is-invalid @enderror" id="profile_website"
-                    value="{{ old('profile_website') ?? $profile?->website }}">
+                    value="{{ old('_token') ? old('profile_website') : $profile?->website }}">
                 <div id="websiteHelp" class="form-text">
                     The address of your homepage.
                 </div>
@@ -301,7 +301,7 @@
                     </div>
                     <input type="text" name="twitter" placeholder="YourTwitterHandle"
                         class="form-control @error('twitter') is-invalid @enderror" id="twitter"
-                        value="{{ old('twitter') ?? $profile?->twitter }}">
+                        value="{{ old('_token') ? old('twitter') : $profile?->twitter }}">
                 </div>
                 <div id="twitterHelp" class="form-text">
                     Want to make sure people find you on Twitter? Add your handle above to guide them there!
@@ -317,7 +317,7 @@
                     </div>
                     <input type="text" name="telegram" placeholder="YourTelegramHandle"
                         class="form-control @error('telegram') is-invalid @enderror" id="telegram"
-                        value="{{ old('telegram') ?? $profile?->telegram }}">
+                        value="{{ old('_token') ? old('telegram') : $profile?->telegram }}">
                 </div>
                 <div id="telegramHelp" class="form-text">
                     Promote your Telegram channel or allow people to get in touch with you personally via Telegram.
@@ -328,7 +328,7 @@
             <label for="discord" class="col-sm-2 col-form-label fw-bold">Discord</label>
             <div class="col-sm-10">
                 <input type="text" name="discord" placeholder="YourDiscordHandle#0000" class="form-control @error('discord') is-invalid @enderror"
-                    id="discord" value="{{ old('discord') ?? $profile?->discord }}">
+                    id="discord" value="{{ old('_token') ?  old('discord') : $profile?->discord }}">
                 <div id="discordHelp" class="form-text">
                     Let people find and contact you on Discord by providing your handle here!
                 </div>
@@ -338,7 +338,7 @@
             <label for="tweet" class="col-sm-2 col-form-label fw-bold">Advertisement text</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="tweet" class="form-control @error('tweet') is-invalid @enderror"
-                    id="tweet">{{ old('tweet') ?? $profile?->tweet }}</textarea>
+                    id="tweet">{{ old('_token') ?  old('tweet') : $profile?->tweet }}</textarea>
                 <div id="tweetHelp" class="form-text">
                     A short text which the Dealers' Den team can publish on Twitter and Telegram. By filling this
                     field, you agree that your data will be used publicly for advertisement.
