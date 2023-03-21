@@ -38,6 +38,11 @@ class ApplicationTest extends TestCase
             "wanted" => "I want plushies",
             "comment" => "this is a test, who cares.",
             "tos" => "on",
+            // Expected default for new Profile()
+            // Should be refactored into separate view
+            "attends_thu" => "on",
+            "attends_fri" => "on",
+            "attends_sat" => "on",
         ]);
         $response->assertRedirect(route('dashboard'));
         $this->assertDatabaseHas('applications', [
@@ -143,6 +148,11 @@ class ApplicationTest extends TestCase
             "wanted" => "I want more dragons",
             "comment" => "I care.",
             "tos" => "on",
+            // Expected default for new Profile()
+            // Should be refactored into separate view
+            "attends_thu" => "on",
+            "attends_fri" => "on",
+            "attends_sat" => "on",
         ]);
         $response->assertRedirect(route('applications.edit'));
         $this->assertDatabaseHas('applications', [
