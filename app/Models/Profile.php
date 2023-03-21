@@ -22,6 +22,12 @@ class Profile extends Model
       "attends_sat" => "boolean",
     ];
 
+    protected $attributes = [
+        "attends_thu" => true,
+        "attends_fri" => true,
+        "attends_sat" => true,
+    ];
+
     public function application()
     {
         return $this->belongsTo(Application::class);

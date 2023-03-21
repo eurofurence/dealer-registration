@@ -151,6 +151,15 @@ class ProfileController extends Controller
             "art_preview_caption" => [
                 'max:255',
             ],
+            "attends_thu" => [
+                'required_without_all:attends_fri,attends_sat'
+            ],
+            "attends_fri" => [
+                'required_without_all:attends_thu,attends_sat'
+            ],
+            "attends_sat" => [
+                'required_without_all:attends_thu,attends_fri'
+            ]
         ];
     }
 }

@@ -12,7 +12,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="attends_thu" @checked(old('attends_thu') ?? $profile?->attends_thu === true) type="checkbox"
+                    <input class="form-check-input @error('attends_thu') is-invalid @enderror" name="attends_thu" @checked(old('attends_thu') ?? $profile?->attends_thu === true) type="checkbox"
                         id="attends_thu">
                     <label class="form-check-label" for="attends_thu">
                         Monday
@@ -23,7 +23,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="attends_fri" @checked(old('attends_fri') ?? $profile?->attends_fri === true) type="checkbox"
+                    <input class="form-check-input @error('attends_fri') is-invalid @enderror" name="attends_fri" @checked(old('attends_fri') ?? $profile?->attends_fri === true) type="checkbox"
                         id="attends_fri">
                     <label class="form-check-label" for="attends_fri">
                         Tuesday
@@ -34,7 +34,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input" name="attends_sat" @checked(old('attends_sat') ?? $profile?->attends_sat === true) type="checkbox"
+                    <input class="form-check-input @error('attends_sat') is-invalid @enderror" name="attends_sat" @checked(old('attends_sat') ?? $profile?->attends_sat === true) type="checkbox"
                         id="attends_sat">
                     <label class="form-check-label" for="attends_sat">
                         Wednesday
@@ -45,7 +45,7 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div id="attendanceHelp" class="form-text">Please select all days when our Attendees can meet you at
-                    your Dealers' Den table.
+                    your Dealers' Den table (must be at least one).
                 </div>
             </div>
         </div>
