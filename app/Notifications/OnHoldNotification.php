@@ -36,7 +36,7 @@ class OnHoldNotification extends Notification implements ShouldQueue
             ->action('I confirm and agree to purchase the offered Dealership Package.', url('/applications/confirm'))
             ->line('We understand that this alternative option may not be what you had in mind when applying, but we hope that it will still meet your needs and enable you to participate in the  Eurofurence Dealers\' Den. As we have limited space, we will be offering any available table sizes to other applications on the waiting list if we do not receive a response from you within the next seven days. So please let us know within this time frame whether you would like to accept one of the alternative options or decline the offer and be put on the waiting list. To do so, simply reply to this email.')
             ->line('We apologize for any inconvenience this may have caused you, and we hope to hear back from you soon. Thank you for your understanding and cooperation.')
-            ->salutation(new HtmlString('Best regards,<br />Pattarchus'));
+            ->salutation(new HtmlString('Best regards, <br />Pattarchus'));
     }
 
     public function toArray(object $notifiable): array
