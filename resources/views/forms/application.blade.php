@@ -136,7 +136,7 @@
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                         @foreach ($table_types as $type)
-                            <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested === $type['id']) || (!$application?->table_type_requested && old('space', 2) === $type['id']))>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
+                            <option value="{{ $type['id'] }}" @selected(($application?->table_type_requested ?? old('space')) === $type['id'])>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
                             </option>
                         @endforeach
                     </select>

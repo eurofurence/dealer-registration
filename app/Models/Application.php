@@ -33,8 +33,12 @@ class Application extends Model
       "checked_in_at" => "datetime",
       "offer_sent_at" => "datetime",
       "offer_accepted_at" => "datetime",
-
     ];
+
+    protected $attributes = [
+        "table_type_requested" => 2
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
