@@ -295,22 +295,32 @@
         <div class="row mb-3">
             <label for="twitter" class="col-sm-2 col-form-label fw-bold">Twitter</label>
             <div class="col-sm-10">
-                <input type="text" name="twitter" placeholder="@@YourTwitterHandle"
-                    class="form-control @error('twitter') is-invalid @enderror" id="twitter"
-                    value="{{ old('twitter') ?? $profile?->twitter }}">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span clasS="input-group-text">@</span>
+                    </div>
+                    <input type="text" name="twitter" placeholder="YourTwitterHandle"
+                        class="form-control @error('twitter') is-invalid @enderror" id="twitter"
+                        value="{{ old('twitter') ?? $profile?->twitter }}">
+                </div>
                 <div id="twitterHelp" class="form-text">
-                    Your Twitter handle.
+                    Want to make sure people find you on Twitter? Add your handle above to guide them there!
                 </div>
             </div>
         </div>
         <div class="row mb-3">
             <label for="telegram" class="col-sm-2 col-form-label fw-bold">Telegram</label>
             <div class="col-sm-10">
-                <input type="text" name="telegram" placeholder="@@YourTelegramHandle"
-                    class="form-control @error('telegram') is-invalid @enderror" id="telegram"
-                    value="{{ old('telegram') ?? $profile?->telegram }}">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span clasS="input-group-text">@</span>
+                    </div>
+                    <input type="text" name="telegram" placeholder="YourTelegramHandle"
+                        class="form-control @error('telegram') is-invalid @enderror" id="telegram"
+                        value="{{ old('telegram') ?? $profile?->telegram }}">
+                </div>
                 <div id="telegramHelp" class="form-text">
-                    Your Telegram handle.
+                    Promote your Telegram channel or allow people to get in touch with you personally via Telegram.
                 </div>
             </div>
         </div>
@@ -320,7 +330,7 @@
                 <input type="text" name="discord" placeholder="YourDiscordHandle#0000" class="form-control @error('discord') is-invalid @enderror"
                     id="discord" value="{{ old('discord') ?? $profile?->discord }}">
                 <div id="discordHelp" class="form-text">
-                    Your Discord handle.
+                    Let people find and contact you on Discord by providing your handle here!
                 </div>
             </div>
         </div>
