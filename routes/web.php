@@ -35,8 +35,8 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
     Route::get('applications/edit',[\App\Http\Controllers\Applications\ApplicationController::class, 'edit'])->name('applications.edit');
     Route::put('applications',[\App\Http\Controllers\Applications\ApplicationController::class, 'update'])->name('applications.update');
     Route::get('applications/delete',[\App\Http\Controllers\Applications\ApplicationController::class, 'delete'])->name('applications.delete');
-    Route::delete('applications',[\App\Http\Controllers\Applications\ApplicationController::class, 'destroy'])->name('applications.destroy');
-
+    Route::delete('applications',[\App\Http\Controllers\Applications\ApplicationController::class, 'destroy'])->name('applications.destroy');    
+    
     Route::get('applications/invitees',[\App\Http\Controllers\Applications\InviteesController::class,'view'])->name('applications.invitees.view');
     Route::delete('applications/invitees',[\App\Http\Controllers\Applications\InviteesController::class,'destroy'])->name('applications.invitees.destroy');
     Route::post('applications/invitees/regenerate-keys',[\App\Http\Controllers\Applications\InviteesController::class,'regenerateKeys'])->name('applications.invitees.regenerate-keys');
@@ -45,5 +45,9 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
 
     Route::get('table/verify', \App\Http\Controllers\TableVerifyController::class)->name('table.verify');
     Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');
+
+    Route::get('applications', function () {
+        return \Illuminate\Support\Facades\Redirect::route('dashboard');
+    });
 });
 
