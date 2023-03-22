@@ -12,8 +12,8 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input @error('attends_thu') is-invalid @enderror" name="attends_thu" @checked(old('_token') ? old('attends_thu') : $profile?->attends_thu === true) type="checkbox"
-                        id="attends_thu">
+                    <input class="form-check-input @error('attends_thu') is-invalid @enderror" name="attends_thu"
+                        @checked(old('_token') ? old('attends_thu') : $profile?->attends_thu === true) type="checkbox" id="attends_thu">
                     <label class="form-check-label" for="attends_thu">
                         Monday
                     </label>
@@ -23,8 +23,8 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input @error('attends_fri') is-invalid @enderror" name="attends_fri" @checked(old('_token') ? old('attends_fri') : $profile?->attends_fri === true) type="checkbox"
-                        id="attends_fri">
+                    <input class="form-check-input @error('attends_fri') is-invalid @enderror" name="attends_fri"
+                        @checked(old('_token') ? old('attends_fri') : $profile?->attends_fri === true) type="checkbox" id="attends_fri">
                     <label class="form-check-label" for="attends_fri">
                         Tuesday
                     </label>
@@ -34,17 +34,23 @@
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
-                    <input class="form-check-input @error('attends_sat') is-invalid @enderror" name="attends_sat" @checked(old('_token') ? old('attends_sat') : $profile?->attends_sat === true) type="checkbox"
-                        id="attends_sat">
+                    <input class="form-check-input @error('attends_sat') is-invalid @enderror" name="attends_sat"
+                        @checked(old('_token') ? old('attends_sat') : $profile?->attends_sat === true) type="checkbox" id="attends_sat">
                     <label class="form-check-label" for="attends_sat">
                         Wednesday
                     </label>
+                    @error('attends_sat')
+                        <div class="invalid-feedback" role="alert">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
             </div>
         </div>
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
-                <div id="attendanceHelp" class="form-text">Please select all days when our Attendees can meet you at
+                <div id="attendanceHelp" class="form-text">
+                    Please select all days when our Attendees can meet you at
                     your Dealers' Den table (must be at least one).
                 </div>
             </div>
@@ -163,7 +169,7 @@
                     class="form-control @error('short_desc') is-invalid @enderror" id="short_desc">{{ old('_token') ? old('short_desc') : $profile?->short_desc }}</textarea>
                 @error('short_desc')
                     <div class="invalid-feedback">{{ $message }}</div>
-                @enderror 
+                @enderror
                 <div id="short_descHelp" class="form-text">
                     A short description, 1 - 3 sentences, to appear in the dealer list next to your thumbnail image.
                 </div>
@@ -320,7 +326,7 @@
                     @error('twitter')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>               
+                </div>
                 <div id="twitterHelp" class="form-text">
                     Want to make sure people find you on Twitter? Add your handle above to guide them there!
                 </div>
@@ -339,7 +345,7 @@
                     @error('telegram')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>                
+                </div>
                 <div id="telegramHelp" class="form-text">
                     Promote your Telegram channel or allow people to get in touch with you personally via Telegram.
                 </div>
@@ -348,8 +354,9 @@
         <div class="row mb-3">
             <label for="discord" class="col-sm-2 col-form-label fw-bold">Discord</label>
             <div class="col-sm-10">
-                <input type="text" name="discord" placeholder="YourDiscordHandle#0000" class="form-control @error('discord') is-invalid @enderror"
-                    id="discord" value="{{ old('_token') ?  old('discord') : $profile?->discord }}">
+                <input type="text" name="discord" placeholder="YourDiscordHandle#0000"
+                    class="form-control @error('discord') is-invalid @enderror" id="discord"
+                    value="{{ old('_token') ? old('discord') : $profile?->discord }}">
                 @error('discord')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -362,7 +369,7 @@
             <label for="tweet" class="col-sm-2 col-form-label fw-bold">Advertisement text</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="tweet" class="form-control @error('tweet') is-invalid @enderror"
-                    id="tweet">{{ old('_token') ?  old('tweet') : $profile?->tweet }}</textarea>
+                    id="tweet">{{ old('_token') ? old('tweet') : $profile?->tweet }}</textarea>
                 @error('tweet')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

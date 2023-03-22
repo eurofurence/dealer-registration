@@ -91,14 +91,6 @@ class ApplicationRequest extends FormRequest
         }
     }
 
-    public function messages()
-    {
-        return [
-            'denType.required_if' => 'Please select a location.',
-            'merchandise.required_unless' => 'Please fill in the merchandise you plan to offer.',
-        ];
-    }
-
     private function isCodeRequired(): bool
     {
         $isRequestForFullDealership = ApplicationType::tryFrom($this->get('applicationType')) === ApplicationType::Dealer;
