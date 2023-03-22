@@ -26,11 +26,11 @@
                                     If a table has already been assigned to you, you will lose it.<br>
                                     <b>Please only continue if you are sure that you want to cancel your application.</b>
                                 </p>
-                                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                                    <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Cancel Application
-                                    </button>
+                                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">                                    
                                     <a href="{{ route('dashboard') }}"
                                        class="btn btn-outline-secondary btn-lg px-4">Keep my Application</a>
+                                    <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Cancel Application
+                                    </button>
                                 </div>
                             </div>
                             @else

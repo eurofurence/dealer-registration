@@ -12,7 +12,7 @@
                 <div class="col-md-12 text-center">
                     <div class="alert alert-warning">
                         You are changing your Role away from
-                        <b>Dealer</b> this means you will lose your previous application as a dealer and join another
+                        <b>Dealer</b>. This means you will lose your previous application as a dealer and join another
                         dealer as a {{ $applicationType->value }}.
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="website" class="col-sm-2 col-form-label fw-bold">Website/Portfolio</label>
+                <label for="website" class="col-sm-2 col-form-label fw-bold">Website / Portfolio</label>
                 <div class="col-sm-10">
                     <input type="text" name="website" placeholder="https://yourprofile.example.com/itsme"
                         value="{{ old('_token') ? old('website') : $application?->website }}"
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="merchandise" class="col-sm-2 col-form-label fw-bold">Merchandise/Service</label>
+                <label for="merchandise" class="col-sm-2 col-form-label fw-bold">Merchandise / Service</label>
                 <div class="col-sm-10">
                     <input type="text" name="merchandise"
                         value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
@@ -156,7 +156,7 @@
                             <b>Wall preferred</b>
                         </label>
                         <div id="wallseatHelp" class="form-text">
-                            If you would prefer to sit at a table in front of a wall, please select this option.
+                            If you prefer to sit at a table with a wall behind it, please select this option.
                         </div>
                     </div>
                 </div>

@@ -340,7 +340,7 @@
                 <textarea rows="5" type="text" name="tweet" class="form-control @error('tweet') is-invalid @enderror"
                     id="tweet">{{ old('_token') ?  old('tweet') : $profile?->tweet }}</textarea>
                 <div id="tweetHelp" class="form-text">
-                    A short text which the Dealers' Den team can publish on Twitter and Telegram. By filling this
+                    A short text which the Dealers' Den team can publish on Twitter and Telegram. By filling in this
                     field, you agree that your data will be used publicly for advertisement.
                     <br />
                     You might want to include your Twitter/Telegram handle or a website.
