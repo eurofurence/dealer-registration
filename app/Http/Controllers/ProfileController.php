@@ -137,13 +137,20 @@ class ProfileController extends Controller
                 'max:255',
             ],
             "twitter" => [
-                'max:255',
+                'nullable',
+                // Twitter user name validation: https://help.twitter.com/en/managing-your-account/twitter-username-rules
+                'regex:/^[0-9a-z_]{4,15}$/i',
             ],
             "telegram" => [
-                'max:255',
+                'nullable',
+                // Telegram user name validation: https://core.telegram.org/method/account.checkUsername
+                'regex:/^[0-9a-z_]{5,32}$/i',
             ],
             "discord" => [
-                'max:255',
+                'nullable',
+                // Discord user name validation: https://discord.com/developers/docs/resources/user
+                // (simplified because we don't need to check all edge cases)
+                'regex:/^[^@#:]{2,32}#[0-9]{4}$/',
             ],
             "tweet" => [
                 'max:280',
