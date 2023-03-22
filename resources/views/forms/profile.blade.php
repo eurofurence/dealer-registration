@@ -161,6 +161,9 @@
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="short_desc"
                     class="form-control @error('short_desc') is-invalid @enderror" id="short_desc">{{ old('_token') ? old('short_desc') : $profile?->short_desc }}</textarea>
+                @error('short_desc')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror 
                 <div id="short_descHelp" class="form-text">
                     A short description, 1 - 3 sentences, to appear in the dealer list next to your thumbnail image.
                 </div>
@@ -214,6 +217,9 @@
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="artist_desc"
                     class="form-control @error('artist_desc') is-invalid @enderror" id="artist_desc">{{ old('_token') ? old('artist_desc') : $profile?->artist_desc }}</textarea>
+                @error('artist_desc')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div id="artist_descHelp" class="form-text">
                     Information about yourself; e.g., your background, how you became an artist,...
                 </div>
@@ -264,6 +270,9 @@
             <div class="col-sm-10">
                 <textarea rows="1" type="text" name="art_preview_caption"
                     class="form-control @error('art_preview_caption') is-invalid @enderror" id="art_preview_caption">{{ old('_token') ? old('art_preview_caption') : $profile?->art_preview_caption }}</textarea>
+                @error('art_preview_caption')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div id="art_preview_captionHelp" class="form-text">
                     If you have uploaded an art/merchandise preview image above, you can enter a description that is
                     displayed beneath it.
@@ -275,6 +284,9 @@
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="art_desc" class="form-control @error('art_desc') is-invalid @enderror"
                     id="art_desc">{{ old('_token') ? old('art_desc') : $profile?->art_desc }}</textarea>
+                @error('art_desc')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div id="art_descHelp" class="form-text">
                     Information about your art or other merchandise. This is also the place for details about
                     commissions, prices, and other things worthwhile to know.
@@ -287,6 +299,9 @@
                 <input type="text" name="profile_website" placeholder="https://yourprofile.example.com/itsme"
                     class="form-control @error('profile_website') is-invalid @enderror" id="profile_website"
                     value="{{ old('_token') ? old('profile_website') : $profile?->website }}">
+                @error('profile_website')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div id="websiteHelp" class="form-text">
                     The address of your homepage.
                 </div>
@@ -302,7 +317,10 @@
                     <input type="text" name="twitter" placeholder="YourTwitterHandle"
                         class="form-control @error('twitter') is-invalid @enderror" id="twitter"
                         value="{{ old('_token') ? old('twitter') : $profile?->twitter }}">
-                </div>
+                    @error('twitter')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>               
                 <div id="twitterHelp" class="form-text">
                     Want to make sure people find you on Twitter? Add your handle above to guide them there!
                 </div>
@@ -318,7 +336,10 @@
                     <input type="text" name="telegram" placeholder="YourTelegramHandle"
                         class="form-control @error('telegram') is-invalid @enderror" id="telegram"
                         value="{{ old('_token') ? old('telegram') : $profile?->telegram }}">
-                </div>
+                    @error('telegram')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>                
                 <div id="telegramHelp" class="form-text">
                     Promote your Telegram channel or allow people to get in touch with you personally via Telegram.
                 </div>
@@ -329,6 +350,9 @@
             <div class="col-sm-10">
                 <input type="text" name="discord" placeholder="YourDiscordHandle#0000" class="form-control @error('discord') is-invalid @enderror"
                     id="discord" value="{{ old('_token') ?  old('discord') : $profile?->discord }}">
+                @error('discord')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div id="discordHelp" class="form-text">
                     Let people find and contact you on Discord by providing your handle here!
                 </div>
@@ -339,6 +363,9 @@
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="tweet" class="form-control @error('tweet') is-invalid @enderror"
                     id="tweet">{{ old('_token') ?  old('tweet') : $profile?->tweet }}</textarea>
+                @error('tweet')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div id="tweetHelp" class="form-text">
                     A short text which the Dealers' Den team can publish on Twitter and Telegram. By filling in this
                     field, you agree that your data will be used publicly for advertisement.

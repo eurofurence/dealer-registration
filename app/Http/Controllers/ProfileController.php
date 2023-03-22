@@ -133,7 +133,7 @@ class ProfileController extends Controller
             "art_desc" => [
                 'max:2048',
             ],
-            "website" => [
+            "profile_website" => [
                 'max:255',
             ],
             "twitter" => [
