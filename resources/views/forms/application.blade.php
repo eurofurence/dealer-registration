@@ -47,7 +47,7 @@
         </div>
         @if ($applicationType !== \App\Enums\ApplicationType::Assistant)
             <div class="row mb-3">
-                <label for="displayName" class="col-sm-2 col-form-label fw-bold">Display Name</label>
+                <label for="displayName" class="col-sm-2 col-form-label fw-bold">Dis&shy;play Name</label>
                 <div class="col-sm-10">
                     <input type="text" name="displayName"
                         value="{{ old('_token') ? old('displayName') : $application?->display_name }}"
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="website" class="col-sm-2 col-form-label fw-bold">Website / Portfolio</label>
+                <label for="website" class="col-sm-2 col-form-label fw-bold">Web&shy;site<wbr>/<wbr>Port&shy;folio</label>
                 <div class="col-sm-10">
                     <input type="text" name="website" placeholder="https://yourprofile.example.com/itsme"
                         value="{{ old('_token') ? old('website') : $application?->website }}"
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="merchandise" class="col-sm-2 col-form-label fw-bold">Merchandise / Service</label>
+                <label for="merchandise" class="col-sm-2 col-form-label fw-bold">Mer&shy;chan&shy;dise<wbr>/<wbr>Ser&shy;vice</label>
                 <div class="col-sm-10">
                     <input type="text" name="merchandise"
                         value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
@@ -102,7 +102,7 @@
             </div>
 
             <fieldset class="row mb-4" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
-                <legend class="col-form-label fw-bold col-sm-2 pt-0">Location</legend>
+                <legend class="col-form-label fw-bold col-sm-2 pt-0">Loca&shy;tion</legend>
                 <div class="col-sm-10">
                     <div class="form-check">
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
@@ -176,7 +176,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="wanted" class="col-sm-2 col-form-label fw-bold">Preferred&nbsp;Neighbors</label>
+                <label for="wanted" class="col-sm-2 col-form-label fw-bold">Pre&shy;ferred Neigh&shy;bors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted" class="form-control @error('wanted') is-invalid @enderror"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="wanted">{{ old('_token') ? old('wanted') : $application?->wanted_neighbors }}</textarea>
@@ -191,7 +191,7 @@
         @endif
 
         <div class="row mb-3">
-            <label for="comment" class="col-sm-2 col-form-label fw-bold">Comments</label>
+            <label for="comment" class="col-sm-2 col-form-label fw-bold">Com&shy;ments</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
                     @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast()) id="comment">{{ old('_token') ? old('comment') : $application?->comment }}</textarea>

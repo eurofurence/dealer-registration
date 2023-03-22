@@ -7,7 +7,7 @@
                 the registration period has ended.</p>
         </div>
         <div class="row mb-3">
-            <label class="col-sm-2 col-form-label fw-bold">Attendance</label>
+            <label class="col-sm-2 col-form-label fw-bold">Attend&shy;ance</label>
         </div>
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
@@ -56,7 +56,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label class="col-sm-2 col-form-label fw-bold">Categories</label>
+            <label class="col-sm-2 col-form-label fw-bold">Catego&shy;ries</label>
         </div>
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
@@ -121,7 +121,7 @@
             </div>
         </div>
         <div class="row mb-1 mt-5">
-            <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold">Thumbnail</label>
+            <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold">Thumb&shy;nail</label>
             <div class="col-sm-10">
                 <input id="image_thumbnail" type="file"
                     class="form-control @error('image_thumbnail') is-invalid @enderror" name="image_thumbnail"
@@ -163,7 +163,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="short_desc" class="col-sm-2 col-form-label fw-bold">Short&nbsp;Description</label>
+            <label for="short_desc" class="col-sm-2 col-form-label fw-bold">Short De&shy;scrip&shy;tion</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="short_desc"
                     class="form-control @error('short_desc') is-invalid @enderror" id="short_desc">{{ old('_token') ? old('short_desc') : $profile?->short_desc }}</textarea>
@@ -219,7 +219,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="artist_desc" class="col-sm-2 col-form-label fw-bold">About&nbsp;the&nbsp;Artist</label>
+            <label for="artist_desc" class="col-sm-2 col-form-label fw-bold">About the Artist</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="artist_desc"
                     class="form-control @error('artist_desc') is-invalid @enderror" id="artist_desc">{{ old('_token') ? old('artist_desc') : $profile?->artist_desc }}</textarea>
@@ -232,7 +232,7 @@
             </div>
         </div>
         <div class="row mb-1 mt-5">
-            <label for="image_art" class="col-sm-2 col-form-label fw-bold">Art Preview</label>
+            <label for="image_art" class="col-sm-2 col-form-label fw-bold">Art Pre&shy;view</label>
             <div class="col-sm-10">
                 <input id="image_art" type="file" class="form-control @error('image_art') is-invalid @enderror"
                     name="image_art" accept="image/jpeg, image/png"
@@ -272,7 +272,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="art_preview_caption" class="col-sm-2 col-form-label fw-bold">Art Preview Caption</label>
+            <label for="art_preview_caption" class="col-sm-2 col-form-label fw-bold">Art Pre&shy;view Cap&shy;tion</label>
             <div class="col-sm-10">
                 <textarea rows="1" type="text" name="art_preview_caption"
                     class="form-control @error('art_preview_caption') is-invalid @enderror" id="art_preview_caption">{{ old('_token') ? old('art_preview_caption') : $profile?->art_preview_caption }}</textarea>
@@ -286,7 +286,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="art_desc" class="col-sm-2 col-form-label fw-bold">About&nbsp;the&nbsp;Art</label>
+            <label for="art_desc" class="col-sm-2 col-form-label fw-bold">About the Art</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="art_desc" class="form-control @error('art_desc') is-invalid @enderror"
                     id="art_desc">{{ old('_token') ? old('art_desc') : $profile?->art_desc }}</textarea>
@@ -300,7 +300,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="profile_website" class="col-sm-2 col-form-label fw-bold">Website</label>
+            <label for="profile_website" class="col-sm-2 col-form-label fw-bold">Web&shy;site</label>
             <div class="col-sm-10">
                 <input type="text" name="profile_website" placeholder="https://yourprofile.example.com/itsme"
                     class="form-control @error('profile_website') is-invalid @enderror" id="profile_website"
@@ -314,7 +314,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="twitter" class="col-sm-2 col-form-label fw-bold">Twitter</label>
+            <label for="twitter" class="col-sm-2 col-form-label fw-bold">Twit&shy;ter</label>
             <div class="col-sm-10">
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -333,7 +333,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="telegram" class="col-sm-2 col-form-label fw-bold">Telegram</label>
+            <label for="telegram" class="col-sm-2 col-form-label fw-bold">Tele&shy;gram</label>
             <div class="col-sm-10">
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -352,7 +352,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="discord" class="col-sm-2 col-form-label fw-bold">Discord</label>
+            <label for="discord" class="col-sm-2 col-form-label fw-bold">Dis&shy;cord</label>
             <div class="col-sm-10">
                 <input type="text" name="discord" placeholder="YourDiscordHandle#0000"
                     class="form-control @error('discord') is-invalid @enderror" id="discord"
@@ -366,7 +366,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="tweet" class="col-sm-2 col-form-label fw-bold">Advertisement text</label>
+            <label for="tweet" class="col-sm-2 col-form-label fw-bold">Ad&shy;ver&shy;tise&shy;ment text</label>
             <div class="col-sm-10">
                 <textarea rows="5" type="text" name="tweet" class="form-control @error('tweet') is-invalid @enderror"
                     id="tweet">{{ old('_token') ? old('tweet') : $profile?->tweet }}</textarea>
