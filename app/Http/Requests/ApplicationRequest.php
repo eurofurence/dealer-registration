@@ -47,13 +47,13 @@ class ApplicationRequest extends FormRequest
             "merchandise" => [
                 "exclude_if:applicationType,assistant",
                 "required_unless:applicationType,assistant",
-                "min:3",                
+                "min:3",
                 "max:4096",
             ],
             "denType" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
-            ],            
+            ],
             "space" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
@@ -72,11 +72,11 @@ class ApplicationRequest extends FormRequest
                 "exclude_unless:applicationType,dealer",
                 "nullable",
                 "max:4096",
-            ],            
-            "comment" => [                
+            ],
+            "comment" => [
                 "nullable",
                 "max:4096",
-            ], 
+            ],
             "tos" => [
                 new RequiredIf($this->routeIs('applications.store')),
             ],
@@ -84,7 +84,7 @@ class ApplicationRequest extends FormRequest
 
         $profileValidations = ProfileController::getValidations();
 
-        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) { 
+        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
             return array_merge($appValidations, $profileValidations);
         } else {
             return $profileValidations;
@@ -92,10 +92,10 @@ class ApplicationRequest extends FormRequest
     }
 
     public function messages()
-    {   
+    {
         return [
             'denType.required_if' => 'Please select a location.',
-            'merchandise.required_unless' => 'Please fill in the merchandise you plan to offer.',        
+            'merchandise.required_unless' => 'Please fill in the merchandise you plan to offer.',
         ];
     }
 
@@ -169,11 +169,13 @@ class ApplicationRequest extends FormRequest
                 "canceled_at" => null,
                 "table_number" => null,
                 "parent" => $parentId,
-                ]);
-            ProfileController::createOrUpdate($this, $result->id);
+            ]);
+            if ($applicationType !== ApplicationType::Assistant) {
+                ProfileController::createOrUpdate($this, $result->id);
+            }
         } else {
             $application = Application::findByUserId(\Auth::id());
-            if ($application) {
+            if ($application && $applicationType !== ApplicationType::Assistant) {
                 ProfileController::createOrUpdate($this, $application->id);
             }
         }
