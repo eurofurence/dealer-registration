@@ -117,7 +117,8 @@ class ApplicationRequest extends FormRequest
     {
         $application = \Auth::user()->application;
         if ($this->routeIs('applications.store')) {
-            return is_null($application) || $application->getStatus() === ApplicationStatus::Canceled;
+            $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
+            return is_null($application) || $application->getStatus() === ApplicationStatus::Canceled || $newApplicationType !== $application->type;
         }
         return !is_null($application) && $application->getStatus() !== ApplicationStatus::Canceled;
     }
