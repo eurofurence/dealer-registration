@@ -15,6 +15,7 @@ class InviteesController extends Controller
         $application = $user->application;
 
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
+        abort_if(!$application->isActive(), 403, 'Canceled registrations cannot manage this.');
         /**
          * Create invite codes if not existing yet
          */
