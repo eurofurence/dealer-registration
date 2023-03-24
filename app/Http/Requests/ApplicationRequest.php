@@ -124,14 +124,13 @@ class ApplicationRequest extends FormRequest
 
     public function act()
     {
-        // Determine Application Type
-        $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
-
         $application = \Auth::user()->application;
+
+        $newApplicationType = ($this->get('code')) ? Application::determineApplicationTypeByCode($this->get('code')) : $application->type;
 
         // If an the application is not for a dealer
         if ($newApplicationType !== ApplicationType::Dealer) {
-            $newParent = Application::findByCode($this->get('code'))->id;
+            $newParent = Application::findByCode($this->get('code')) ? Application::findByCode($this->get('code'))->id : $application->parent;
             $parentId = $newParent ?? $application->parent;
             return $this->update($newApplicationType, $parentId);
         }

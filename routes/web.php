@@ -46,6 +46,10 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
     Route::get('table/verify', \App\Http\Controllers\TableVerifyController::class)->name('table.verify');
     Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');
 
+    Route::get('applications/invitees/regenerate-keys', function () {
+        return \Illuminate\Support\Facades\Redirect::route('dashboard');
+    });
+
     Route::get('applications', function () {
         return \Illuminate\Support\Facades\Redirect::route('dashboard');
     });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Applications;
 
 use App\Enums\ApplicationType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JoinSubmitRequest;
 use App\Models\Application;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,6 +25,12 @@ class InvitationController extends Controller
                 return $q->where('invite_code_assistants', $request->get('code'))
                     ->orWhere('invite_code_shares', $request->get('code'));
             })->get();
+
+        if (!$request->get('code')) {
+            throw ValidationException::withMessages([
+                "code" => "Please enter a code.",
+            ]);
+        }
 
         if ($applications->count() === 0) {
             throw ValidationException::withMessages([
