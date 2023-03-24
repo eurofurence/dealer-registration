@@ -41,11 +41,15 @@ class InviteesController extends Controller
 
     public function destroy(InviteeRemovalRequest $request)
     {
-        Application::findOrFail($request->get('invitee_id'))->update([
+        $invitee = Application::findOrFail($request->get('invitee_id'));
+
+        $invitee->update([
             "type" => ApplicationType::Dealer,
             "canceled_at" => now(),
             "parent" => null
         ]);
+        //TODO: Notify effected assistant/share about cancellation of parent Dealership
+        //$child->user()->notify(new CanceledByDealershipNotification());
         return back();
     }
 

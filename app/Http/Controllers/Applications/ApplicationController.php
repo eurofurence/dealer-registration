@@ -9,6 +9,7 @@ use App\Models\Application;
 use App\Models\TableType;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationController extends Controller
 {
@@ -60,11 +61,23 @@ class ApplicationController extends Controller
 
     public function destroy()
     {
-        \Auth::user()->application->update([
+        $application = \Auth::user()->application;
+        foreach($application->children()->get() as $child) {
+            $child->update([
+                'canceled_at' => now(),
+                'parent' => null,
+                'type' => 'dealer'
+            ]);
+            //TODO: Notify effected assistants & shares about cancellation of parent Dealership
+            //$child->user()->notify(new CanceledByDealershipNotification());
+        }
+        $application->update([
             'canceled_at' => now(),
             'parent' => null,
             'type' => 'dealer'
         ]);
+        //TODO: Notify user about cancellation of their own application
+        //\Auth::user()->notify(new CanceledBySelfNotification());
         return \Redirect::route('dashboard');
     }
 
