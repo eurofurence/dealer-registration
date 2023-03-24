@@ -23,9 +23,6 @@ class ApplicationRequest extends FormRequest
          * User joins another Application as share/assistant (code required)
          * User updates another Application as share (code not required aslong user does not change role)
          */
-        $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
-        $parentApplication = Application::findByCode($this->get('code'));
-        $application = \Auth::user()->application;
 
         $appValidations = [
             "applicationType" => [
@@ -127,12 +124,11 @@ class ApplicationRequest extends FormRequest
     {
         $application = \Auth::user()->application;
 
-        $newApplicationType = ($this->get('code')) ? Application::determineApplicationTypeByCode($this->get('code')) : $application->type;
+        $newApplicationType = ($this->get('code')) ? Application::determineApplicationTypeByCode($this->get('code')) : $application->type ?? ApplicationType::Dealer;
 
         // If an the application is not for a dealer
-        if ($newApplicationType !== ApplicationType::Dealer) {
-            $newParent = Application::findByCode($this->get('code')) ? Application::findByCode($this->get('code'))->id : $application->parent;
-            $parentId = $newParent ?? $application->parent;
+        if ($newApplicationType !== ApplicationType::Dealer || ($application?->type !== ApplicationType::Dealer && $application?->canceled_at !== null)) {
+            $parentId = Application::findByCode($this->get('code'))?->id ?? $application->parent;
             return $this->update($newApplicationType, $parentId);
         }
 
