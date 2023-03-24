@@ -37,7 +37,7 @@ class AcceptedNotification extends Notification implements ShouldQueue
             ->line('Upon completion of payment, we will assign a specific table to your Dealership, based on your request and space availability. Although placements are not final until the start of the convention, you will be sent an email containing the preliminary Dealership table assignment for information.')
             ->line(new HtmlString('If you have any questions or concerns regarding the payment or subsequent processes, please contact Dealers\' Den management via <a href="mailto:'. config('ef.dealers_email') .'">' . config('ef.dealers_email') . '</a>.'))
             ->line('Thank you again for your interest and participation in Eurofurence Dealers\' Den! We are looking forward to seeing you and your beautiful artwork and items on display at the convention, and we have no doubt that it will be a huge hit among our attendees.')
-            ->salutation(new HtmlString('Warmest regards, <br />Pattarchus'));
+            ->salutation(new HtmlString('Best regards,<br />the Eurofurence Dealers\' Den Team'));
     }
 
     public function toArray(object $notifiable): array
