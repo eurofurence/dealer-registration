@@ -121,7 +121,7 @@ class Application extends Model
 
     public function getFreeShares(): int
     {
-        return !is_null($this->requestedTable) ?  $this->requestedTable->seats - 1 - $this->getActiveShares() - $this->getActiveAssistants() : 0;
+        return !is_null($this->requestedTable) ?  $this->getAvailableShares() - $this->getActiveShares() : 0;
     }
 
     public function getFreeAssistants(): int
