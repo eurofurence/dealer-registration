@@ -107,7 +107,11 @@ class Application extends Model
 
     public function getAvailableShares(): int
     {
-        return !is_null($this->requestedTable) ? max($this->requestedTable->seats - 1 - $this->getActiveAssistants(), 0) : 0;        
+        if (is_null($this->requestedTable)) {
+            return 0;
+        }
+        $countedAssistants = $this->getActiveShares() < $this->requestedTable->seats - 1 ? $this->getActiveAssistants() : max($this->getActiveAssistants() - 1, 0);
+        return !is_null($this->requestedTable) ? max($this->requestedTable->seats - 1 - $countedAssistants, 0) : 0;
     }
 
     public function getAvailableAssistants(): int
