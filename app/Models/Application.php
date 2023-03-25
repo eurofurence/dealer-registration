@@ -15,24 +15,24 @@ class Application extends Model
     protected $guarded = [];
 
     protected $appends = [
-      "status"
+        "status"
     ];
 
     protected $with = [
-      'requestedTable',
-      'assignedTable',
+        'requestedTable',
+        'assignedTable',
     ];
 
     protected $casts = [
-      "type" => ApplicationType::class,
-      "is_power" => "boolean",
-      "is_afterdark" => "boolean",
-      "is_wallseat" => "boolean",
-      "canceled_at" => "datetime",
-      "waiting_at" => "datetime",
-      "checked_in_at" => "datetime",
-      "offer_sent_at" => "datetime",
-      "offer_accepted_at" => "datetime",
+        "type" => ApplicationType::class,
+        "is_power" => "boolean",
+        "is_afterdark" => "boolean",
+        "is_wallseat" => "boolean",
+        "canceled_at" => "datetime",
+        "waiting_at" => "datetime",
+        "checked_in_at" => "datetime",
+        "offer_sent_at" => "datetime",
+        "offer_accepted_at" => "datetime",
     ];
 
     protected $attributes = [
@@ -46,39 +46,39 @@ class Application extends Model
 
     public function requestedTable()
     {
-        return $this->belongsTo(TableType::class,'table_type_requested');
+        return $this->belongsTo(TableType::class, 'table_type_requested');
     }
 
     public function assignedTable()
     {
-        return $this->belongsTo(TableType::class,'table_type_assigned');
+        return $this->belongsTo(TableType::class, 'table_type_assigned');
     }
 
     public function parent()
     {
-        return $this->belongsTo(__CLASS__,'parent');
+        return $this->belongsTo(__CLASS__, 'parent');
     }
 
     public function children()
     {
-        return $this->hasMany(__CLASS__,'parent');
+        return $this->hasMany(__CLASS__, 'parent');
     }
 
     public function getStatus()
     {
-        if(!is_null($this->canceled_at)) {
+        if (!is_null($this->canceled_at)) {
             return ApplicationStatus::Canceled;
         }
-        if(!is_null($this->checked_in_at)) {
+        if (!is_null($this->checked_in_at)) {
             return ApplicationStatus::CheckedIn;
         }
-        if(!is_null($this->waiting_at)) {
+        if (!is_null($this->waiting_at)) {
             return ApplicationStatus::Waiting;
         }
-        if(!is_null($this->offer_accepted_at)) {
+        if (!is_null($this->offer_accepted_at)) {
             return ApplicationStatus::TableAccepted;
         }
-        if(!is_null($this->offer_sent_at)) {
+        if (!is_null($this->offer_sent_at)) {
             return ApplicationStatus::TableOffered;
         }
         return ApplicationStatus::Open;
@@ -97,12 +97,12 @@ class Application extends Model
 
     public function getActiveShares(): int
     {
-        return $this->children()->whereNull('canceled_at')->where('type',ApplicationType::Share)->count();
+        return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Share)->count();
     }
 
     public function getActiveAssistants(): int
     {
-        return $this->children()->whereNull('canceled_at')->where('type',ApplicationType::Assistant)->count();
+        return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
     }
 
     public function getAvailableShares(): int
@@ -126,7 +126,7 @@ class Application extends Model
 
     public function getFreeAssistants(): int
     {
-        return $this->getAvailableAssistants() - $this->children()->whereNotNull('canceled_at')->where('type',ApplicationType::Assistant)->count();
+        return $this->getAvailableAssistants() - $this->children()->whereNotNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
     }
 
     public static function determineApplicationTypeByCode(string|null $code): ApplicationType
@@ -134,7 +134,7 @@ class Application extends Model
         $applicationType = ApplicationType::Dealer;
         if (!is_null($code)) {
             $application = self::findByCode($code);
-            if($application === null) {
+            if ($application === null) {
                 return $applicationType;
             }
 
@@ -155,10 +155,10 @@ class Application extends Model
 
     public function setStatusAttribute(ApplicationStatus|string $status)
     {
-        if(is_string($status)) {
+        if (is_string($status)) {
             $status = ApplicationStatus::tryFrom($status);
         }
-        if($status === ApplicationStatus::Canceled) {
+        if ($status === ApplicationStatus::Canceled) {
             $this->update([
                 'offer_accepted_at' => null,
                 'offer_sent_at' => null,
@@ -170,7 +170,7 @@ class Application extends Model
             ]);
         }
 
-        if($status === ApplicationStatus::Open) {
+        if ($status === ApplicationStatus::Open) {
             $this->update([
                 'offer_accepted_at' => null,
                 'offer_sent_at' => null,
@@ -180,7 +180,7 @@ class Application extends Model
             ]);
         }
 
-        if($status === ApplicationStatus::Waiting) {
+        if ($status === ApplicationStatus::Waiting) {
             $this->update([
                 'offer_accepted_at' => null,
                 'offer_sent_at' => null,
@@ -189,7 +189,7 @@ class Application extends Model
             ]);
         }
 
-        if($status === ApplicationStatus::TableOffered) {
+        if ($status === ApplicationStatus::TableOffered) {
             $this->update([
                 'offer_accepted_at' => null,
                 'offer_sent_at' => now(),
@@ -198,7 +198,7 @@ class Application extends Model
             ]);
         }
 
-        if($status === ApplicationStatus::TableAccepted) {
+        if ($status === ApplicationStatus::TableAccepted) {
             $this->update([
                 'offer_accepted_at' => now(),
                 'waiting_at' => null,
@@ -206,7 +206,7 @@ class Application extends Model
             ]);
         }
 
-        if($status === ApplicationStatus::CheckedIn) {
+        if ($status === ApplicationStatus::CheckedIn) {
             $this->update([
                 'checked_in_at' => now(),
                 'canceled_at' => null,
