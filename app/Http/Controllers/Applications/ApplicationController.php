@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\TableType;
+use App\Notifications\CanceledByDealershipNotification;
+use App\Notifications\CanceledBySelfNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -68,16 +70,14 @@ class ApplicationController extends Controller
                 'parent' => null,
                 'type' => 'dealer'
             ]);
-            //TODO: Notify effected assistants & shares about cancellation of parent Dealership
-            //$child->user()->notify(new CanceledByDealershipNotification());
+            $child->user()->first()->notify(new CanceledByDealershipNotification());
         }
         $application->update([
             'canceled_at' => now(),
             'parent' => null,
             'type' => 'dealer'
         ]);
-        //TODO: Notify user about cancellation of their own application
-        //\Auth::user()->notify(new CanceledBySelfNotification());
+        \Auth::user()->notify(new CanceledBySelfNotification());
         return \Redirect::route('dashboard');
     }
 

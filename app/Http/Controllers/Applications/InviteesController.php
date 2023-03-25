@@ -6,6 +6,7 @@ use App\Enums\ApplicationType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InviteeRemovalRequest;
 use App\Models\Application;
+use App\Notifications\CanceledByDealershipNotification;
 
 class InviteesController extends Controller
 {
@@ -48,8 +49,7 @@ class InviteesController extends Controller
             "canceled_at" => now(),
             "parent" => null
         ]);
-        //TODO: Notify effected assistant/share about cancellation of parent Dealership
-        //$child->user()->notify(new CanceledByDealershipNotification());
+        $invitee->user()->first()->notify(new CanceledByDealershipNotification());
         return back();
     }
 
