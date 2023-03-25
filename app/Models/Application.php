@@ -126,7 +126,7 @@ class Application extends Model
 
     public function getFreeAssistants(): int
     {
-        return $this->getAvailableAssistants() - $this->children()->whereNotNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
+        return $this->getAvailableAssistants() - $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
     }
 
     public static function determineApplicationTypeByCode(string|null $code): ApplicationType
