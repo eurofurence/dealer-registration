@@ -37,10 +37,7 @@ class OidcClientController extends Controller
          * Only Identity Client - Redirects to error page if scope is invalid
          */
         if (isset($data['error'])) {
-            return Redirect::route('auth.error', [
-                'error' => $data['error'],
-                'error_description' => $data['error_description'],
-            ]);
+            return Redirect::route('auth.login');
         }
 
         /**
