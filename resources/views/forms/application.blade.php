@@ -82,8 +82,8 @@
                 <div class="col-sm-10">
                     <input type="text" name="merchandise"
                         value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
-                        class="form-control @error('merchandise') is-invalid @enderror" required id="merchandise"
-                        @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
+                        class="form-control @error('merchandise') is-invalid @enderror" aria-required="true"
+                        id="merchandise" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('merchandise')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -107,8 +107,8 @@
                 <div class="col-sm-10">
                     <div class="form-check">
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
-                            name="denType" id="denTypeRegular" required value="denTypeRegular" @checked(
-                                old('_token') ?  old('denType') === 'denTypeRegular' : $application?->is_afterdark === false)>
+                            name="denType" id="denTypeRegular" aria-required="true" value="denTypeRegular"
+                            @checked(old('_token') ? old('denType') === 'denTypeRegular' : $application?->is_afterdark === false)>
                         <label class="form-check-label" for="denTypeRegular">
                             Dealers’ Den (Rated PG-13 with natural nudity)
                         </label>
@@ -208,8 +208,10 @@
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
                     <input class="form-check-input @error('tos') is-invalid @enderror" name="tos"
-                        @checked(old('tos') ?? Route::is('applications.edit')) @disabled(Route::is('applications.edit')) type="checkbox" required id="tos">
-                    <label class="form-check-label required fw-bold" for="tos">I confirm that I have read and agree to abide by the Dealers' Den Terms of Service.</label>
+                        @checked(old('tos') ?? Route::is('applications.edit')) @disabled(Route::is('applications.edit')) type="checkbox"
+                        aria-required="true" id="tos">
+                    <label class="form-check-label required fw-bold" for="tos">I confirm that I have read and
+                        agree to abide by the Dealers' Den Terms of Service.</label>
                     @error('tos')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
