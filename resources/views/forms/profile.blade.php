@@ -176,16 +176,15 @@
             </div>
         </div>
         <div class="row mb-1 mt-5">
-            <label for="image_artist" class="col-sm-2 col-form-label fw-bold">Artist Image</label>
+            <label for="image_artist" class="col-sm-2 col-form-label fw-bold">Profile Header</label>
             <div class="col-sm-10">
 
                 <input id="image_artist" type="file"
                     class="form-control @error('image_artist') is-invalid @enderror" name="image_artist"
                     accept="image/jpeg, image/png"
                     onchange="document.getElementById('image_artist_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_artist_preview_large').src = window.URL.createObjectURL(this.files[0]);">
-                <div id="image_artistHelp" class="form-text">You can upload a preview image of your art or
-                    merchandise, which will be shown on a separate page in the EF app. The size of this image should
-                    be 400&times;400 pixels (max file size is 1 MB).
+                <div id="image_artistHelp" class="form-text">This image is shown on your dedicated page in the EF app.
+                    Aim for a size of 400×450 pixels (max file size is 1 MB).
                 </div>
                 @error('image_artist')
                     <span class="invalid-feedback" role="alert">
@@ -232,13 +231,14 @@
             </div>
         </div>
         <div class="row mb-1 mt-5">
-            <label for="image_art" class="col-sm-2 col-form-label fw-bold">Art Pre&shy;view</label>
+            <label for="image_art" class="col-sm-2 col-form-label fw-bold">Show&shy;case Image</label>
             <div class="col-sm-10">
                 <input id="image_art" type="file" class="form-control @error('image_art') is-invalid @enderror"
                     name="image_art" accept="image/jpeg, image/png"
                     onchange="document.getElementById('image_art_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_art_preview_large').src = window.URL.createObjectURL(this.files[0]);">
-                <div id="image_artHelp" class="form-text">This image is shown on your dedicated page in the EF
-                    app. Aim for a size of 400&times;450 pixels (max file size is 1 MB).
+                <div id="image_artHelp" class="form-text">You can upload a preview image of your art or merchandise,
+                    which will be shown on a separate page in the EF app. The size of this image should be 400×400
+                    pixels (max file size is 1 MB).
                 </div>
                 @error('image_art')
                     <span class="invalid-feedback" role="alert">
@@ -272,7 +272,9 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="art_preview_caption" class="col-sm-2 col-form-label fw-bold">Art Pre&shy;view Cap&shy;tion</label>
+            <label for="art_preview_caption"
+                class="col-sm-2 col-form-label fw-bold">Show&shy;case
+                Cap&shy;tion</label>
             <div class="col-sm-10">
                 <textarea rows="1" type="text" name="art_preview_caption"
                     class="form-control @error('art_preview_caption') is-invalid @enderror" id="art_preview_caption">{{ old('_token') ? old('art_preview_caption') : $profile?->art_preview_caption }}</textarea>
