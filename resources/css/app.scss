@@ -1,2 +1,7 @@
 $primary: #00504b;
 @import "bootstrap/scss/bootstrap.scss";
+
+label.required:after, legend.required:after, span.required:after {
+    content: "*";
+    color: red;
+}

@@ -3,6 +3,7 @@
         <div class="card-title">
             <h4>General Info</h4>
             <p>This information will be used to contact you, display your information, or send you notifications as needed.</p>
+            <div class="form-text">Fields marked with an asterisk (<span class="required"></span>) are mandatory.</div>
         </div>
         <!-- Hidden --->
         <input type="hidden" name="code" value="{{ $code }}">
@@ -77,11 +78,11 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="merchandise" class="col-sm-2 col-form-label fw-bold">Mer&shy;chan&shy;dise<wbr>/<wbr>Ser&shy;vice</label>
+                <label for="merchandise" class="col-sm-2 col-form-label required fw-bold">Mer&shy;chan&shy;dise<wbr>/<wbr>Ser&shy;vice</label>
                 <div class="col-sm-10">
                     <input type="text" name="merchandise"
                         value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
-                        class="form-control @error('merchandise') is-invalid @enderror" id="merchandise"
+                        class="form-control @error('merchandise') is-invalid @enderror" required id="merchandise"
                         @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
                     @error('merchandise')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -102,11 +103,11 @@
             </div>
 
             <fieldset class="row mb-4" @disabled(Carbon\Carbon::parse(config('ef.reg_end_date'))->isPast())>
-                <legend class="col-form-label fw-bold col-sm-2 pt-0">Loca&shy;tion</legend>
+                <legend class="col-form-label fw-bold col-sm-2 pt-0 required">Loca&shy;tion</legend>
                 <div class="col-sm-10">
                     <div class="form-check">
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
-                            name="denType" id="denTypeRegular" value="denTypeRegular" @checked(
+                            name="denType" id="denTypeRegular" required value="denTypeRegular" @checked(
                                 old('_token') ?  old('denType') === 'denTypeRegular' : $application?->is_afterdark === false)>
                         <label class="form-check-label" for="denTypeRegular">
                             Dealers’ Den (Rated PG-13 with natural nudity)
@@ -207,10 +208,8 @@
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
                     <input class="form-check-input @error('tos') is-invalid @enderror" name="tos"
-                        @checked(old('tos') ?? Route::is('applications.edit')) @disabled(Route::is('applications.edit')) type="checkbox" id="tos">
-                    <label class="form-check-label" for="tos">
-                        <b>I confirm that I have read and agree to abide by the Dealers' Den Terms of Service.</b>
-                    </label>
+                        @checked(old('tos') ?? Route::is('applications.edit')) @disabled(Route::is('applications.edit')) type="checkbox" required id="tos">
+                    <label class="form-check-label required fw-bold" for="tos">I confirm that I have read and agree to abide by the Dealers' Den Terms of Service.</label>
                     @error('tos')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -220,6 +219,10 @@
                             link</a> to open the Dealers' Den Terms of Service in a new window or a new tab.
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-10 offset-sm-2 form-text">
             </div>
         </div>
     </div>
