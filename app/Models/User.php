@@ -53,7 +53,8 @@ class User extends Authenticatable implements FilamentUser
     {
         return in_array($this->identity_id, [
             "QL89R6583KNDG3WJ",
-            "M728WGE7ZJKJVO63"
+            "M728WGE7ZJKJVO63",
+            "QL89R6580XKNDG3W"
         ]);
     }
 }
