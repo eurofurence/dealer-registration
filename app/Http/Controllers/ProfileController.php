@@ -6,6 +6,7 @@ use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use ZipArchive;
 
 class ProfileController extends Controller
 {
@@ -171,5 +172,24 @@ class ProfileController extends Controller
                 'required_without_all:attends_thu,attends_fri',
             ]
         ];
+    }
+
+    public function exportImages()
+    {
+        abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
+
+        $zip = new ZipArchive;
+
+        if (true === ($zip->open('storage/profileImages.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
+            foreach (Storage::allFiles('public') as $file) {
+                $name = basename($file);
+                if ($name !== '.gitignore') {
+                    $zip->addFile(public_path('storage/' . $name), $name);
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download(public_path('storage/profileImages.zip'), 'profileImages.zip');
     }
 }

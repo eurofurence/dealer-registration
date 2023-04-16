@@ -19,8 +19,8 @@ class ApplicationController extends Controller
     {
         $application = \Auth::user()->application ?? new Application();
         $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
-        return view('application.create',[
-            'table_types' => TableType::all(['id','name','price']),
+        return view('application.create', [
+            'table_types' => TableType::all(['id', 'name', 'price']),
             'application' => $application,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
@@ -38,10 +38,10 @@ class ApplicationController extends Controller
     public function edit(Request $request)
     {
         $application = \Auth::user()->application;
-        abort_if(is_null($application),403,'No Registration');
+        abort_if(is_null($application), 403, 'No Registration');
         $applicationType = ($request->get('code')) ? Application::determineApplicationTypeByCode($request->get('code')) : $application->type;
-        return view('application.edit',[
-            'table_types' => TableType::all(['id','name','price']),
+        return view('application.edit', [
+            'table_types' => TableType::all(['id', 'name', 'price']),
             "application" => $application,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
@@ -56,7 +56,7 @@ class ApplicationController extends Controller
 
     public function delete()
     {
-        return view('application.delete',[
+        return view('application.delete', [
             "application" => \Auth::user()->application,
         ]);
     }
@@ -64,7 +64,7 @@ class ApplicationController extends Controller
     public function destroy()
     {
         $application = \Auth::user()->application;
-        foreach($application->children()->get() as $child) {
+        foreach ($application->children()->get() as $child) {
             $child->update([
                 'canceled_at' => now(),
                 'parent' => null,
@@ -79,6 +79,36 @@ class ApplicationController extends Controller
         ]);
         \Auth::user()->notify(new CanceledBySelfNotification());
         return \Redirect::route('dashboard');
+    }
+
+    public function exportCsv()
+    {
+        abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
+
+        $headers = [
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=applications.csv',
+            'Expires' => '0',
+            'Pragma' => 'public'
+        ];
+
+        $applications = Application::getAllApplicationsForExport();
+
+        if (!empty($applications)) {
+            # add table headers
+            array_unshift($applications, array_keys($applications[0]));
+        }
+
+        $callback = function () use ($applications) {
+            $handle = fopen('php://output', 'w');
+            foreach ($applications as $row) {
+                fputcsv($handle, $row);
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers)->sendContent();
     }
 
     /**

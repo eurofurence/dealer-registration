@@ -227,4 +227,45 @@ class Application extends Model
     {
         return self::where('user_id', $user_id)->first();
     }
+
+    public static function getAllApplicationsForExport()
+    {
+        $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
+            ->leftJoin('users', 'user_id', '=', 'users.id')
+            ->leftJoin('table_types AS t1', 'table_type_requested', '=', 't1.id')
+            ->leftJoin('table_types AS t2', 'table_type_assigned', '=', 't2.id')
+            ->select(
+                'user_id',
+                'users.name AS user_name',
+                'applications.id',
+                'type',
+                'parent',
+                'display_name',
+                'applications.website',
+                'table_number',
+                'merchandise',
+                'invite_code_shares',
+                'invite_code_assistants',
+                'wanted_neighbors',
+                'comment',
+                'is_afterdark',
+                'is_power',
+                'is_wallseat',
+                'waiting_at',
+                'offer_sent_at',
+                'offer_accepted_at',
+                'checked_in_at',
+                'canceled_at',
+                'applications.created_at',
+                'applications.updated_at',
+                'profiles.*',
+                't1.name AS table_type_requested',
+                't2.name AS table_type_assigned'
+            )
+            ->get();
+
+        return json_decode(json_encode($applications), true);
+    }
+
 }
+

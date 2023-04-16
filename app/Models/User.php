@@ -52,9 +52,10 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessFilament(): bool
     {
         return in_array($this->identity_id, [
-            "QL89R6583KNDG3WJ",
-            "M728WGE7ZJKJVO63",
-            "QL89R6580XKNDG3W"
+            "QL89R6583KNDG3WJ", // ???
+            "M728WGE7ZJKJVO63", // ???
+            "QL89R6580XKNDG3W", // Pattarchus(?)
+            "1243MK1XZWKXWJ68"  // Jul
         ]);
     }
 }
