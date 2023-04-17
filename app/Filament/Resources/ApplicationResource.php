@@ -44,7 +44,7 @@ class ApplicationResource extends Resource
                     Forms\Components\Grid::make()->columns()->schema([
                         Forms\Components\Textarea::make('wanted_neighbors')
                             ->label('Wanted')
-                            ->maxLength(65535),                       
+                            ->maxLength(65535),
                     ]),
                     Forms\Components\Textarea::make('comment')
                         ->columnSpanFull()
@@ -67,19 +67,23 @@ class ApplicationResource extends Resource
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
-                        Forms\Components\Select::make('type')->options(ApplicationType::class)->required(),
+                        Forms\Components\Select::make('type')->options(ApplicationType::class)->reactive()->required(),
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
                             ->required(),
-                        Forms\Components\Select::make('parent')->searchable()->relationship('parent', 'id')
+                        Forms\Components\Select::make('parent')
+                            ->searchable()
+                            ->relationship('parent', 'id')
                             ->getOptionLabelFromRecordUsing(function (?Application $record) {
                                 return $record->user->name;
                             })
-                            ->hidden(function (?Application $record) {
-                                return $record->type === ApplicationType::Dealer;
-                            })
-                            ->required(),
-                        Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')->required(),
-                        Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')->nullable(),
+                            ->hidden(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value)
+                            ->required(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value),
+                        Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')
+                            ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->required(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value),
+                        Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
+                            ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->nullable(),
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
@@ -114,7 +118,7 @@ class ApplicationResource extends Resource
                 Tables\Columns\TextColumn::make('display_name')->searchable(),
                 Tables\Columns\TextInputColumn::make('table_number')->sortable()->searchable(),
                 Tables\Columns\IconColumn::make('wanted_neighbors')->label('N Wanted')->default(false)->boolean(),
-                Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),                
+                Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),
                 Tables\Columns\IconColumn::make('is_afterdark')
                     ->label('AD')
                     ->sortable()
