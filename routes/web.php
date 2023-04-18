@@ -42,9 +42,11 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
     Route::delete('applications/invitees',[\App\Http\Controllers\Applications\InviteesController::class,'destroy'])->name('applications.invitees.destroy');
     Route::post('applications/invitees/regenerate-keys',[\App\Http\Controllers\Applications\InviteesController::class,'regenerateKeys'])->name('applications.invitees.regenerate-keys');
 
+    Route::get('table/confirm',[\App\Http\Controllers\TableVerifyController::class,'view'])->name('table.confirm');
+    Route::put('table/confirm',[\App\Http\Controllers\TableVerifyController::class,'update'])->name('table.update');
+
     Route::post('join',[\App\Http\Controllers\Applications\InvitationController::class,'store'])->name('join.submit');
 
-    Route::get('table/verify', \App\Http\Controllers\TableVerifyController::class)->name('table.verify');
     Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');
 
     Route::get('applications/invitees/regenerate-keys', function () {
