@@ -67,17 +67,14 @@ class ApplicationResource extends Resource
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
-                        Forms\Components\Select::make('type')->options(ApplicationType::class)->reactive()->required(),
+                        Forms\Components\Select::make('type')->options(ApplicationType::class)
+                            ->reactive()
+                            ->required(),
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
                             ->required(),
-                        Forms\Components\Select::make('parent')
-                            ->searchable()
-                            ->relationship('parent', 'id')
-                            ->getOptionLabelFromRecordUsing(function (?Application $record) {
-                                return $record->user->name;
-                            })
-                            ->hidden(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value)
-                            ->required(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value),
+                        Forms\Components\TextInput::make('parent')
+                            ->maxLength(255)
+                            ->helperText("Enter the parent's application ID or submit an empty field to delete the parent relation"),
                         Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')
                             ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
                             ->required(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value),
@@ -103,6 +100,7 @@ class ApplicationResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')->searchable()->label("ID"),
                 Tables\Columns\TextColumn::make('user.name')->searchable(),
                 Tables\Columns\BadgeColumn::make('status')->enum(ApplicationStatus::cases())->formatStateUsing(function (Application $record) {
                     return $record->status->name;
