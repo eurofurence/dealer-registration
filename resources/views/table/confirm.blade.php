@@ -9,22 +9,28 @@
             <a href="{{ route('dashboard') }}" class="btn btn-sm btn-primary">Return to dashboard</a>
         </div>
 
+        @if (Session::exists('table-confirmation-successful'))
+            <div class="alert alert-success text-center fw-bold">Your data has been saved successfully.</div>
+        @elseif (Session::exists('table-confirmation-error'))
+            <div class="alert alert-danger text-center fw-bold">An error has occurred.</div>
+        @endif
+
         @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
-        <div class="card">
-            <div class="card-body">
-                <div class="px-4 py-5 my-5 text-center">
-                    <h1 class="display-5 fw-bold">Table accepted - thank you!</h1>
-                    <div class="col-lg-6 mx-auto">
-                        <p class="lead mb-4">
-                            <b>Your table:</b>
-                            <br />Table number: {{ $application->table_number ?? $table_number }}
-                            <br />Table type:
-                            {{ $table_type_assigned['name'] . ' with ' . $table_type_assigned['seats'] . ' seat(s)' }}
-                        </p>
+            <div class="card">
+                <div class="card-body">
+                    <div class="px-4 py-5 my-5 text-center">
+                        <h1 class="display-5 fw-bold">Table accepted - thank you!</h1>
+                        <div class="col-lg-6 mx-auto">
+                            <p class="lead mb-4">
+                                <b>Your table:</b>
+                                <br />Table number: {{ $application->table_number ?? $table_number }}
+                                <br />Table type:
+                                {{ $table_type_assigned['name'] . ' with ' . $table_type_assigned['seats'] . ' seat(s)' }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @elseif ($application->status === \App\Enums\ApplicationStatus::TableOffered)
             <form class="needs-validation" method="POST" action="{{ route('table.update') }}">
                 @method('PUT')
