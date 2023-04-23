@@ -22,38 +22,63 @@ class ProfileResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(3)
             ->schema([
-                Forms\Components\TextInput::make('application_id'),
-                Forms\Components\Textarea::make('short_desc')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('artist_desc')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('art_desc')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('website')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('twitter')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('telegram')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('discord')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('tweet')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('art_preview_caption')
-                    ->maxLength(65535),
-                Forms\Components\FileUpload::make('image_thumbnail'),
-                Forms\Components\FileUpload::make('image_artist'),
-                Forms\Components\FileUpload::make('image_art'),
-                Forms\Components\Toggle::make('is_print'),
-                Forms\Components\Toggle::make('is_artwork'),
-                Forms\Components\Toggle::make('is_fursuit'),
-                Forms\Components\Toggle::make('is_commissions'),
-                Forms\Components\Toggle::make('is_misc'),
-                Forms\Components\Toggle::make('attends_thu'),
-                Forms\Components\Toggle::make('attends_fri'),
-                Forms\Components\Toggle::make('attends_sat'),
+                Forms\Components\Group::make()->columnSpan(2)->columns()->schema([
+                    Forms\Components\TextInput::make('application_id'),
 
+                    Forms\Components\TextInput::make('website')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('twitter')
+                        ->maxLength(1024),
+                    Forms\Components\TextInput::make('telegram')
+                        ->maxLength(1024),
+                    Forms\Components\TextInput::make('discord')
+                        ->maxLength(1024),
+                    Forms\Components\TextInput::make('tweet')
+                        ->maxLength(280),
+                    Forms\Components\TextInput::make('art_preview_caption')
+                        ->maxLength(255),
+
+                    Forms\Components\Fieldset::make('Images')->inlineLabel()->columns(2)->schema([
+                        Forms\Components\FileUpload::make('image_thumbnail')
+                            ->image()
+                            ->imageResizeMode('force')
+                            ->imageResizeTargetWidth('60')
+                            ->imageResizeTargetHeight('60'),
+                        Forms\Components\Textarea::make('short_desc')
+                                ->maxLength(1024),
+                        Forms\Components\FileUpload::make('image_artist')
+                            ->image()
+                            ->imageResizeMode('force')
+                            ->imageResizeTargetWidth('400')
+                            ->imageResizeTargetHeight('400'),
+                        Forms\Components\Textarea::make('artist_desc')
+                                ->maxLength(2048),
+                        Forms\Components\FileUpload::make('image_art')
+                            ->image()
+                            ->imageResizeMode('force')
+                            ->imageResizeTargetWidth('400')
+                            ->imageResizeTargetHeight('450'),
+                        Forms\Components\Textarea::make('art_desc')
+                                ->maxLength(2048),
+                    ]),
+                ]),
+
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\Fieldset::make('Categories')->inlineLabel()->columns(1)->schema([
+                        Forms\Components\Toggle::make('is_print'),
+                        Forms\Components\Toggle::make('is_artwork'),
+                        Forms\Components\Toggle::make('is_fursuit'),
+                        Forms\Components\Toggle::make('is_commissions'),
+                        Forms\Components\Toggle::make('is_misc'),
+                    ]),
+                    Forms\Components\Fieldset::make('Attendance')->inlineLabel()->columns(1)->schema([
+                        Forms\Components\Toggle::make('attends_thu'),
+                        Forms\Components\Toggle::make('attends_fri'),
+                        Forms\Components\Toggle::make('attends_sat'),
+                    ]),
+                ]),
             ]);
     }
 
