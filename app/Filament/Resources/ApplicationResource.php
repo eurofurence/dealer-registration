@@ -7,12 +7,15 @@ use App\Enums\ApplicationType;
 use App\Filament\Resources\ApplicationResource\Pages;
 use App\Filament\Resources\ApplicationResource\RelationManagers;
 use App\Models\Application;
+use App\Notifications\AcceptedNotification;
+use App\Notifications\OnHoldNotification;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ApplicationResource extends Resource
@@ -100,7 +103,7 @@ class ApplicationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->searchable()->label("ID"),
+                Tables\Columns\TextColumn::make('id')->label("ID"),
                 Tables\Columns\TextColumn::make('user.name')->searchable(),
                 Tables\Columns\BadgeColumn::make('status')->enum(ApplicationStatus::cases())->formatStateUsing(function (Application $record) {
                     return $record->status->name;
@@ -110,6 +113,7 @@ class ApplicationResource extends Resource
                     'danger' => ApplicationStatus::Canceled->value
                 ]),
                 Tables\Columns\TextColumn::make('requestedTable.name'),
+                Tables\Columns\TextColumn::make('assignedTable.name'),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
                     return ucfirst($state);
                 })->sortable(),
@@ -137,12 +141,25 @@ class ApplicationResource extends Resource
                 Tables\Filters\Filter::make('assignedTable')->query(fn (Builder $query): Builder => $query->whereNull('table_type_assigned'))->label('Missing assigned table'),
                 Tables\Filters\Filter::make('table_number')->query(fn (Builder $query): Builder => $query->whereNull('table_number'))->label('Missing table number'),
                 Tables\Filters\Filter::make('is_afterdark')->query(fn (Builder $query): Builder => $query->where('is_afterdark','=','1'))->label('Is Afterdark'),
+                Tables\Filters\Filter::make('table_assigned')->query(fn (Builder $query): Builder => $query->whereNotNull('offer_sent_at'))->label('Table assigned'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkAction::make('Send table offer')
+                    ->action(function (Collection $records): void {
+                        foreach ($records as $record) {
+                            $tableData = $record->assignedTable()->first()->name . ' - ' . $record->assignedTable()->first()->price/100 . ' EUR';
+
+                            if ($record->assignedTable()->first()->name === $record->requestedTable()->first()->name) {
+                                $record->user()->first()->notify(new AcceptedNotification($tableData));
+                            } else {
+                                $record->user()->first()->notify(new OnHoldNotification($tableData));
+                            }
+                        }
+                    }),
             ]);
     }
 

@@ -46,7 +46,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('reg_id'),
                 Tables\Columns\TextColumn::make('identity_id'),
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('email')->url(fn (?User $user) => "mailto:{$user->email}"),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
@@ -66,7 +66,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            new ChildrenRelationManager()
+            // new ChildrenRelationManager()
         ];
     }
 
