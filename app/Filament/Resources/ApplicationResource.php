@@ -6,9 +6,11 @@ use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use App\Filament\Resources\ApplicationResource\Pages;
 use App\Filament\Resources\ApplicationResource\RelationManagers;
+use App\Http\Controllers\Applications\ApplicationController;
 use App\Models\Application;
 use App\Notifications\AcceptedNotification;
 use App\Notifications\OnHoldNotification;
+use App\Notifications\WaitingListNotification;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -16,13 +18,13 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $emailIcon = 'heroicon-o-envelope';
     public static function form(Form $form): Form
     {
         return $form
@@ -67,6 +69,7 @@ class ApplicationResource extends Resource
                         ])->required(),
                         Forms\Components\TextInput::make('table_number')
                             ->maxLength(255),
+                        Forms\Components\Toggle::make('is_notified')->label('Notification sent'),
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
@@ -133,6 +136,10 @@ class ApplicationResource extends Resource
                     ->label('Wallseat')
                     ->sortable()
                     ->boolean(),
+                Tables\Columns\IconColumn::make('is_notified')
+                    ->label('Notification sent')
+                    ->sortable()
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
             ])
@@ -148,20 +155,18 @@ class ApplicationResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('Send table offer')
+                Tables\Actions\BulkAction::make('Send Notification')
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
-                            $tableData = $record->assignedTable()->first()->name . ' - ' . $record->assignedTable()->first()->price/100 . ' EUR';
-
-                            if ($record->assignedTable()->first()->name === $record->requestedTable()->first()->name) {
-                                $record->user()->first()->notify(new AcceptedNotification($tableData));
-                            } else {
-                                $record->user()->first()->notify(new OnHoldNotification($tableData));
-                            }
+                            ApplicationController::sendAcceptanceNotification($record);
                         }
-                    }),
+                    })
+                    ->requiresConfirmation()
+                    ->icon('heroicon-o-mail'),
             ]);
     }
+
+
 
     public static function getRelations(): array
     {

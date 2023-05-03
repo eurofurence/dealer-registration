@@ -33,6 +33,7 @@ class Application extends Model
         "checked_in_at" => "datetime",
         "offer_sent_at" => "datetime",
         "offer_accepted_at" => "datetime",
+        "is_notified" => "boolean",
     ];
 
     protected $attributes = [
@@ -251,6 +252,7 @@ class Application extends Model
                 'is_afterdark',
                 'is_power',
                 'is_wallseat',
+                'is_notified',
                 'waiting_at',
                 'offer_sent_at',
                 'offer_accepted_at',
@@ -265,6 +267,12 @@ class Application extends Model
             ->get();
 
         return json_decode(json_encode($applications), true);
+    }
+
+    public function setIsNotified($isNotified)
+    {
+        $this->is_notified = $isNotified;
+        $this->save();
     }
 
 }

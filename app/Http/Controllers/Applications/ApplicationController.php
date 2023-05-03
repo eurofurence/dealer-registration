@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Applications;
 
+use App\Enums\ApplicationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\TableType;
+use App\Notifications\AcceptedNotification;
 use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
+use App\Notifications\OnHoldNotification;
+use App\Notifications\WaitingListNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -109,6 +113,32 @@ class ApplicationController extends Controller
         };
 
         return response()->stream($callback, 200, $headers)->sendContent();
+    }
+
+    public static function sendAcceptanceNotification(Application $application) {
+        $user = $application->user()->first();
+        $status = $application->getStatus();
+
+        if (!$application->is_notified){
+            switch ($status){
+                case ApplicationStatus::TableOffered:
+                    $tableData = $application->assignedTable()->first()->name . ' - ' . $application->assignedTable()->first()->price/100 . ' EUR';
+                    if ($application->assignedTable()->first()->name === $application->requestedTable()->first()->name) {
+                        $user->notify(new AcceptedNotification($tableData));
+                    } else {
+                        $user->notify(new OnHoldNotification($tableData));
+                    }
+                    $application->setIsNotified(true);
+                    break;
+                case ApplicationStatus::Waiting:
+                    $user->notify(new WaitingListNotification());
+                    $application->setIsNotified(true);
+                    break;
+                case ApplicationStatus::Open:
+                    $application->setIsNotified(false);
+                    break;
+            }
+        }
     }
 
     /**
