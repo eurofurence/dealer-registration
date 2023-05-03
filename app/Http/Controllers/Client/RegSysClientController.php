@@ -10,30 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class RegSysClientController extends Controller
 {
-    private static function getPackage(TableType $tableType): string
-    {
-        $package = null;
-
-        // TODO: make table type an enum
-        switch ($tableType->id) {
-            case 1:
-                $package = 'dealer-half';
-                break;
-            case 2:
-                $package = 'dealer-full';
-                break;
-            case 3:
-            case 4:
-                $package = 'dealer-double';
-                break;
-            case 5:
-                $package = 'dealer-quad';
-                break;
-        }
-
-        return $package;
-    }
-
     public static function bookPackage(string $id, TableType $tableType): bool
     {
         // POST https://regtest.eurofurence.org/test-a56k-dev/regsys/service/package-api?token=<token>&id=<id>&package=<package>
@@ -41,7 +17,7 @@ class RegSysClientController extends Controller
         $response = Http::post(config('services.regsys.url') . '/package-api', [
             'token' => config('services.regsys.token'),
             'id' => $id,
-            'package' => self::getPackage($tableType),
+            'package' => $tableType->package,
         ]);
 
         if ($response->ok()) {
@@ -59,7 +35,7 @@ class RegSysClientController extends Controller
         $response = Http::delete(config('services.regsys.url') . '/package-api', [
             'token' => config('services.regsys.token'),
             'id' => $id,
-            'package' => self::getPackage($tableType),
+            'package' => $tableType->package,
         ]);
 
         if ($response->ok()) {

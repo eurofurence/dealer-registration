@@ -28,6 +28,7 @@ class ApplicationFactory extends Factory
             'is_afterdark' => $this->faker->boolean(),
             'is_power' => $this->faker->boolean(),
             'is_wallseat' => $this->faker->boolean(),
+            'is_notified' => $this->faker->boolean(),
             'waiting_at' => Carbon::now(),
             'offer_sent_at' => Carbon::now(),
             'offer_accepted_at' => Carbon::now(),

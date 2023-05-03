@@ -28,6 +28,8 @@ class TableTypeResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('seats')
                     ->required(),
+                Forms\Components\TextInput::make('package')
+                    ->maxLength(255),
             ]);
     }
 
@@ -37,6 +39,7 @@ class TableTypeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('seats'),
+                Tables\Columns\TextColumn::make('package'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')

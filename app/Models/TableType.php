@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TableType extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
     public function application()
     {
         $this->belongsTo(Application::class);

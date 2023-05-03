@@ -17,6 +17,7 @@ class TableTypeSeeder extends Seeder
             "spaces" => 1,
             "price" => 5000,
             "name" => "Half (65cm x 65cm)",
+            "package" => "dealer-half",
         ]);
         TableType::firstOrCreate([
             "id" => 2,
@@ -26,6 +27,7 @@ class TableTypeSeeder extends Seeder
             "spaces" => 1,
             "price" => 10000,
             "name" => "Full (130cm x 65cm) [recommended]",
+            "package" => "dealer-full",
         ]);
         TableType::firstOrCreate([
             "id" => 3,
@@ -35,6 +37,7 @@ class TableTypeSeeder extends Seeder
             "spaces" => 1,
             "price" => 20000,
             "name" => "Double Length (260cm x 65cm)",
+            "package" => "dealer-double",
         ]);
         TableType::firstOrCreate([
             "id" => 4,
@@ -44,6 +47,7 @@ class TableTypeSeeder extends Seeder
             "spaces" => 1,
             "price" => 20000,
             "name" => "Double Width (130cm x 130cm)",
+            "package" => "dealer-double",
         ]);
         TableType::firstOrCreate([
             "id" => 5,
@@ -53,6 +57,7 @@ class TableTypeSeeder extends Seeder
             "spaces" => 1,
             "price" => 40000,
             "name" => "Quad (260cm x 130cm)",
+            "package" => "dealer-quad",
         ]);
 
 

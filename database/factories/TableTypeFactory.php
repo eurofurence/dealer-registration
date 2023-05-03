@@ -17,6 +17,7 @@ class TableTypeFactory extends Factory
             'spaces' => $this->faker->randomNumber(),
             'seats' => $this->faker->randomNumber(),
             'price' => $this->faker->randomNumber(),
+            'package' => $this->faker->word(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
