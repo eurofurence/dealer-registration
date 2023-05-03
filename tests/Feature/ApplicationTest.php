@@ -7,6 +7,8 @@ use App\Models\Application;
 use App\Models\TableType;
 use http\Client\Curl\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 /**
@@ -16,6 +18,14 @@ use Tests\TestCase;
 class ApplicationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function setUp() : void
+    {
+        parent::setUp();
+
+        // to avoid registration fields not being filled
+        Config::set('ef.reg_end_date', Carbon::tomorrow());
+    }
 
     public function test_application_creation_and_edit_normal()
     {
