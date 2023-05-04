@@ -115,7 +115,7 @@ class ApplicationController extends Controller
         return response()->stream($callback, 200, $headers)->sendContent();
     }
 
-    public static function sendAcceptanceNotification(Application $application) {
+    public static function sendStatusNotification(Application $application) {
         $user = $application->user()->first();
         $status = $application->getStatus();
 
@@ -134,8 +134,7 @@ class ApplicationController extends Controller
                     $user->notify(new WaitingListNotification());
                     $application->setIsNotified(true);
                     break;
-                case ApplicationStatus::Open:
-                    $application->setIsNotified(false);
+                default:
                     break;
             }
         }

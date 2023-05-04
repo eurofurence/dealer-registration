@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->boolean('is_notified')->nullable();
+            $table->boolean('is_notified')->default(false);
         });
     }
 

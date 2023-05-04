@@ -155,10 +155,10 @@ class ApplicationResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('Send Notification')
+                Tables\Actions\BulkAction::make('Send status notification')
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
-                            ApplicationController::sendAcceptanceNotification($record);
+                            ApplicationController::sendStatusNotification($record);
                         }
                     })
                     ->requiresConfirmation()

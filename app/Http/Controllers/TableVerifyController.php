@@ -25,14 +25,14 @@ class TableVerifyController extends Controller
 
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
-        if ($application->status === ApplicationStatus::TableOffered) {
+        if ($application->status === ApplicationStatus::TableOffered && $application->is_notified) {
             return view('table.confirm', [
                 'application' => $application,
                 'table_type_requested' => TableType::find($application->table_type_requested),
                 'table_type_assigned' => TableType::find($application->table_type_assigned),
                 'table_number' => $application->table_number,
             ]);
-        } else if ($application->status === ApplicationStatus::TableAccepted) {
+        } else if ($application->status === ApplicationStatus::TableAccepted && $application->is_notified) {
             return view('table.confirm', [
                 'application' => $application,
                 'table_type_requested' => TableType::find($application->table_type_requested),
