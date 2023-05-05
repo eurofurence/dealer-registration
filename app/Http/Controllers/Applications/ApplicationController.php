@@ -37,13 +37,22 @@ class ApplicationController extends Controller
     public function store(ApplicationRequest $request)
     {
         $application = $request->act();
-        $applicationType = ($request->get('code')) ? Application::determineApplicationTypeByCode($request->get('code')) : $application?->type;
-        if ($applicationType === ApplicationType::Assistant) {
-            \Auth::user()->notify(new WelcomeAssistantNotification());
+        if ($application && $application->getStatus() === ApplicationStatus::Open) {
+            switch($application->type) {
+                case ApplicationType::Dealer:
+                case ApplicationType::Share:
+                    \Auth::user()->notify(new WelcomeNotification());
+                    break;
+                case ApplicationType::Assistant:
+                    \Auth::user()->notify(new WelcomeAssistantNotification());
+                    break;
+                default:
+                    abort(400, 'Unknown application type.');
+            }
+            return \Redirect::route('dashboard')->with('save-successful');
         } else {
-            \Auth::user()->notify(new WelcomeNotification());
+            abort(400, 'Invalid application state.');
         }
-        return \Redirect::route('dashboard')->with('save-successful');
     }
 
     public function edit(Request $request)
@@ -59,6 +68,7 @@ class ApplicationController extends Controller
             'profile' => ProfileController::getByApplicationId($application->id)
         ]);
     }
+
     public function update(ApplicationRequest $request)
     {
         $request->act();
