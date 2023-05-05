@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Applications;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\ApplicationType;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
@@ -13,6 +14,7 @@ use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
 use App\Notifications\OnHoldNotification;
 use App\Notifications\WaitingListNotification;
+use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -34,8 +36,13 @@ class ApplicationController extends Controller
 
     public function store(ApplicationRequest $request)
     {
-        $request->act();
-        \Auth::user()->notify(new WelcomeNotification());
+        $application = $request->act();
+        $applicationType = ($request->get('code')) ? Application::determineApplicationTypeByCode($request->get('code')) : $application?->type;
+        if ($applicationType === ApplicationType::Assistant) {
+            \Auth::user()->notify(new WelcomeAssistantNotification());
+        } else {
+            \Auth::user()->notify(new WelcomeNotification());
+        }
         return \Redirect::route('dashboard')->with('save-successful');
     }
 

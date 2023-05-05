@@ -175,5 +175,6 @@ class ApplicationRequest extends FormRequest
         if ($application && $application->isActive() && $applicationType !== ApplicationType::Assistant) {
             ProfileController::createOrUpdate($this, $application->id);
         }
+        return $application;
     }
 }
