@@ -40,13 +40,14 @@
     @endif
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-2">
-                @if (isset($application) && $application->isActive())
+        @if (isset($application) && $application->isActive())
+            <div class="col-md-6">
+                <div class="card mb-2">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Manage your Registration</h5>
                         <p class="card-text lead">You may update your registration, update it or cancel your registration
-                            as long as the registration has not closed yet. You can also invite other dealers and assistants to
+                            as long as the registration has not closed yet. You can also invite other dealers and assistants
+                            to
                             your slot.</p>
                         <a href="{{ route('applications.edit') }}" class="btn btn-lg btn-primary">Manage your
                             Registration</a>
@@ -63,29 +64,33 @@
                             @endif
                         </a>
                     </div>
-                @else
+                </div>
+            </div>
+        @elseif (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+            <div class="col-md-6">
+                <div class="card mb-2">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Apply for a Dealership</h5>
                         <p class="card-text lead">As a Dealers' Den dealership owner, you are responsible for managing your
                             space. While you may choose to share your table with other dealers if space permits, you will be
                             the primary point of contact for your business.</p>
-                        @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
-                            <a href="{{ route('applications.create') }}" class="btn btn-lg btn-primary">Submit your
-                                Dealership application</a>
-                        @endif
+                        <a href="{{ route('applications.create') }}" class="btn btn-lg btn-primary">Submit your
+                            Dealership application</a>
                     </div>
-                @endif
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card mb-2">
-                <div class="card-body text-center">
-                    <h5 class="card-title display-6">Join an existing Dealership</h5>
-                    <p class="card-text lead">You have been invited by an existing dealership to share their space at the
-                        Dealers' Den.</p>
-                    <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have an invitation code</a>
                 </div>
             </div>
+        @endif
+        <div class="col-md-6 mx-auto">
+            @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+                <div class="card mb-2">
+                    <div class="card-body text-center">
+                        <h5 class="card-title display-6">Join an existing Dealership</h5>
+                        <p class="card-text lead">You have been invited by an existing dealership to share their space at
+                            the Dealers' Den.</p>
+                        <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have an invitation code</a>
+                    </div>
+                </div>
+            @endif
             <div class="card mb-2">
                 <div class="card-body text-center">
                     <h5 class="card-title display-6">Become a Dealer Assistant</h5>
