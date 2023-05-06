@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Applications;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\ApplicationType;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
@@ -13,6 +14,7 @@ use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
 use App\Notifications\OnHoldNotification;
 use App\Notifications\WaitingListNotification;
+use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -34,9 +36,23 @@ class ApplicationController extends Controller
 
     public function store(ApplicationRequest $request)
     {
-        $request->act();
-        \Auth::user()->notify(new WelcomeNotification());
-        return \Redirect::route('dashboard')->with('save-successful');
+        $application = $request->act();
+        if ($application && $application->getStatus() === ApplicationStatus::Open) {
+            switch($application->type) {
+                case ApplicationType::Dealer:
+                case ApplicationType::Share:
+                    \Auth::user()->notify(new WelcomeNotification());
+                    break;
+                case ApplicationType::Assistant:
+                    \Auth::user()->notify(new WelcomeAssistantNotification());
+                    break;
+                default:
+                    abort(400, 'Unknown application type.');
+            }
+            return \Redirect::route('dashboard')->with('save-successful');
+        } else {
+            abort(400, 'Invalid application state.');
+        }
     }
 
     public function edit(Request $request)
@@ -52,6 +68,7 @@ class ApplicationController extends Controller
             'profile' => ProfileController::getByApplicationId($application->id)
         ]);
     }
+
     public function update(ApplicationRequest $request)
     {
         $request->act();

@@ -115,9 +115,18 @@ class ApplicationRequest extends FormRequest
         $application = \Auth::user()->application;
         if ($this->routeIs('applications.store')) {
             $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
-            return is_null($application) || $application->getStatus() === ApplicationStatus::Canceled || $newApplicationType !== $application->type;
+            // Only allow access to applications.store route if no active application exists or type changes
+            // while reg is still open …
+            if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
+                return is_null($application) || !$application->isActive() || $newApplicationType !== $application->type;
+            }
+            // … or somebody wants to become an assistant …
+            else {
+                return $newApplicationType === ApplicationType::Assistant && (is_null($application) || !$application->isActive() || $newApplicationType !== $application->type);
+            }
         }
-        return !is_null($application) && $application->getStatus() !== ApplicationStatus::Canceled;
+        // … otherwise require existing and active application for this request.
+        return !is_null($application) && $application->isActive();
     }
 
     public function act()
@@ -135,10 +144,12 @@ class ApplicationRequest extends FormRequest
         return $this->update($newApplicationType);
     }
 
-    public function update(ApplicationType $applicationType, int|null $parentId = null)
+    private function update(ApplicationType $applicationType, int|null $parentId = null)
     {
-        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
-            $result = Application::updateOrCreate([
+        $application = null;
+        // Only allow changes to applications while reg is still open
+        if (Carbon::parse(config('ef.reg_end_date'))->isFuture() || $applicationType === ApplicationType::Assistant) {
+            $application = Application::updateOrCreate([
                 "user_id" => \Auth::id(),
             ], [
                 "table_type_requested" => $this->get('space'),
@@ -158,14 +169,12 @@ class ApplicationRequest extends FormRequest
                 "table_number" => null,
                 "parent" => $parentId,
             ]);
-            if ($applicationType !== ApplicationType::Assistant) {
-                ProfileController::createOrUpdate($this, $result->id);
-            }
         } else {
             $application = Application::findByUserId(\Auth::id());
-            if ($application && $applicationType !== ApplicationType::Assistant) {
-                ProfileController::createOrUpdate($this, $application->id);
-            }
         }
+        if ($application && $application->isActive() && $applicationType !== ApplicationType::Assistant) {
+            ProfileController::createOrUpdate($this, $application->id);
+        }
+        return $application;
     }
 }

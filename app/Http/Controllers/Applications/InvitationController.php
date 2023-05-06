@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\JoinSubmitRequest;
 use App\Models\Application;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
@@ -20,6 +21,13 @@ class InvitationController extends Controller
 
     public function store(Request $request)
     {
+        $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
+        if (!Carbon::parse(config('ef.reg_end_date'))->isFuture() && $applicationType !== ApplicationType::Assistant) {
+            throw ValidationException::withMessages([
+                "code" => "The registration period for new dealers has ended, please check back next year.",
+            ]);
+        }
+
         $applications = Application::where('type', ApplicationType::Dealer)
             ->where(function ($q) use ($request) {
                 return $q->where('invite_code_assistants', $request->get('code'))
