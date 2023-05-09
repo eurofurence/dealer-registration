@@ -247,13 +247,12 @@ class Application extends Model
             ->leftJoin('table_types AS t1', 'table_type_requested', '=', 't1.id')
             ->leftJoin('table_types AS t2', 'table_type_assigned', '=', 't2.id')
             ->select(
-                'user_id',
+                'applications.id AS app_id',
                 'users.name AS user_name',
-                'applications.id',
-                'type',
+                'type AS app_type',
                 'parent',
                 'display_name',
-                'applications.website',
+                'applications.website AS app_website',
                 'table_number',
                 'merchandise',
                 'invite_code_shares',
@@ -263,17 +262,17 @@ class Application extends Model
                 'is_afterdark',
                 'is_power',
                 'is_wallseat',
+                't1.name AS table_type_requested',
+                't2.name AS table_type_assigned',
                 'is_notified',
+                'applications.created_at AS app_created_at',
+                'applications.updated_at AS app_updated_at',
                 'waiting_at',
                 'offer_sent_at',
                 'offer_accepted_at',
                 'checked_in_at',
                 'canceled_at',
-                'applications.created_at',
-                'applications.updated_at',
                 'profiles.*',
-                't1.name AS table_type_requested',
-                't2.name AS table_type_assigned'
             )
             ->get();
 
