@@ -229,6 +229,17 @@ class Application extends Model
         return self::where('user_id', $user_id)->first();
     }
 
+    public static function getEligibleParents()
+    {
+        return self::leftJoin('users', 'user_id', '=', 'users.id')
+            ->where('type', '=', 'dealer')
+            ->whereNull('canceled_at')
+            ->select(
+                'applications.id AS id',
+                'users.name AS name'
+            )->get();
+    }
+
     public static function getAllApplicationsForExport()
     {
         $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')

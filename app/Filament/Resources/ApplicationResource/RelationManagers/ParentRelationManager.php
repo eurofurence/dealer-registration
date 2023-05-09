@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ApplicationResource\RelationManagers;
 
 use App\Enums\ApplicationStatus;
 use App\Filament\Resources\ApplicationResource;
+use App\Http\Controllers\Applications\ApplicationController;
 use App\Models\Application;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -11,11 +12,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class ChildrenRelationManager extends RelationManager
+class ParentRelationManager extends RelationManager
 {
-    protected static string $relationship = 'children';
+    protected static string $relationship = 'parent';
 
-    protected static ?string $title = "Shares and Assistants";
+    protected static ?string $title = "Parent";
     protected static ?string $label = "application";
     protected static ?string $recordTitleAttribute = 'user.name';
 
@@ -49,17 +50,23 @@ class ChildrenRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
+                // Tables\Actions\Action::make('Add')
+                //     ->action(function (Application $record, array $data): void {
+                //         $record->parent = $data['id'];
+                //         $record->update();
+                //     })
+                //     ->form([
+                //         Forms\Components\Select::make('parent')
+                //             // ->label('Parent')
+                //             ->options(Application::getEligibleParents())
+                //     ])
+                //     ->requiresConfirmation()
+                //     ->color('danger'),
             ])
             ->actions([
                 Tables\Actions\Action::make('Show')
                     ->url(fn(Application $record): string => ApplicationResource::getUrl('edit', ['record' => $record])),
-                Tables\Actions\Action::make('Delete')
-                    ->action(function (Application $record): void {
-                        $record->parent = null;
-                        $record->update();
-                    })
-                    ->requiresConfirmation()
-                    ->color('danger'),
+
             ])
             ->bulkActions([
             ]);

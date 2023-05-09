@@ -78,15 +78,15 @@ class ApplicationResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
                             ->required(),
-                        Forms\Components\TextInput::make('parent')
-                            ->maxLength(255)
-                            ->helperText("Enter the parent's application ID or submit an empty field to delete the parent relation"),
+                        Forms\Components\Select::make('parent')->searchable()->options(Application::getEligibleParents()->pluck('name', 'id'))
+                            ->hidden(fn(\Closure $get) => $get('type') === ApplicationType::Dealer->value)
+                            ->required(fn(\Closure $get) => $get('type') !== ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')
-                            ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->required(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value),
+                            ->hidden(fn(\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->required(fn(\Closure $get) => $get('type') === ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
-                            ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->nullable(fn (\Closure $get) => $get('status') !== ApplicationStatus::TableOffered->value),
+                            ->hidden(fn(\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->nullable(fn(\Closure $get) => $get('status') !== ApplicationStatus::TableOffered->value),
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
@@ -111,10 +111,10 @@ class ApplicationResource extends Resource
                 Tables\Columns\BadgeColumn::make('status')->enum(ApplicationStatus::cases())->formatStateUsing(function (Application $record) {
                     return $record->status->name;
                 })->colors([
-                    'secondary',
-                    'success' => ApplicationStatus::TableAccepted->value,
-                    'danger' => ApplicationStatus::Canceled->value
-                ]),
+                        'secondary',
+                        'success' => ApplicationStatus::TableAccepted->value,
+                        'danger' => ApplicationStatus::Canceled->value
+                    ]),
                 Tables\Columns\TextColumn::make('requestedTable.name'),
                 Tables\Columns\TextColumn::make('assignedTable.name'),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
@@ -144,11 +144,11 @@ class ApplicationResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('parent')->query(fn (Builder $query): Builder => $query->where('type','dealer'))->label('Only Dealerships'),
-                Tables\Filters\Filter::make('assignedTable')->query(fn (Builder $query): Builder => $query->whereNull('table_type_assigned'))->label('Missing assigned table'),
-                Tables\Filters\Filter::make('table_number')->query(fn (Builder $query): Builder => $query->whereNull('table_number'))->label('Missing table number'),
-                Tables\Filters\Filter::make('is_afterdark')->query(fn (Builder $query): Builder => $query->where('is_afterdark','=','1'))->label('Is Afterdark'),
-                Tables\Filters\Filter::make('table_assigned')->query(fn (Builder $query): Builder => $query->whereNotNull('offer_sent_at'))->label('Table assigned'),
+                Tables\Filters\Filter::make('parent')->query(fn(Builder $query): Builder => $query->where('type', 'dealer'))->label('Only Dealerships'),
+                Tables\Filters\Filter::make('assignedTable')->query(fn(Builder $query): Builder => $query->whereNull('table_type_assigned'))->label('Missing assigned table'),
+                Tables\Filters\Filter::make('table_number')->query(fn(Builder $query): Builder => $query->whereNull('table_number'))->label('Missing table number'),
+                Tables\Filters\Filter::make('is_afterdark')->query(fn(Builder $query): Builder => $query->where('is_afterdark', '=', '1'))->label('Is Afterdark'),
+                Tables\Filters\Filter::make('table_assigned')->query(fn(Builder $query): Builder => $query->whereNotNull('offer_sent_at'))->label('Table assigned'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -171,7 +171,8 @@ class ApplicationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ChildrenRelationManager::class
+            RelationManagers\ChildrenRelationManager::class,
+            RelationManagers\ParentRelationManager::class
         ];
     }
 
