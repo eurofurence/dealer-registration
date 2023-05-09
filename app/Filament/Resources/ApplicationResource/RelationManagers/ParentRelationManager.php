@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ApplicationResource\RelationManagers;
 
 use App\Enums\ApplicationStatus;
 use App\Filament\Resources\ApplicationResource;
-use App\Http\Controllers\Applications\ApplicationController;
 use App\Models\Application;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -50,18 +49,6 @@ class ParentRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                // Tables\Actions\Action::make('Add')
-                //     ->action(function (Application $record, array $data): void {
-                //         $record->parent = $data['id'];
-                //         $record->update();
-                //     })
-                //     ->form([
-                //         Forms\Components\Select::make('parent')
-                //             // ->label('Parent')
-                //             ->options(Application::getEligibleParents())
-                //     ])
-                //     ->requiresConfirmation()
-                //     ->color('danger'),
             ])
             ->actions([
                 Tables\Actions\Action::make('Show')
