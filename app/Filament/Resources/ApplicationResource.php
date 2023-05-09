@@ -66,7 +66,7 @@ class ApplicationResource extends Resource
                             "table_offered" => "Table offered",
                             "table_accepted" => "Table accepted",
                             "checked_in" => "Checked in (Onsite)"
-                        ])->required(),
+                        ])->required()->reactive(),
                         Forms\Components\TextInput::make('table_number')
                             ->maxLength(255),
                         Forms\Components\Toggle::make('is_notified')->label('Notification sent'),
@@ -86,7 +86,7 @@ class ApplicationResource extends Resource
                             ->required(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
                             ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->nullable(),
+                            ->nullable(fn (\Closure $get) => $get('status') !== ApplicationStatus::TableOffered->value),
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
