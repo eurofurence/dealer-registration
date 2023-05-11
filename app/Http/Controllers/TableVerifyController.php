@@ -48,9 +48,9 @@ class TableVerifyController extends Controller
     {
         $application = \Auth::user()->application;
 
-        if (RegSysClientController::bookPackage(\Auth::user()->reg_id, TableType::find($application->table_type_assigned))) {
+        if (RegSysClientController::bookPackage(\Auth::user()->reg_id, $application->assignedTable()->first())) {
             $application->setStatusAttribute(ApplicationStatus::TableAccepted);
-            \Auth::user()->notify(new TableAcceptedNotification());
+            \Auth::user()->notify(new TableAcceptedNotification($application->assignedTable()->first()->name, $application->table_number, $application->assignedTable()->first()->price));
             return \Redirect::route('table.confirm')->with('table-confirmation-successful');
         } else {
             return \Redirect::route('table.confirm')->with('table-confirmation-error');

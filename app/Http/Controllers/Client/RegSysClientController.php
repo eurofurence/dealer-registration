@@ -12,8 +12,6 @@ class RegSysClientController extends Controller
 {
     public static function bookPackage(string $id, TableType $tableType): bool
     {
-        // POST https://regtest.eurofurence.org/test-a56k-dev/regsys/service/package-api?token=<token>&id=<id>&package=<package>
-
         $response = Http::post(config('services.regsys.url') . '/package-api', [
             'token' => config('services.regsys.token'),
             'id' => $id,
@@ -30,8 +28,6 @@ class RegSysClientController extends Controller
 
     public static function removePackage(string $id, TableType $tableType): bool
     {
-        // DELETE https://regtest.eurofurence.org/test-a56k-dev/regsys/service/package-api?token=<token>&id=<id>&package=<package>
-
         $response = Http::delete(config('services.regsys.url') . '/package-api', [
             'token' => config('services.regsys.token'),
             'id' => $id,
@@ -48,9 +44,6 @@ class RegSysClientController extends Controller
 
     public static function getAllRegs(): mixed
     {
-        // read all regs (id, nick, email, status):
-        // GET https://regtest.eurofurence.org/test-a56k-dev/regsys/service/dealers-den-api?token=<token>
-
         $response = Http::get(config('services.regsys.url') . '/dealers-den-api', [
             'token' => config('services.regsys.token'),
         ]);
@@ -65,7 +58,6 @@ class RegSysClientController extends Controller
 
     public static function getSingleReg(string $id): mixed
     {
-        // GET https://regtest.eurofurence.org/test-a56k-dev/regsys/service/dealers-den-api?token=<token>&id=<id>
         $response = Http::get(config('services.regsys.url') . '/dealers-den-api', [
             'token' => config('services.regsys.token'),
             'id' => $id,
