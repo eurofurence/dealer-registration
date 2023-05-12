@@ -38,11 +38,12 @@ class RegSysClientController extends Controller
             return false;
         }
 
-        $response = Http::post(config('services.regsys.url') . '/package-api', [
-            'token' => config('services.regsys.token'),
-            'id' => $reg_id,
-            'package' => $tableType->package,
-        ]);
+        $url = config('services.regsys.url')
+            . '/package-api?token=' . config('services.regsys.token')
+            . "&id=" . $reg_id
+            . "&package=" . $tableType->package;
+
+        $response = Http::post($url);
 
         if ($response->ok()) {
             return true;
@@ -61,11 +62,12 @@ class RegSysClientController extends Controller
             return false;
         }
 
-        $response = Http::delete(config('services.regsys.url') . '/package-api', [
-            'token' => config('services.regsys.token'),
-            'id' => $reg_id,
-            'package' => $tableType->package,
-        ]);
+        $url = config('services.regsys.url')
+            . '/package-api?token=' . config('services.regsys.token')
+            . "&id=" . $reg_id
+            . "&package=" . $tableType->package;
+
+        $response = Http::delete( $url);
 
         if ($response->ok()) {
             return true;
