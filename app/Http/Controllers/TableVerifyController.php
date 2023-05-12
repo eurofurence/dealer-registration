@@ -47,10 +47,11 @@ class TableVerifyController extends Controller
     public function update(Request $request)
     {
         $application = \Auth::user()->application;
+        $assignedTable = $application->assignedTable()->first();
 
-        if (RegSysClientController::bookPackage(\Auth::user()->reg_id, $application->assignedTable()->first())) {
+        if (RegSysClientController::bookPackage(\Auth::user()->reg_id, $assignedTable)) {
             $application->setStatusAttribute(ApplicationStatus::TableAccepted);
-            \Auth::user()->notify(new TableAcceptedNotification($application->assignedTable()->first()->name, $application->table_number, $application->assignedTable()->first()->price));
+            \Auth::user()->notify(new TableAcceptedNotification($assignedTable->name, $application->table_number, $assignedTable->price));
             return \Redirect::route('table.confirm')->with('table-confirmation-successful');
         } else {
             return \Redirect::route('table.confirm')->with('table-confirmation-error');
@@ -62,7 +63,7 @@ class TableVerifyController extends Controller
     {
         $application = \Auth::user()->application;
 
-        if (RegSysClientController::removePackage(\Auth::user()->reg_id, TableType::find($application->table_type_assigned))) {
+        if (RegSysClientController::removePackage(\Auth::user()->reg_id, TableType::find($application->assignedTable()->first()))) {
             // TODO
         } else {
             // TODO

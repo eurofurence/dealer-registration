@@ -26,14 +26,14 @@ class AppServiceProvider extends ServiceProvider
             return Http::baseUrl(config('services.oidc.url'));
         });
 
-        DB::listen(function($query) {
-            Log::debug(
-                $query->sql,
-                [
-                    'bindings' => $query->bindings,
-                    'time' => $query->time
-                ]
-            );
-        });
+        // DB::listen(function($query) {
+        //     Log::debug(
+        //         $query->sql,
+        //         [
+        //             'bindings' => $query->bindings,
+        //             'time' => $query->time
+        //         ]
+        //     );
+        // });
     }
 }
