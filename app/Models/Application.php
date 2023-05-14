@@ -65,8 +65,21 @@ class Application extends Model
                     || $model->status === ApplicationStatus::Waiting
                 )
             ) {
-                Log::info("Attempting to change status of application {$model->id} from {$model->status->name} to TableOffered due to table type change.");
+                Log::info("Changing status of application {$model->id} from {$model->status->name} to TableOffered due to table type change.");
                 $model->status = ApplicationStatus::TableOffered;
+            }
+        });
+
+        // Update child applications to TableAccepted on parent accepting their offered table
+        static::updated(function (Application $model) {
+            if ($model->type === ApplicationType::Dealer && $model->wasChanged('offer_accepted_at') && !empty($model->offer_accepted_at)) {
+                Log::info("Changing status of children of application {$model->id} to TableAccepted due to table having been accepted.");
+                foreach ($model->children()->get() as $child) {
+                    if ($child->status !== ApplicationStatus::Canceled) {
+                        Log::info("Changing status of application {$child->id} to TableAccepted due to parent application {$model->id} having changed to this status.");
+                        $child->status = ApplicationStatus::TableAccepted;
+                    }
+                }
             }
         });
     }
