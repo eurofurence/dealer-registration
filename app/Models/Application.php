@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Helper\Table;
 
@@ -39,6 +40,29 @@ class Application extends Model
     protected $attributes = [
         "table_type_requested" => 2
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        // When the table type changes and the application is either Open or Waiting, this should
+        // change the status to Table Offered. Probably to side-effects from other mutators like
+        // Application::setStatusAttribute(), this only works when status is not part of the data
+        // submitted in the request as it will otherwise override the automatic status change.
+        // tl;dr
+        // Updates application status from Open/Waiting to Table Offered on table type change in
+        // list view, but not in edit view.
+        static::updating(function (Application $model) {
+            if (
+                !$model->isDirty(['waiting_at', 'offer_accepted_at', 'checked_in_at', 'canceled_at']) // we're not trying to change status
+                && $model->isDirty('table_type_assigned') // table type was changed
+                && ($model->status === ApplicationStatus::Open || $model->status === ApplicationStatus::Waiting) // status is applicable for table offer
+            ) {
+                // Change status to Table Offered
+                Log::info("Attempting to change status of application {$model->id} from {$model->status->name} to TableOffered due to table type change.");
+                $model->status = ApplicationStatus::TableOffered;
+            }
+        });
+    }
 
     public function user()
     {
@@ -290,6 +314,4 @@ class Application extends Model
         $this->is_notified = $isNotified;
         $this->save();
     }
-
 }
-
