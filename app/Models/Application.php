@@ -44,20 +44,27 @@ class Application extends Model
     protected static function boot()
     {
         parent::boot();
-        // When the table type changes and the application is either Open or Waiting, this should
-        // change the status to Table Offered. Probably to side-effects from other mutators like
-        // Application::setStatusAttribute(), this only works when status is not part of the data
-        // submitted in the request as it will otherwise override the automatic status change.
-        // tl;dr
-        // Updates application status from Open/Waiting to Table Offered on table type change in
-        // list view, but not in edit view.
+        // Automatically update application status from Open/Waiting to Table Offered on table type/number
         static::updating(function (Application $model) {
             if (
-                !$model->isDirty(['waiting_at', 'offer_accepted_at', 'checked_in_at', 'canceled_at']) // we're not trying to change status
-                && $model->isDirty('table_type_assigned') // table type was changed
-                && ($model->status === ApplicationStatus::Open || $model->status === ApplicationStatus::Waiting) // status is applicable for table offer
+                // ignore if we have directly modified the application status in this request
+                !$model->isDirty(['waiting_at', 'offer_sent_at', 'offer_accepted_at', 'checked_in_at', 'canceled_at'])
+                && !$model->wasChanged(['waiting_at', 'offer_sent_at', 'offer_accepted_at', 'checked_in_at', 'canceled_at'])
+                && (
+                    // table type change is also a relevant trigger for dealer applications
+                    ($model->type === ApplicationType::Dealer && $model->isDirty('table_type_assigned'))
+                    // table number change is sufficient for further checks
+                    || $model->isDirty('table_number')
+                )
+                // table number must not be empty
+                && !empty($model->table_number)
+                // table type must be assigned for dealer applications
+                && ($model->type === ApplicationType::Dealer && !empty($model->table_type_assigned))
+                // status is applicable for automatic change (Open or Waiting)
+                && ($model->status === ApplicationStatus::Open
+                    || $model->status === ApplicationStatus::Waiting
+                )
             ) {
-                // Change status to Table Offered
                 Log::info("Attempting to change status of application {$model->id} from {$model->status->name} to TableOffered due to table type change.");
                 $model->status = ApplicationStatus::TableOffered;
             }
