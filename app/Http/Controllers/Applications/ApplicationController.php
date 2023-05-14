@@ -78,14 +78,17 @@ class ApplicationController extends Controller
 
     public function delete()
     {
+        $application = \Auth::user()->application;
+        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
         return view('application.delete', [
-            "application" => \Auth::user()->application,
+            "application" => $application,
         ]);
     }
 
     public function destroy()
     {
         $application = \Auth::user()->application;
+        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
         foreach ($application->children()->get() as $child) {
             $child->update([
                 'canceled_at' => now(),

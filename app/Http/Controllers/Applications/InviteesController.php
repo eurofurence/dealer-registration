@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\InviteeRemovalRequest;
 use App\Models\Application;
 use App\Notifications\CanceledByDealershipNotification;
+use Carbon\Carbon;
 
 class InviteesController extends Controller
 {
@@ -20,19 +21,19 @@ class InviteesController extends Controller
         /**
          * Create invite codes if not existing yet
          */
-        if(is_null($application->invite_code_shares)) {
-            $application->update(['invite_code_shares' => "dealers-".\Str::random()]);
+        if (is_null($application->invite_code_shares)) {
+            $application->update(['invite_code_shares' => "dealers-" . \Str::random()]);
         }
-        if(is_null($application->invite_code_assistants)) {
-            $application->update(['invite_code_assistants' => "assistant-".\Str::random()]);
+        if (is_null($application->invite_code_assistants)) {
+            $application->update(['invite_code_assistants' => "assistant-" . \Str::random()]);
         }
 
-        return view('application.invitees',[
+        return view('application.invitees', [
             'application' => $application,
             'currentSeats' => $application->children()->whereNotNull('canceled_at')->count() + 1,
             'maxSeats' => $application->requestedTable->seats,
-            "assistants" => $application->children()->where('type',ApplicationType::Assistant)->with('user')->get(),
-            "shares" =>  $application->children()->where('type',ApplicationType::Share)->with('user')->get(),
+            "assistants" => $application->children()->where('type', ApplicationType::Assistant)->with('user')->get(),
+            "shares" =>  $application->children()->where('type', ApplicationType::Share)->with('user')->get(),
             "shares_count" => $application->getAvailableShares(),
             "assistants_count" => $application->getAvailableAssistants(),
             "shares_active_count" => $application->getActiveShares(),
@@ -43,6 +44,7 @@ class InviteesController extends Controller
     public function destroy(InviteeRemovalRequest $request)
     {
         $invitee = Application::findOrFail($request->get('invitee_id'));
+        abort_if(!Carbon::parse(config('ef.reg_end_date'))->isFuture() && $invitee->type !== ApplicationType::Assistant, 403, 'Only assistants may be modified once the registration period is over.');
 
         $invitee->update([
             "type" => ApplicationType::Dealer,
@@ -56,8 +58,8 @@ class InviteesController extends Controller
     public function regenerateKeys()
     {
         $user = \Auth::user()->application->update([
-            'invite_code_assistants' => "assistant-".\Str::random(),
-            'invite_code_shares' => "dealers-".\Str::random()
+            'invite_code_assistants' => "assistant-" . \Str::random(),
+            'invite_code_shares' => "dealers-" . \Str::random()
         ]);
         return \Redirect::route('applications.invitees.view');
     }

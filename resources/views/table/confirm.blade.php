@@ -73,9 +73,9 @@
                             </div>
                             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                                 <a href="{{ route('applications.delete') }}"
-                                    class="btn btn-outline-secondary btn-lg px-4">Cancel
+                                    class="btn btn-outline-danger btn-lg px-4">Cancel
                                     Dealer Application</a>
-                                <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Confirm Dealer Package
+                                <button type="submit" class="btn btn-primary btn-lg px-4 gap-3">Confirm Dealer Package
                                 </button>
                             </div>
                         </div>

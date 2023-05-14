@@ -32,21 +32,18 @@ class TableVerifyController extends Controller
                 'table_type_assigned' => TableType::find($application->table_type_assigned),
                 'table_number' => $application->table_number,
             ]);
-        } else if ($application->status === ApplicationStatus::TableAccepted && $application->is_notified) {
-            return view('table.confirm', [
-                'application' => $application,
-                'table_type_requested' => TableType::find($application->table_type_requested),
-                'table_type_assigned' => TableType::find($application->table_type_assigned),
-                'table_number' => $application->table_number,
-            ]);
         } else {
-            return view('dashboard');
+            return \Redirect::route('dashboard');
         }
     }
 
     public function update(Request $request)
     {
         $application = \Auth::user()->application;
+
+        abort_if($application->status !== ApplicationStatus::TableOffered, 403, 'No table offer available to be accepted.');
+        abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
+
         $assignedTable = $application->assignedTable()->first();
 
         if (RegSysClientController::bookPackage(\Auth::user()->reg_id, $assignedTable)) {
@@ -59,14 +56,10 @@ class TableVerifyController extends Controller
     }
 
 
-    public function delete(Request $request)
-    {
-        $application = \Auth::user()->application;
-
-        if (RegSysClientController::removePackage(\Auth::user()->reg_id, TableType::find($application->assignedTable()->first()))) {
-            // TODO
-        } else {
-            // TODO
-        }
-    }
+    /*
+     * Delete method does not need to be implemented because:
+     * - Once accepted, unpaid tables can only be canceled by contacting the team.
+     * - Paid tables cannot be canceled at all (at best, transfer via team may be possible).
+     */
+    // public function delete(Request $request) {}
 }
