@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Applications;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use App\Enums\StatusNotificationResult;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
@@ -38,7 +39,7 @@ class ApplicationController extends Controller
     {
         $application = $request->act();
         if ($application && $application->getStatus() === ApplicationStatus::Open) {
-            switch($application->type) {
+            switch ($application->type) {
                 case ApplicationType::Dealer:
                 case ApplicationType::Share:
                     \Auth::user()->notify(new WelcomeNotification());
@@ -132,28 +133,38 @@ class ApplicationController extends Controller
         return response()->stream($callback, 200, $headers)->sendContent();
     }
 
-    public static function sendStatusNotification(Application $application) {
+    public static function sendStatusNotification(Application $application): StatusNotificationResult
+    {
         $user = $application->user()->first();
         $status = $application->getStatus();
 
-        if (!$application->is_notified){
-            switch ($status){
+        if (!$application->is_notified) {
+            switch ($status) {
                 case ApplicationStatus::TableOffered:
-                    $tableData = $application->assignedTable()->first()->name . ' - ' . $application->assignedTable()->first()->price/100 . ' EUR';
-                    if ($application->assignedTable()->first()->name === $application->requestedTable()->first()->name) {
+                    $tableData = $application->assignedTable()->first()->name . ' - ' . $application->assignedTable()->first()->price / 100 . ' EUR';
+                    if ($application->table_type_assigned === $application->table_type_requested) {
+                        Log::info("Sending accepted notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
                         $user->notify(new AcceptedNotification($tableData));
+                        $application->setIsNotified(true);
+                        return StatusNotificationResult::Accepted;
                     } else {
+                        Log::info("Sending on-hold notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
                         $user->notify(new OnHoldNotification($tableData));
+                        $application->setIsNotified(true);
+                        return StatusNotificationResult::OnHold;
                     }
-                    $application->setIsNotified(true);
-                    break;
                 case ApplicationStatus::Waiting:
+                    Log::info("Sending waiting list notification to user {$user->id} for application {$application->id}.");
                     $user->notify(new WaitingListNotification());
                     $application->setIsNotified(true);
-                    break;
+                    return StatusNotificationResult::WaitingList;
                 default:
-                    break;
+                    Log::info("Not sending notification to user {$user->id} because application{$application->id} is not in an applicable status.");
+                    return StatusNotificationResult::NotApplicable;
             }
+        } else {
+            Log::info("Not sending notification to user {$user->id} for application {$application->id} because notification was already sent previously.");
+            return StatusNotificationResult::AlreadySent;
         }
     }
 

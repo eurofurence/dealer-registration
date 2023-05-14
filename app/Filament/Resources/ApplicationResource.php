@@ -4,20 +4,24 @@ namespace App\Filament\Resources;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use App\Enums\StatusNotificationResult;
 use App\Filament\Resources\ApplicationResource\Pages;
 use App\Filament\Resources\ApplicationResource\RelationManagers;
 use App\Http\Controllers\Applications\ApplicationController;
 use App\Models\Application;
+use App\Models\TableType;
 use App\Notifications\AcceptedNotification;
 use App\Notifications\OnHoldNotification;
 use App\Notifications\WaitingListNotification;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ApplicationResource extends Resource
 {
@@ -157,9 +161,49 @@ class ApplicationResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\BulkAction::make('Send status notification')
                     ->action(function (Collection $records): void {
+                        $resultsType = StatusNotificationResult::class;
+                        $results = array_fill_keys(
+                            array_map(
+                                fn (StatusNotificationResult $r) => $r->name,
+                                $resultsType::cases()
+                            ),
+                            0);
                         foreach ($records as $record) {
-                            ApplicationController::sendStatusNotification($record);
+                            $result = ApplicationController::sendStatusNotification($record);
+                            $results[$result->name] += 1;
                         }
+
+                        $statusCounts = '';
+
+                        foreach ($results as $statusName=>$count) {
+                            switch($statusName) {
+                                case StatusNotificationResult::Accepted->name:
+                                    $statusCounts .= "<li>{$count} notified about being accepted with requested table</li>";
+                                    break;
+                                case StatusNotificationResult::OnHold->name:
+                                    $statusCounts .= "<li>{$count} notified about offered table differing from requested table (on-hold)</li>";
+                                    break;
+                                case StatusNotificationResult::WaitingList->name:
+                                    $statusCounts .= "<li>{$count} notified about waiting list</li>";
+                                    break;
+                                case StatusNotificationResult::NotApplicable->name:
+                                    $statusCounts .= "<li>{$count} not notified because application status was not applicable</li>";
+                                    break;
+                                case StatusNotificationResult::AlreadySent->name:
+                                    $statusCounts .= "<li>{$count} not notified because notifications were already sent previously</li>";
+                                    break;
+                                default:
+                                    $statusCounts .= "<li>{$count} with unknown status {$statusName}</li>";
+                                    break;
+                            }
+                        }
+
+                        Notification::make()
+                            ->title("Bulk notifications sent")
+                            ->body("<ul>
+                            {$statusCounts}
+                            </ul>")
+                            ->success()->persistent()->send();
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-mail'),

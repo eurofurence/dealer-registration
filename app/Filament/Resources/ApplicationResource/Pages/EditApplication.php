@@ -2,8 +2,11 @@
 
 namespace App\Filament\Resources\ApplicationResource\Pages;
 
+use App\Enums\StatusNotificationResult;
 use App\Filament\Resources\ApplicationResource;
 use App\Http\Controllers\Applications\ApplicationController;
+use App\Models\Application;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -22,9 +25,52 @@ class EditApplication extends EditRecord
         ];
     }
 
+    public function getRecord(): Application
+    {
+        return parent::getRecord();
+    }
+
     public function sendStatusNotification()
     {
-        ApplicationController::sendStatusNotification($this->getRecord());
+        $application = $this->getRecord();
+        $user = $application->user()->first();
+        $result = ApplicationController::sendStatusNotification($application);
+        $frontendNotification = Notification::make();
+
+        switch ($result) {
+            case StatusNotificationResult::Accepted:
+                $frontendNotification->title('Notification sent')
+                    ->body("Notified application {$application->id} of user {$user->name} about being accepted with their requested table type.")
+                    ->success();
+                break;
+            case StatusNotificationResult::OnHold:
+                $frontendNotification->title('Notification sent')
+                    ->body("Notified application {$application->id} of user {$user->name} about being offered a different table type than they requested (on-hold).")
+                    ->success();
+                break;
+            case StatusNotificationResult::WaitingList:
+                $frontendNotification->title('Notification sent')
+                    ->body("Notified application {$application->id} of user {$user->name} about being put on the waiting list.")
+                    ->success();
+                break;
+            case StatusNotificationResult::NotApplicable:
+                $frontendNotification->title('Notification not sent')
+                    ->body("No applicable notification for current status '{$application->getStatus()->value}' of application {$application->id} of user {$user->name}.")
+                    ->warning();
+                break;
+            case StatusNotificationResult::AlreadySent:
+                $frontendNotification->title('Notification already sent')
+                    ->body("Did not notify application {$application->id} of user {$user->name} because a notification was already sent previously! To resend please uncheck 'notification sent' first.")
+                    ->danger();
+                break;
+            default:
+                $frontendNotification->title('Error')
+                    ->body("Unexpected return value from ApplicationController::sendStatusNotification! Please inform the developers: [application={$application->id},result={$result->name}]")
+                    ->danger();
+                break;
+        }
+
+        $frontendNotification->persistent()->send();
         $this->refreshFormData(['is_notified']);
     }
 }
