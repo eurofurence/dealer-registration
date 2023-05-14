@@ -51,21 +51,20 @@ class Application extends Model
                 !$model->isDirty(['waiting_at', 'offer_sent_at', 'offer_accepted_at', 'checked_in_at', 'canceled_at'])
                 && !$model->wasChanged(['waiting_at', 'offer_sent_at', 'offer_accepted_at', 'checked_in_at', 'canceled_at'])
                 && (
-                    // table type change is also a relevant trigger for dealer applications
-                    ($model->type === ApplicationType::Dealer && $model->isDirty('table_type_assigned'))
-                    // table number change is sufficient for further checks
-                    || $model->isDirty('table_number')
+                    // table number or type was changed
+                    $model->isDirty('table_type_assigned') || $model->isDirty('table_number')
+                    || $model->wasChanged('table_type_assigned') || $model->wasChanged('table_number')
                 )
                 // table number must not be empty
                 && !empty($model->table_number)
                 // table type must be assigned for dealer applications
-                && ($model->type === ApplicationType::Dealer && !empty($model->table_type_assigned))
+                && ($model->type !== ApplicationType::Dealer || !empty($model->table_type_assigned))
                 // status is applicable for automatic change (Open or Waiting)
                 && ($model->status === ApplicationStatus::Open
                     || $model->status === ApplicationStatus::Waiting
                 )
             ) {
-                Log::info("Changing status of application {$model->id} from {$model->status->name} to TableOffered due to table type change.");
+                Log::info("Changing status of application {$model->id} from {$model->status->name} to TableOffered due to table type/name change.");
                 $model->status = ApplicationStatus::TableOffered;
             }
         });
@@ -73,11 +72,25 @@ class Application extends Model
         // Update child applications to TableAccepted on parent accepting their offered table
         static::updated(function (Application $model) {
             if ($model->type === ApplicationType::Dealer && $model->wasChanged('offer_accepted_at') && !empty($model->offer_accepted_at)) {
-                Log::info("Changing status of children of application {$model->id} to TableAccepted due to table having been accepted.");
+                Log::info("Changing status of children of application {$model->id} to TableAccepted due to parent table having been accepted.");
                 foreach ($model->children()->get() as $child) {
                     if ($child->status !== ApplicationStatus::Canceled) {
                         Log::info("Changing status of application {$child->id} to TableAccepted due to parent application {$model->id} having changed to this status.");
                         $child->status = ApplicationStatus::TableAccepted;
+                    }
+                }
+            }
+        });
+
+        // Update child applications to TableAccepted on parent accepting their offered table
+        static::updated(function (Application $model) {
+            if ($model->type === ApplicationType::Dealer && $model->wasChanged('table_number') && !empty($model->table_number)) {
+                Log::info("Changing table number of assistants of application {$model->id} to that of parent.");
+                foreach ($model->children()->get() as $child) {
+                    if ($child->status !== ApplicationStatus::Canceled && $child->type === ApplicationType::Assistant) {
+                        Log::info("Changing table number of assistant application {$child->id} to {$model->table_number} due to parent application change.");
+                        $child->table_number = $model->table_number;
+                        $child->update();
                     }
                 }
             }
