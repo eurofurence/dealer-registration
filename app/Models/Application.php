@@ -159,6 +159,12 @@ class Application extends Model
         if (is_string($status)) {
             $status = ApplicationStatus::tryFrom($status);
         }
+
+        // Don't reset timestamps when application is saved without status change!
+        if ($this->getStatus() === $status) {
+            return;
+        }
+
         if ($status === ApplicationStatus::Canceled) {
             $this->update([
                 'offer_accepted_at' => null,
