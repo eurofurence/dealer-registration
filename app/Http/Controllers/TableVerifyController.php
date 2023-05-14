@@ -42,6 +42,7 @@ class TableVerifyController extends Controller
         $application = \Auth::user()->application;
 
         abort_if($application->status !== ApplicationStatus::TableOffered, 403, 'No table offer available to be accepted.');
+        abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
         $assignedTable = $application->assignedTable()->first();
 
