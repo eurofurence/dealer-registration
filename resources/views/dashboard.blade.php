@@ -56,6 +56,7 @@
                             <a href="{{ route('applications.invitees.view') }}"
                                 class="btn btn-sm btn-outline-primary">Assistants & Shares</a>
                         @endif
+                        @if ($application->status !== \App\Enums\ApplicationStatus::TableAccepted && $application->status !== \App\Enums\ApplicationStatus::CheckedIn)
                         <a href="{{ route('applications.delete') }}" class="btn btn-sm btn-outline-danger">
                             @if ($application->type === \App\Enums\ApplicationType::Dealer)
                                 Cancel Registration
@@ -63,6 +64,7 @@
                                 Leave Dealership
                             @endif
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
