@@ -82,7 +82,8 @@ class Application extends Model
             }
         });
 
-        // Update child applications to TableAccepted on parent accepting their offered table
+        // Update table number of Assistants when their parent's table number is updated
+        // DO NOT do this for Shares as it would automatically set them to TableOffered without review!
         static::updated(function (Application $model) {
             if ($model->type === ApplicationType::Dealer && $model->wasChanged('table_number') && !empty($model->table_number)) {
                 Log::info("Changing table number of assistants of application {$model->id} to that of parent.");

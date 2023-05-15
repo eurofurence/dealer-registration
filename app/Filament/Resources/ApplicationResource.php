@@ -187,7 +187,7 @@ class ApplicationResource extends Resource
                                     $statusCounts .= "<li>{$count} notified about waiting list</li>";
                                     break;
                                 case StatusNotificationResult::NotApplicable->name:
-                                    $statusCounts .= "<li>{$count} not notified because application status was not applicable</li>";
+                                    $statusCounts .= "<li>{$count} not notified because application status/type was not applicable</li>";
                                     break;
                                 case StatusNotificationResult::AlreadySent->name:
                                     $statusCounts .= "<li>{$count} not notified because notifications were already sent previously</li>";

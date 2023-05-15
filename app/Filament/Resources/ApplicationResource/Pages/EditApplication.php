@@ -55,7 +55,7 @@ class EditApplication extends EditRecord
                 break;
             case StatusNotificationResult::NotApplicable:
                 $frontendNotification->title('Notification not sent')
-                    ->body("No applicable notification for current status '{$application->getStatus()->value}' of application {$application->id} of user {$user->name}.")
+                    ->body("No applicable notification for current status '{$application->status->value}' or type '{$application->type->value}' of application {$application->id} of user {$user->name}.")
                     ->warning();
                 break;
             case StatusNotificationResult::AlreadySent:

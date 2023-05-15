@@ -141,9 +141,26 @@ class ApplicationController extends Controller
         $user = $application->user()->first();
         $status = $application->getStatus();
 
-        if (!$application->is_notified) {
+        if ($application->type !== ApplicationType::Dealer) {
+            Log::info("Not sending accepted notification for user {$user->id} for application {$application->id} since they are not a Dealer.");
+            return StatusNotificationResult::NotApplicable;
+        } elseif (!$application->is_notified) {
             switch ($status) {
                 case ApplicationStatus::TableOffered:
+
+                    // Do not notify dealerships where not all Shares have passed review
+                    // either by being set to TableOffered or Canceled.
+                    $childrenHaveOffer = true;
+                    foreach($application->children()->get() as $child) {
+                        if ($child->type === ApplicationType::Share) {
+                            $childrenHaveOffer = $childrenHaveOffer && ($child->status === ApplicationStatus::TableOffered || $child->status === ApplicationStatus::Canceled);
+                        }
+                    }
+                    if (!$childrenHaveOffer) {
+                        Log::info("Not sending accepted notification for user {$user->id} for application {$application->id} since not all Shares have been set to TableOffered or Canceled during review.");
+                        return StatusNotificationResult::NotApplicable;
+                    }
+
                     $tableData = $application->assignedTable()->first()->name . ' - ' . $application->assignedTable()->first()->price / 100 . ' EUR';
                     if ($application->table_type_assigned === $application->table_type_requested) {
                         Log::info("Sending accepted notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
@@ -162,7 +179,7 @@ class ApplicationController extends Controller
                     $application->setIsNotified(true);
                     return StatusNotificationResult::WaitingList;
                 default:
-                    Log::info("Not sending notification to user {$user->id} because application{$application->id} is not in an applicable status.");
+                    Log::info("Not sending notification to user {$user->id} because application {$application->id} is not in an applicable status.");
                     return StatusNotificationResult::NotApplicable;
             }
         } else {
