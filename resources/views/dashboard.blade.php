@@ -24,11 +24,33 @@
     @if (isset($application))
         @if (
             $application->type === \App\Enums\ApplicationType::Dealer &&
-                $application->getStatus() === \App\Enums\ApplicationStatus::Open)
+                ($application->getStatus() === \App\Enums\ApplicationStatus::Open || (($application->status === \App\Enums\ApplicationStatus::TableOffered || $application->status === \App\Enums\ApplicationStatus::Waiting) && !$application->is_notified)))
             <div class="alert alert-info text-center">
                 <h3>Your registration as a dealer is currently being reviewed.</h3>
                 <span>Please wait for our team to process your application. You will be notified via email if your
                     application status changes.</span>
+            </div>
+        @endif
+
+        @if ($application->type === \App\Enums\ApplicationType::Dealer && $application->status === \App\Enums\ApplicationStatus::TableOffered && $application->is_notified)
+            <div class="alert alert-info text-center">
+                <h3>Congratulations!</h3>
+                <p>Your registration as a dealer was accepted! Please review and accept the table you were offered.</p>
+                <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a>
+            </div>
+        @endif
+
+        @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
+            <div class="alert alert-info text-center">
+                <h3>See you at Eurofurence!</h3>
+                <p>Your table in this year's Dealers' Den is: <strong>{{$application->table_number}}</strong></p>
+            </div>
+        @endif
+
+        @if ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
+            <div class="alert alert-info text-center">
+                <h3>Welcome to Eurofurence!</h3>
+                <p>Your table in this year's Dealers' Den is: <strong>{{$application->table_number}}</strong></p>
             </div>
         @endif
 
