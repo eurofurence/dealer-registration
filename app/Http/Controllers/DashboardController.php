@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Client\RegSysClientController;
+use Illuminate\Support\Facades\Log;
+
 class DashboardController extends Controller
 {
     public function __invoke()
     {
+        $user = \Auth::user();
 
         $application = $user->application;
-        //TODO: Retrieve payment status for Dealer and display status on Dasboard
+        $efRegistration = RegSysClientController::getSingleReg($user->reg_id);
 
         return view('dashboard',[
-            "application" => $application
+            "application" => $application,
+            "efRegistrationStatus" => $efRegistration ? $efRegistration['status'] : false,
         ]);
     }
 }

@@ -23,34 +23,72 @@
     </div>
     @if (isset($application))
         @if (
-            $application->type === \App\Enums\ApplicationType::Dealer &&
-                ($application->getStatus() === \App\Enums\ApplicationStatus::Open || (($application->status === \App\Enums\ApplicationStatus::TableOffered || $application->status === \App\Enums\ApplicationStatus::Waiting) && !$application->is_notified)))
-            <div class="alert alert-info text-center">
-                <h3>Your registration as a dealer is currently being reviewed.</h3>
-                <span>Please wait for our team to process your application. You will be notified via email if your
-                    application status changes.</span>
-            </div>
-        @endif
-
-        @if ($application->type === \App\Enums\ApplicationType::Dealer && $application->status === \App\Enums\ApplicationStatus::TableOffered && $application->is_notified)
-            <div class="alert alert-info text-center">
-                <h3>Congratulations!</h3>
-                <p>Your registration as a dealer was accepted! Please review and accept the table you were offered.</p>
-                <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a>
-            </div>
-        @endif
-
-        @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
+            $application->getStatus() === \App\Enums\ApplicationStatus::Open ||
+                (($application->status === \App\Enums\ApplicationStatus::TableOffered ||
+                    $application->status === \App\Enums\ApplicationStatus::Waiting) &&
+                    !$application->is_notified))
+            @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                <div class="alert alert-info text-center">
+                    <h3>Application in Review</h3>
+                    <p>Your registration as a dealer is currently being reviewed.</p>
+                    <p>Please wait for our team to process your application. You will be notified via email if your
+                        application status changes.</p>
+                </div>
+            @else
+                <div class="alert alert-info text-center">
+                    <h3>Application in Review</h3>
+                    <p>The registration of the dealership you are part of is currently being reviewed.</p>
+                    <p>Please wait for our team to process the application. The main account of your dealership will be notified via email if
+                        the application status changes.</p>
+                </div>
+            @endif
+        @elseif ($application->status === \App\Enums\ApplicationStatus::TableOffered && $application->is_notified)
+            @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                <div class="alert alert-info text-center">
+                    <h3>Congratulations!</h3>
+                    <p>Your registration as a dealer was accepted! Please review and accept the table you were offered.</p>
+                    <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a>
+                </div>
+            @else
+                <div class="alert alert-info text-center">
+                    <h3>Congratulations!</h3>
+                    <p>The application of the dealership you are part of was accepted! The main account of your dealership has been informed via email and needs to review and accept the assigned table.</p>
+                    <p>For any questions about the table your dealership was assigned, please contact the person who initated the application.</p>
+                </div>
+            @endif
+        @elseif ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
             <div class="alert alert-info text-center">
                 <h3>See you at Eurofurence!</h3>
-                <p>Your table in this year's Dealers' Den is: <strong>{{$application->table_number}}</strong></p>
-            </div>
-        @endif
+                <h5>Your table in this year's Dealers' Den will be: <strong>{{ $application->table_number }}</strong></h5>
+                @switch($efRegistrationStatus)
+                    @case('new')
+                    @case('approved')
 
-        @if ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
+                    @case('partially paid')
+                        <p>Our records show that your EF registration status is <em>{{ $efRegistrationStatus }}</em>. Please check
+                            and make sure to settle all outstanding dues in a timely manner to ensure everything runs smoothly when
+                            you arrive.</p>
+                    @break
+
+                    @case('paid')
+                        <p>According to our records, your EF registration status is <em>{{ $efRegistrationStatus }}</em>, and you
+                            are all
+                            set and ready to go!.</p>
+                    @break
+
+                    @case('cancelled')
+                        <p>Going by our records, it seems your EF registration status is <em>{{ $efRegistrationStatus }}</em>.
+                            Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence this year
+                            after all!</p>
+                    @break
+
+                    @default
+                @endswitch
+            </div>
+        @elseif ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
             <div class="alert alert-info text-center">
                 <h3>Welcome to Eurofurence!</h3>
-                <p>Your table in this year's Dealers' Den is: <strong>{{$application->table_number}}</strong></p>
+                <p>Your table in this year's Dealers' Den is: <strong>{{ $application->table_number }}</strong></p>
             </div>
         @endif
 
@@ -78,14 +116,16 @@
                             <a href="{{ route('applications.invitees.view') }}"
                                 class="btn btn-sm btn-outline-primary">Assistants & Shares</a>
                         @endif
-                        @if ($application->status !== \App\Enums\ApplicationStatus::TableAccepted && $application->status !== \App\Enums\ApplicationStatus::CheckedIn)
-                        <a href="{{ route('applications.delete') }}" class="btn btn-sm btn-outline-danger">
-                            @if ($application->type === \App\Enums\ApplicationType::Dealer)
-                                Cancel Registration
-                            @else
-                                Leave Dealership
-                            @endif
-                        </a>
+                        @if (
+                            $application->status !== \App\Enums\ApplicationStatus::TableAccepted &&
+                                $application->status !== \App\Enums\ApplicationStatus::CheckedIn)
+                            <a href="{{ route('applications.delete') }}" class="btn btn-sm btn-outline-danger">
+                                @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                                    Cancel Registration
+                                @else
+                                    Leave Dealership
+                                @endif
+                            </a>
                         @endif
                     </div>
                 </div>
