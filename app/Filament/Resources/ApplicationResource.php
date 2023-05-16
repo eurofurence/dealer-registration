@@ -21,6 +21,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ApplicationResource extends Resource
@@ -130,7 +131,14 @@ class ApplicationResource extends Resource
                 })->boolean(),
                 Tables\Columns\TextColumn::make('dlrshp')->getStateUsing(function (Application $record) {
                     return $record->parent ?: $record->id;
-                })->sortable()->searchable(),
+                })->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query
+                        ->orderBy(DB::raw('IF(`type` = \'dealer\', `id`,`parent`)'), $direction);
+                })->searchable(query: function (Builder $query, string $search): Builder {
+                    return $query
+                        ->where('id', '=', $search)
+                        ->orWhere('parent', '=', $search);
+                }),
                 Tables\Columns\TextColumn::make('display_name')->searchable(),
                 Tables\Columns\IconColumn::make('wanted_neighbors')->label('N Wanted')->default(false)->boolean(),
                 Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),
