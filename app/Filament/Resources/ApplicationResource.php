@@ -121,7 +121,8 @@ class ApplicationResource extends Resource
                     'danger' => ApplicationStatus::Canceled->value
                 ]),
                 Tables\Columns\TextColumn::make('requestedTable.name'),
-                Tables\Columns\SelectColumn::make('table_type_assigned')->options(TableType::pluck('name', 'id')->toArray()),
+                // FIXME: It is currently not possible to select 'null' to clear the assigned table here, therefore placeholder selection has been disabled.
+                Tables\Columns\SelectColumn::make('table_type_assigned')->options(TableType::pluck('name', 'id')->toArray())->disablePlaceholderSelection(),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
                     return ucfirst($state);
                 })->sortable(),
