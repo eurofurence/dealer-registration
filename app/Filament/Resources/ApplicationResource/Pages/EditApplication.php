@@ -53,14 +53,19 @@ class EditApplication extends EditRecord
                     ->body("Notified application {$application->id} of user {$user->name} about being put on the waiting list.")
                     ->success();
                 break;
-            case StatusNotificationResult::NotApplicable:
+            case StatusNotificationResult::SharesInvalid->name:
+                $frontendNotification->title('Notification not sent')
+                    ->body("Application not notified because some uncanceled shares have not been assigned to the same table number!")
+                    ->danger();
+                break;
+            case StatusNotificationResult::StatusNotApplicable:
                 $frontendNotification->title('Notification not sent')
                     ->body("No applicable notification for current status '{$application->status->value}' or type '{$application->type->value}' of application {$application->id} of user {$user->name}.")
                     ->warning();
                 break;
-            case StatusNotificationResult::AlreadySent:
-                $frontendNotification->title('Notification already sent')
-                    ->body("Did not notify application {$application->id} of user {$user->name} because a notification was already sent previously! To resend please uncheck 'notification sent' first.")
+            case StatusNotificationResult::NotDealer:
+                $frontendNotification->title('Notification not sent')
+                    ->body("Did not notify application {$application->id} of user {$user->name} because they are of type {$application->type->value}.")
                     ->danger();
                 break;
             default:
@@ -71,6 +76,6 @@ class EditApplication extends EditRecord
         }
 
         $frontendNotification->persistent()->send();
-        $this->refreshFormData(['is_notified']);
+        $this->refreshFormData(['status']);
     }
 }

@@ -67,13 +67,13 @@ class ApplicationResource extends Resource
                             "canceled" => "Canceled",
                             "open" => "Open",
                             "waiting" => "Waiting",
+                            "table_assigned" => "Table assigned (Open)",
                             "table_offered" => "Table offered",
                             "table_accepted" => "Table accepted",
-                            "checked_in" => "Checked in (Onsite)"
-                        ])->required()->reactive(),
+                            "checked_in" => "Checked in (on-site)"
+                        ])->disablePlaceholderSelection()->required()->reactive(),
                         Forms\Components\TextInput::make('table_number')
                             ->maxLength(255),
-                        Forms\Components\Toggle::make('is_notified')->label('Notification sent'),
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
@@ -125,6 +125,12 @@ class ApplicationResource extends Resource
                     return ucfirst($state);
                 })->sortable(),
                 Tables\Columns\TextInputColumn::make('table_number')->sortable()->searchable(),
+                Tables\Columns\IconColumn::make('is_ready')->getStateUsing(function (Application $record) {
+                    return $record->isReady();
+                })->boolean(),
+                Tables\Columns\TextColumn::make('dlrshp')->getStateUsing(function (Application $record) {
+                    return $record->parent ?: $record->id;
+                })->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('display_name')->searchable(),
                 Tables\Columns\IconColumn::make('wanted_neighbors')->label('N Wanted')->default(false)->boolean(),
                 Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),
@@ -138,10 +144,6 @@ class ApplicationResource extends Resource
                     ->boolean(),
                 Tables\Columns\IconColumn::make('is_wallseat')
                     ->label('Wallseat')
-                    ->sortable()
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_notified')
-                    ->label('Notification sent')
                     ->sortable()
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -167,30 +169,39 @@ class ApplicationResource extends Resource
                                 fn (StatusNotificationResult $r) => $r->name,
                                 $resultsType::cases()
                             ),
-                            0);
+                            0
+                        );
                         foreach ($records as $record) {
                             $result = ApplicationController::sendStatusNotification($record);
                             $results[$result->name] += 1;
                         }
 
                         $statusCounts = '';
+                        $totalSentCount = 0;
+                        $frontendNotification = Notification::make();
 
-                        foreach ($results as $statusName=>$count) {
-                            switch($statusName) {
+                        foreach ($results as $statusName => $count) {
+                            switch ($statusName) {
                                 case StatusNotificationResult::Accepted->name:
                                     $statusCounts .= "<li>{$count} notified about being accepted with requested table</li>";
+                                    $totalSentCount += $count;
                                     break;
                                 case StatusNotificationResult::OnHold->name:
                                     $statusCounts .= "<li>{$count} notified about offered table differing from requested table (on-hold)</li>";
+                                    $totalSentCount += $count;
                                     break;
                                 case StatusNotificationResult::WaitingList->name:
                                     $statusCounts .= "<li>{$count} notified about waiting list</li>";
+                                    $totalSentCount += $count;
                                     break;
-                                case StatusNotificationResult::NotApplicable->name:
-                                    $statusCounts .= "<li>{$count} not notified because application status/type was not applicable</li>";
+                                case StatusNotificationResult::SharesInvalid->name:
+                                    $statusCounts .= "<li>{$count} not notified because shares/assistants not assigned to same table</li>";
                                     break;
-                                case StatusNotificationResult::AlreadySent->name:
-                                    $statusCounts .= "<li>{$count} not notified because notifications were already sent previously</li>";
+                                case StatusNotificationResult::StatusNotApplicable->name:
+                                    $statusCounts .= "<li>{$count} not notified because status not applicable</li>";
+                                    break;
+                                case StatusNotificationResult::NotDealer->name:
+                                    $statusCounts .= "<li>{$count} not directly notified because share/assistant</li>";
                                     break;
                                 default:
                                     $statusCounts .= "<li>{$count} with unknown status {$statusName}</li>";
@@ -198,12 +209,17 @@ class ApplicationResource extends Resource
                             }
                         }
 
-                        Notification::make()
-                            ->title("Bulk notifications sent")
-                            ->body("<ul>
+                        if ($totalSentCount > 0) {
+                            $frontendNotification->title("{$totalSentCount} bulk notifications sent")
+                                ->success();
+                        } else {
+                            $frontendNotification->title("No bulk notifications sent")
+                                ->warning();
+                        }
+
+                        $frontendNotification->body("<ul>
                             {$statusCounts}
-                            </ul>")
-                            ->success()->persistent()->send();
+                            </ul>")->persistent()->send();
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-mail'),

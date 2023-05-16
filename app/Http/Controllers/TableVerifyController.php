@@ -7,6 +7,7 @@ use App\Enums\ApplicationType;
 use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\TableType;
 use App\Notifications\TableAcceptedNotification;
+use App\Notifications\TableAcceptedShareNotification;
 use Illuminate\Http\Request;
 
 class TableVerifyController extends Controller
@@ -25,7 +26,7 @@ class TableVerifyController extends Controller
 
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
-        if ($application->status === ApplicationStatus::TableOffered && $application->is_notified) {
+        if ($application->status === ApplicationStatus::TableOffered) {
             return view('table.confirm', [
                 'application' => $application,
                 'table_type_requested' => TableType::find($application->table_type_requested),
@@ -49,6 +50,11 @@ class TableVerifyController extends Controller
         if (RegSysClientController::bookPackage(\Auth::user()->reg_id, $assignedTable)) {
             $application->setStatusAttribute(ApplicationStatus::TableAccepted);
             \Auth::user()->notify(new TableAcceptedNotification($assignedTable->name, $application->table_number, $assignedTable->price));
+            foreach ($application->children()->get() as $child) {
+                if ($child->type === ApplicationType::Share) {
+                    $child->user()->first()->notify(new TableAcceptedShareNotification($assignedTable->name, $application->table_number, $assignedTable->price));
+                }
+            }
             return \Redirect::route('table.confirm')->with('table-confirmation-successful');
         } else {
             return \Redirect::route('table.confirm')->with('table-confirmation-error');
