@@ -10,9 +10,6 @@ use App\Filament\Resources\ApplicationResource\RelationManagers;
 use App\Http\Controllers\Applications\ApplicationController;
 use App\Models\Application;
 use App\Models\TableType;
-use App\Notifications\AcceptedNotification;
-use App\Notifications\OnHoldNotification;
-use App\Notifications\WaitingListNotification;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Form;
@@ -121,8 +118,7 @@ class ApplicationResource extends Resource
                     'danger' => ApplicationStatus::Canceled->value
                 ]),
                 Tables\Columns\TextColumn::make('requestedTable.name')->icon(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation' : '')->iconPosition('after')->color(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : ''),
-                // FIXME: It is currently not possible to select 'null' to clear the assigned table here, therefore placeholder selection has been disabled.
-                Tables\Columns\SelectColumn::make('table_type_assigned')->options(TableType::pluck('name', 'id')->toArray()),
+                Tables\Columns\SelectColumn::make('tableTypeAssignedAutoNull')->options(TableType::pluck('name', 'id')->toArray()),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
                     return ucfirst($state);
                 })->sortable(),
