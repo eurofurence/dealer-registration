@@ -368,7 +368,10 @@ class Application extends Model
         }
 
         foreach ($dealership->children()->get() as $child) {
-            if ($child->status !== ApplicationStatus::Canceled && $child->status !== $dealership->status) {
+            if($child->status === ApplicationStatus::Canceled) {
+                continue;
+            }
+            if ($child->status !== $dealership->status) {
                 return false;
             }
             // table numbers must be identical
