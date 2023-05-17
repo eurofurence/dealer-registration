@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\Console\Helper\Table;
 
 class Application extends Model
 {
@@ -119,6 +117,10 @@ class Application extends Model
     public function children()
     {
         return $this->hasMany(__CLASS__, 'parent');
+    }
+
+    public function profile() {
+        return $this->belongsTo(Profile::class, 'id', 'application_id', 'profiles');
     }
 
     public function getStatus()

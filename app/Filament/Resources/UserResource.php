@@ -38,9 +38,9 @@ class UserResource extends Resource
 
                 Forms\Components\Fieldset::make('Reg status')->inlineLabel()->columns(1)->schema([
                     Forms\Components\Placeholder::make('packages booked')
-                        ->content(fn(?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? '-'),
+                        ->content(fn(?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? ''),
                     Forms\Components\Placeholder::make('reg status')
-                        ->content(fn(?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? '-'),
+                        ->content(fn(?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? ''),
                 ]),
             ]);
     }
