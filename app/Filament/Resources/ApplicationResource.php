@@ -118,12 +118,12 @@ class ApplicationResource extends Resource
                     'danger' => ApplicationStatus::Canceled->value
                 ]),
                 Tables\Columns\TextColumn::make('requestedTable.name')->icon(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation' : '')->iconPosition('after')->color(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : ''),
-                Tables\Columns\SelectColumn::make('tableTypeAssignedAutoNull')->options(TableType::pluck('name', 'id')->toArray()),
+                Tables\Columns\SelectColumn::make('tableTypeAssignedAutoNull')->label('Assigned table')->options(TableType::pluck('name', 'id')->toArray()),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
                     return ucfirst($state);
                 })->sortable(),
                 Tables\Columns\TextInputColumn::make('table_number')->sortable()->searchable(),
-                Tables\Columns\IconColumn::make('is_ready')->getStateUsing(function (Application $record) {
+                Tables\Columns\IconColumn::make('is_ready')->label('Ready')->getStateUsing(function (Application $record) {
                     return $record->isReady();
                 })->boolean(),
                 Tables\Columns\TextColumn::make('dlrshp')->getStateUsing(function (Application $record) {
