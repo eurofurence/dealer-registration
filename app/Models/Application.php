@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Helper\Table;
 
@@ -33,12 +34,65 @@ class Application extends Model
         "checked_in_at" => "datetime",
         "offer_sent_at" => "datetime",
         "offer_accepted_at" => "datetime",
-        "is_notified" => "boolean",
     ];
 
     protected $attributes = [
         "table_type_requested" => 2
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        // Automatically update application status from Waiting to TableAssigned on table type/number change
+        // to allow accepting waiting dealerships via table assignment
+        static::updating(function (Application $model) {
+            if ( // table number or type was modified
+                ($model->isDirty('table_type_assigned') || $model->isDirty('table_number'))
+                // table number must not be empty
+                && !empty($model->table_number)
+                // table type must be assigned for dealer applications
+                && ($model->type !== ApplicationType::Dealer || !empty($model->table_type_assigned))
+                // status is applicable for automatic change (only Waiting)
+                && $model->status === ApplicationStatus::Waiting
+            ) {
+                Log::info("Changing status of application {$model->id} from {$model->status->name} to TableAssigned due to table type/name change.");
+                $model->status = ApplicationStatus::TableAssigned;
+            }
+        });
+
+        // Update the status of child applications on parent changing to TableOffered/Waiting/TableAccepted
+        static::updated(function (Application $model) {
+            if (
+                $model->type === ApplicationType::Dealer
+                && (
+                    ($model->wasChanged('offer_accepted_at') && !empty($model->offer_accepted_at))
+                    || ($model->wasChanged('offer_sent_at') && !empty($model->offer_sent_at))
+                    || ($model->wasChanged('waiting_at'))
+                )
+            ) {
+                foreach ($model->children()->get() as $child) {
+                    if ($child->status !== ApplicationStatus::Canceled) {
+                        Log::info("Changing status of application {$child->id} to {$model->status->name} due to parent application {$model->id} having changed to this status.");
+                        $child->status = $model->status;
+                    }
+                }
+            }
+        });
+
+        // Update table number of Assistants when their parent's table number is updated
+        // DO NOT do this for Shares as it would automatically set them to TableAssigned without review!
+        static::updated(function (Application $model) {
+            if ($model->type === ApplicationType::Dealer && $model->wasChanged('table_number')) {
+                foreach ($model->children()->get() as $child) {
+                    if ($child->status !== ApplicationStatus::Canceled && $child->type === ApplicationType::Assistant) {
+                        Log::info("Changing table number of assistant application {$child->id} to {$model->table_number} due to parent application {$model->id} change.");
+                        $child->table_number = $model->table_number;
+                        $child->update();
+                    }
+                }
+            }
+        });
+    }
 
     public function user()
     {
@@ -69,20 +123,19 @@ class Application extends Model
     {
         if (!is_null($this->canceled_at)) {
             return ApplicationStatus::Canceled;
-        }
-        if (!is_null($this->checked_in_at)) {
+        } elseif (!is_null($this->checked_in_at)) {
             return ApplicationStatus::CheckedIn;
-        }
-        if (!is_null($this->waiting_at)) {
+        } elseif (!is_null($this->waiting_at)) {
             return ApplicationStatus::Waiting;
-        }
-        if (!is_null($this->offer_accepted_at)) {
+        } elseif (!is_null($this->offer_accepted_at)) {
             return ApplicationStatus::TableAccepted;
-        }
-        if (!is_null($this->offer_sent_at)) {
+        } elseif (!is_null($this->offer_sent_at)) {
             return ApplicationStatus::TableOffered;
+        } elseif (($this->type !== ApplicationType::Dealer || !is_null($this->table_type_assigned)) && !empty($this->table_number)) {
+            return ApplicationStatus::TableAssigned;
+        } else {
+            return ApplicationStatus::Open;
         }
-        return ApplicationStatus::Open;
     }
 
     public function isActive()
@@ -159,6 +212,12 @@ class Application extends Model
         if (is_string($status)) {
             $status = ApplicationStatus::tryFrom($status);
         }
+
+        // Don't reset timestamps when application is saved without status change!
+        if ($this->getStatus() === $status) {
+            return;
+        }
+
         if ($status === ApplicationStatus::Canceled) {
             $this->update([
                 'offer_accepted_at' => null,
@@ -168,6 +227,16 @@ class Application extends Model
                 'waiting_at' => null,
                 'type' => ApplicationType::Dealer,
                 'canceled_at' => now(),
+            ]);
+        }
+
+        // TableAssigned is technically identical to open just with a table number assigned.
+        if ($status === ApplicationStatus::TableAssigned) {
+            $this->update([
+                'offer_accepted_at' => null,
+                'offer_sent_at' => null,
+                'waiting_at' => null,
+                'canceled_at' => null,
             ]);
         }
 
@@ -185,6 +254,7 @@ class Application extends Model
             $this->update([
                 'offer_accepted_at' => null,
                 'offer_sent_at' => null,
+                'table_number' => null,
                 'waiting_at' => now(),
                 'canceled_at' => null,
             ]);
@@ -204,6 +274,7 @@ class Application extends Model
                 'offer_accepted_at' => now(),
                 'waiting_at' => null,
                 'canceled_at' => null,
+                'checked_in_at' => null,
             ]);
         }
 
@@ -264,7 +335,7 @@ class Application extends Model
                 'is_wallseat',
                 't1.name AS table_type_requested',
                 't2.name AS table_type_assigned',
-                'is_notified',
+                '\'n/a\' AS is_notified', // keeping this to not mess with the column count
                 'applications.created_at AS app_created_at',
                 'applications.updated_at AS app_updated_at',
                 'waiting_at',
@@ -279,11 +350,37 @@ class Application extends Model
         return json_decode(json_encode($applications), true);
     }
 
-    public function setIsNotified($isNotified)
+    /**
+     * An application is considered ready if all related applications (parent/children) share the
+     * same status (canceled child applications are ignored for this) and table number and the
+     * application itself is not canceled.
+     */
+    public function isReady(): bool
     {
-        $this->is_notified = $isNotified;
-        $this->save();
+        if ($this->status === ApplicationStatus::Canceled) {
+            return false;
+        }
+
+        if ($this->type !== ApplicationType::Dealer) {
+            $dealership = $this->parent()->get()->first();
+        } else {
+            $dealership = $this;
+        }
+
+        foreach ($dealership->children()->get() as $child) {
+            if ($child->status !== ApplicationStatus::Canceled && $child->status !== $dealership->status) {
+                return false;
+            }
+            // table numbers must be identical
+            if (
+                $child->table_number !== $dealership->table_number
+                // table numbers '' and null should be considered identical
+                && !(empty($dealership->table_number) && empty($child->table_number))
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
-
 }
-

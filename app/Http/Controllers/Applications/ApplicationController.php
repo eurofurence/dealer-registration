@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Applications;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use App\Enums\StatusNotificationResult;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\TableType;
-use App\Notifications\AcceptedNotification;
+use App\Notifications\AlternateTableOfferedNotification;
+use App\Notifications\AlternateTableOfferedShareNotification;
 use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
-use App\Notifications\OnHoldNotification;
+use App\Notifications\TableOfferedNotification;
+use App\Notifications\TableOfferedShareNotification;
 use App\Notifications\WaitingListNotification;
 use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
@@ -38,7 +41,7 @@ class ApplicationController extends Controller
     {
         $application = $request->act();
         if ($application && $application->getStatus() === ApplicationStatus::Open) {
-            switch($application->type) {
+            switch ($application->type) {
                 case ApplicationType::Dealer:
                 case ApplicationType::Share:
                     \Auth::user()->notify(new WelcomeNotification());
@@ -77,14 +80,17 @@ class ApplicationController extends Controller
 
     public function delete()
     {
+        $application = \Auth::user()->application;
+        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
         return view('application.delete', [
-            "application" => \Auth::user()->application,
+            "application" => $application,
         ]);
     }
 
     public function destroy()
     {
         $application = \Auth::user()->application;
+        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
         foreach ($application->children()->get() as $child) {
             $child->update([
                 'canceled_at' => now(),
@@ -132,27 +138,64 @@ class ApplicationController extends Controller
         return response()->stream($callback, 200, $headers)->sendContent();
     }
 
-    public static function sendStatusNotification(Application $application) {
+    public static function sendStatusNotification(Application $application): StatusNotificationResult
+    {
         $user = $application->user()->first();
         $status = $application->getStatus();
 
-        if (!$application->is_notified){
-            switch ($status){
-                case ApplicationStatus::TableOffered:
-                    $tableData = $application->assignedTable()->first()->name . ' - ' . $application->assignedTable()->first()->price/100 . ' EUR';
-                    if ($application->assignedTable()->first()->name === $application->requestedTable()->first()->name) {
-                        $user->notify(new AcceptedNotification($tableData));
-                    } else {
-                        $user->notify(new OnHoldNotification($tableData));
+        if ($application->type !== ApplicationType::Dealer) {
+            Log::info("Not sending accepted notification for user {$user->id} for application {$application->id} since they are not a Dealer.");
+            return StatusNotificationResult::NotDealer;
+        } else {
+            switch ($status) {
+                case ApplicationStatus::TableAssigned:
+                    // Do not send offer to dealerships where not all shares are accepted
+                    if (!$application->isReady()) {
+                            Log::info("Not sending accepted notification for user {$user->id} for application {$application->id} since not all Shares or Assistants have been set to TableOffered or Canceled or been assigned the same table number during review.");
+                            return StatusNotificationResult::SharesInvalid;
                     }
-                    $application->setIsNotified(true);
-                    break;
-                case ApplicationStatus::Waiting:
+
+                    if ($application->table_type_assigned === $application->table_type_requested) {
+                        Log::info("Sending accepted notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
+                        $user->notify(new TableOfferedNotification());
+                        foreach ($application->children()->get() as $child) {
+                            if ($child->type === ApplicationType::Share) {
+                                $child->user()->first()->notify(new TableOfferedShareNotification());
+                            }
+                        }
+                        $application->status = ApplicationStatus::TableOffered;
+                        return StatusNotificationResult::Accepted;
+                    } else {
+                        Log::info("Sending on-hold notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
+                        $assignedTable = $application->assignedTable()->first();
+                        $user->notify(new AlternateTableOfferedNotification($assignedTable->name, $assignedTable->price));
+                        foreach ($application->children()->get() as $child) {
+                            if ($child->type === ApplicationType::Share) {
+                                $child->user()->first()->notify(new AlternateTableOfferedShareNotification($assignedTable->name, $assignedTable->price));
+                            }
+                        }
+                        $application->status = ApplicationStatus::TableOffered;
+                        return StatusNotificationResult::OnHold;
+                    }
+                case ApplicationStatus::Open:
+                    // Do not send dealerships to waiting list if some shares/assistants have a table number
+                    if (!$application->isReady()) {
+                            Log::info("Not sending application {$application->id} of user {$user->id} to waiting list since some Shares or Assistants have been assigned a table number.");
+                            return StatusNotificationResult::SharesInvalid;
+                    }
+
+                    Log::info("Sending waiting list notification to user {$user->id} for application {$application->id}.");
                     $user->notify(new WaitingListNotification());
-                    $application->setIsNotified(true);
-                    break;
+                    foreach ($application->children()->get() as $child) {
+                        if ($child->type === ApplicationType::Share) {
+                            $child->user()->first()->notify(new WaitingListNotification());
+                        }
+                    }
+                    $application->status = ApplicationStatus::Waiting;
+                    return StatusNotificationResult::WaitingList;
                 default:
-                    break;
+                    Log::info("Not sending notification to user {$user->id} because application {$application->id} is not in an applicable status.");
+                    return StatusNotificationResult::StatusNotApplicable;
             }
         }
     }

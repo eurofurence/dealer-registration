@@ -33,6 +33,6 @@ class EditUser extends EditRecord
     public function removePackage()
     {
         RegSysClientController::removePackage($this->getRecord()->reg_id, $this->getRecord()->application()->first()->assignedTable()->first());
-        $this->refreshFormData(['is_notified']);
+        $this->refreshFormData(['packages booked']);
     }
 }

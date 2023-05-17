@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class TableAcceptedNotification extends Notification implements ShouldQueue
+class TableAcceptedShareNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -33,14 +33,14 @@ class TableAcceptedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->greeting("Dear " . $notifiable->name . ",")
             ->subject(config('ef.con_name') . ' Dealers\' Den - Package Confirmed and Next Steps')
-            ->line('We have received your confirmation for your dealer package at the ' . config('ef.con_name') . ' Dealers\' Den. Thank you for taking the time to review and confirm your table assignment and dealer package details. We are excited to have you join us as a dealer at the convention!')
-            ->line('Your confirmed table assignment details are as follows:')
+            ->line('Your Dealership has successfully confirmed its package at the ' . config('ef.con_name') . ' Dealers\' Den. We are excited to have you join us as a dealer at the convention!')
+            ->line('The table assignment details are as follows:')
             ->line('Table Number: ' . $this->tableNumber)
             ->line('Assigned Table Size: ' . $this->tableAssigned)
-            ->line('Final Dealer Package Price: ' . $this->price / 100 . ' EUR' )
-            ->line(new HtmlString('As you have confirmed your dealer package, the final price has been added to your Eurofurence registration fee. To complete the payment, please log in to the Eurofurence registration system at <a href="'. config('ef.idp_url') .'">' . config('ef.idp_url') . '</a> and follow the payment instructions.'))
+            ->line('Final Dealer Package Price (paid by Dealership): ' . $this->price / 100 . ' EUR')
+            ->line('As you are part of a Dealership, please be aware that the abovementioned price will be charged to the Dealership and not to you.')
             ->line('In the coming weeks, we will be sending you more information about the Dealers\' Den setup, event schedules, and other important details to help you prepare for the convention. Please keep an eye on your email for these updates.')
-            ->line(new HtmlString('If you have any questions or concerns, feel free to reach out to us at <a href="mailto:'. config('ef.dealers_email') .'">' . config('ef.dealers_email') . '</a>. We are here to help ensure a smooth and enjoyable experience for all our dealers.'))
+            ->line(new HtmlString('If you have any questions or concerns, feel free to reach out to us at <a href="mailto:' . config('ef.dealers_email') . '">' . config('ef.dealers_email') . '</a>. We are here to help ensure a smooth and enjoyable experience for all our dealers.'))
             ->line('Once again, thank you for your participation in ' . config('ef.con_name') . ' Dealers\' Den. We are looking forward to seeing your amazing art and items showcased at the event!')
             ->salutation(new HtmlString('Best regards,<br />the Eurofurence Dealers\' Den Team'));
     }
