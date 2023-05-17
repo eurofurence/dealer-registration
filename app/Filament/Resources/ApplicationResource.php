@@ -120,7 +120,7 @@ class ApplicationResource extends Resource
                     'success' => ApplicationStatus::TableAccepted->value,
                     'danger' => ApplicationStatus::Canceled->value
                 ]),
-                Tables\Columns\TextColumn::make('requestedTable.name'),
+                Tables\Columns\TextColumn::make('requestedTable.name')->icon(fn($record) => $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation' : '')->iconPosition('after')->color(fn($record) => $record->table_type_requested !== $record->table_type_assigned ? 'warning' : ''),
                 // FIXME: It is currently not possible to select 'null' to clear the assigned table here, therefore placeholder selection has been disabled.
                 Tables\Columns\SelectColumn::make('table_type_assigned')->options(TableType::pluck('name', 'id')->toArray())->disablePlaceholderSelection(),
                 Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
