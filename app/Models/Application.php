@@ -361,10 +361,14 @@ class Application extends Model
             return false;
         }
 
-        if ($this->type !== ApplicationType::Dealer) {
-            $dealership = $this->parent()->get()->first();
-        } else {
+        if ($this->type === ApplicationType::Dealer) {
             $dealership = $this;
+        } else {
+            $dealership = $this->parent()->get()->first();
+        }
+
+        if (!empty($dealership->table_number) && $dealership->table_type_assigned === null) {
+            return false;
         }
 
         foreach ($dealership->children()->get() as $child) {
