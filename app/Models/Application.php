@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -43,6 +44,7 @@ class Application extends Model
     protected static function boot()
     {
         parent::boot();
+
         // Automatically update application status from Waiting to TableAssigned on table type/number change
         // to allow accepting waiting dealerships via table assignment
         static::updating(function (Application $model) {
@@ -351,6 +353,22 @@ class Application extends Model
     }
 
     /**
+     * Sets table_type_assigned to `null` if input value is empty, converts to integer otherwise.
+     *
+     * Hacky fix for issues with selecting the placeholder in Filament\Tables\Columns\SelectColumn,
+     * which will attempt to set the int field 'table_type_assigned' to '' instead of null and
+     * triggers an exception in the process instead of storing the value.
+     */
+    public function tableTypeAssignedAutoNull(): Attribute {
+        return Attribute::make(
+            get: fn (int|null $value, array $attributes) => $attributes['table_type_assigned'],
+            set: fn (mixed $value) => [
+                'table_type_assigned' => empty($value) ? null : intval($value),
+            ]
+        );
+    }
+
+    /**
      * An application is considered ready if all related applications (parent/children) share the
      * same status (canceled child applications are ignored for this) and table number and the
      * application itself is not canceled.
@@ -361,14 +379,21 @@ class Application extends Model
             return false;
         }
 
-        if ($this->type !== ApplicationType::Dealer) {
-            $dealership = $this->parent()->get()->first();
-        } else {
+        if ($this->type === ApplicationType::Dealer) {
             $dealership = $this;
+        } else {
+            $dealership = $this->parent()->get()->first();
+        }
+
+        if (!empty($dealership->table_number) && $dealership->table_type_assigned === null) {
+            return false;
         }
 
         foreach ($dealership->children()->get() as $child) {
-            if ($child->status !== ApplicationStatus::Canceled && $child->status !== $dealership->status) {
+            if($child->status === ApplicationStatus::Canceled) {
+                continue;
+            }
+            if ($child->status !== $dealership->status) {
                 return false;
             }
             // table numbers must be identical

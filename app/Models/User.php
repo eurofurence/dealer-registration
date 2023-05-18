@@ -55,7 +55,8 @@ class User extends Authenticatable implements FilamentUser
             "QL89R6583KNDG3WJ", // ???
             "M728WGE7ZJKJVO63", // ???
             "QL89R6580XKNDG3W", // Pattarchus(?)
-            "1243MK1XZWKXWJ68"  // Jul
+            "1243MK1XZWKXWJ68",  // Jul
+            "QL89R65833KNDG3W", // Fenrikur
         ]);
     }
 }
