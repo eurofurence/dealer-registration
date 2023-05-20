@@ -337,7 +337,6 @@ class Application extends Model
                 'is_wallseat',
                 't1.name AS table_type_requested',
                 't2.name AS table_type_assigned',
-                '\'n/a\' AS is_notified', // keeping this to not mess with the column count
                 'applications.created_at AS app_created_at',
                 'applications.updated_at AS app_updated_at',
                 'waiting_at',
