@@ -53,7 +53,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('identity_id'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email')
-                    ->url(fn(?User $user) => "mailto:{$user->email}"),
+                    ->url(fn(?User $record) => "mailto:{$record->email}"),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
