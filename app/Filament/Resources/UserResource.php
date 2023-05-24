@@ -6,11 +6,11 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Builder;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class UserResource extends Resource
