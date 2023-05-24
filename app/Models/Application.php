@@ -125,21 +125,7 @@ class Application extends Model
 
     public function getStatus()
     {
-        if (!is_null($this->canceled_at)) {
-            return ApplicationStatus::Canceled;
-        } elseif (!is_null($this->checked_in_at)) {
-            return ApplicationStatus::CheckedIn;
-        } elseif (!is_null($this->waiting_at)) {
-            return ApplicationStatus::Waiting;
-        } elseif (!is_null($this->offer_accepted_at)) {
-            return ApplicationStatus::TableAccepted;
-        } elseif (!is_null($this->offer_sent_at)) {
-            return ApplicationStatus::TableOffered;
-        } elseif (($this->type !== ApplicationType::Dealer || !is_null($this->table_type_assigned)) && !empty($this->table_number)) {
-            return ApplicationStatus::TableAssigned;
-        } else {
-            return ApplicationStatus::Open;
-        }
+        return ApplicationStatus::for($this);
     }
 
     public function isActive()
