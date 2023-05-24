@@ -37,23 +37,54 @@ enum ApplicationStatus: string
             ApplicationStatus::Canceled => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '!=', null)
-                    ->where('checked_in_at', '=', null)
-                    ->where('offer_accepted_at', '=', null)
-                    ->where('offer_sent_at', '=', null)
-                    ->where('waiting_at', '=', null)
             ),
             ApplicationStatus::CheckedIn => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
                     ->where('checked_in_at', '!=', null)
             ),
+            ApplicationStatus::Waiting => $query->orWhere(
+                fn (\Illuminate\Database\Eloquent\Builder $query) =>
+                $query->where('canceled_at', '=', null)
+                    ->where('checked_in_at', '=', null)
+                    ->where('waiting_at', '!=', null)
+            ),
+            ApplicationStatus::TableAccepted => $query->orWhere(
+                fn (\Illuminate\Database\Eloquent\Builder $query) =>
+                $query->where('canceled_at', '=', null)
+                    ->where('checked_in_at', '=', null)
+                    ->where('waiting_at', '=', null)
+                    ->where('offer_accepted_at', '!=', null)
+            ),
+            ApplicationStatus::TableOffered => $query->orWhere(
+                fn (\Illuminate\Database\Eloquent\Builder $query) =>
+                $query->where('canceled_at', '=', null)
+                    ->where('checked_in_at', '=', null)
+                    ->where('waiting_at', '=', null)
+                    ->where('offer_accepted_at', '=', null)
+                    ->where('offer_sent_at', '!=', null)
+            ),
+            ApplicationStatus::TableAssigned => $query->orWhere(
+                fn (\Illuminate\Database\Eloquent\Builder $query) =>
+                $query->where('canceled_at', '=', null)
+                    ->where('checked_in_at', '=', null)
+                    ->where('waiting_at', '=', null)
+                    ->where('offer_accepted_at', '=', null)
+                    ->where('offer_sent_at', '=', null)
+                    ->where('table_number', '!=', null)
+                    ->where(
+                        fn (\Illuminate\Database\Eloquent\Builder $query) =>
+                        $query->orWhere('table_type_assigned', '!=', null)
+                            ->orWhere('type', '!=', \App\Enums\ApplicationType::Dealer->value)
+                    )
+            ),
             ApplicationStatus::Open => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
                     ->where('checked_in_at', '=', null)
+                    ->where('waiting_at', '=', null)
                     ->where('offer_accepted_at', '=', null)
                     ->where('offer_sent_at', '=', null)
-                    ->where('waiting_at', '=', null)
                     ->where(
                         fn (\Illuminate\Database\Eloquent\Builder $query) =>
                         $query->orWhere('table_number', '=', null)
@@ -63,43 +94,6 @@ enum ApplicationStatus: string
                                     ->where('type', '=', \App\Enums\ApplicationType::Dealer->value)
                             )
                     )
-            ),
-            ApplicationStatus::TableAccepted => $query->orWhere(
-                fn (\Illuminate\Database\Eloquent\Builder $query) =>
-                $query->where('canceled_at', '=', null)
-                    ->where('checked_in_at', '=', null)
-                    ->where('offer_accepted_at', '!=', null)
-                    ->where('waiting_at', '=', null)
-            ),
-            ApplicationStatus::TableAssigned => $query->orWhere(
-                fn (\Illuminate\Database\Eloquent\Builder $query) =>
-                $query->where('canceled_at', '=', null)
-                    ->where('checked_in_at', '=', null)
-                    ->where('offer_accepted_at', '=', null)
-                    ->where('offer_sent_at', '=', null)
-                    ->where('waiting_at', '=', null)
-                    ->where('table_number', '!=', null)
-                    ->where(
-                        fn (\Illuminate\Database\Eloquent\Builder $query) =>
-                        $query->orWhere('table_type_assigned', '!=', null)
-                            ->orWhere('type', '!=', \App\Enums\ApplicationType::Dealer->value)
-                    )
-            ),
-            ApplicationStatus::TableOffered => $query->orWhere(
-                fn (\Illuminate\Database\Eloquent\Builder $query) =>
-                $query->where('canceled_at', '=', null)
-                    ->where('checked_in_at', '=', null)
-                    ->where('offer_accepted_at', '=', null)
-                    ->where('offer_sent_at', '!=', null)
-                    ->where('waiting_at', '=', null)
-            ),
-            ApplicationStatus::Waiting => $query->orWhere(
-                fn (\Illuminate\Database\Eloquent\Builder $query) =>
-                $query->where('canceled_at', '=', null)
-                    ->where('checked_in_at', '=', null)
-                    ->where('offer_accepted_at', '=', null)
-                    ->where('offer_sent_at', '=', null)
-                    ->where('waiting_at', '!=', null)
             ),
         };
     }
