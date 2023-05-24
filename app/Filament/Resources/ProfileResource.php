@@ -10,8 +10,6 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProfileResource extends Resource
 {
@@ -47,21 +45,21 @@ class ProfileResource extends Resource
                             ->imageResizeTargetWidth('60')
                             ->imageResizeTargetHeight('60'),
                         Forms\Components\Textarea::make('short_desc')
-                                ->maxLength(1024),
+                            ->maxLength(1024),
                         Forms\Components\FileUpload::make('image_artist')
                             ->image()
                             ->imageResizeMode('force')
                             ->imageResizeTargetWidth('400')
                             ->imageResizeTargetHeight('400'),
                         Forms\Components\Textarea::make('artist_desc')
-                                ->maxLength(2048),
+                            ->maxLength(2048),
                         Forms\Components\FileUpload::make('image_art')
                             ->image()
                             ->imageResizeMode('force')
                             ->imageResizeTargetWidth('400')
                             ->imageResizeTargetHeight('450'),
                         Forms\Components\Textarea::make('art_desc')
-                                ->maxLength(2048),
+                            ->maxLength(2048),
                     ]),
                 ]),
 
@@ -134,7 +132,7 @@ class ProfileResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ApplicationRelationManager::class
         ];
     }
 
