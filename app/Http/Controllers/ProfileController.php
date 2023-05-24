@@ -180,16 +180,15 @@ class ProfileController extends Controller
 
         $zip = new ZipArchive;
 
-        if (true === ($zip->open(public_path('storage/profileImages.zip'), ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
-            foreach (Storage::allFiles('public') as $file) {
+        if (true === ($zip->open('profileImages.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
+            foreach (Storage::allFiles() as $file) {
                 $name = basename($file);
                 if ($name !== '.gitignore' && $name !== 'profileImages.zip') {
-                    $zip->addFile(public_path('storage/' . $name), $name);
+                    $zip->addFile(Storage::path($name), $name);
                 }
             }
             $zip->close();
         }
-
-        return response()->download(public_path('storage/profileImages.zip'), 'profileImages.zip');
+        return Storage::download('profileImages.zip');
     }
 }
