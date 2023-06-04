@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\Console\Helper\Table;
 
 class Application extends Model
 {
@@ -121,23 +119,13 @@ class Application extends Model
         return $this->hasMany(__CLASS__, 'parent');
     }
 
+    public function profile() {
+        return $this->belongsTo(Profile::class, 'id', 'application_id', 'profiles');
+    }
+
     public function getStatus()
     {
-        if (!is_null($this->canceled_at)) {
-            return ApplicationStatus::Canceled;
-        } elseif (!is_null($this->checked_in_at)) {
-            return ApplicationStatus::CheckedIn;
-        } elseif (!is_null($this->waiting_at)) {
-            return ApplicationStatus::Waiting;
-        } elseif (!is_null($this->offer_accepted_at)) {
-            return ApplicationStatus::TableAccepted;
-        } elseif (!is_null($this->offer_sent_at)) {
-            return ApplicationStatus::TableOffered;
-        } elseif (($this->type !== ApplicationType::Dealer || !is_null($this->table_type_assigned)) && !empty($this->table_number)) {
-            return ApplicationStatus::TableAssigned;
-        } else {
-            return ApplicationStatus::Open;
-        }
+        return ApplicationStatus::for($this);
     }
 
     public function isActive()

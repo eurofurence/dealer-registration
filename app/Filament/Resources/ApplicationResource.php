@@ -19,7 +19,6 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ApplicationResource extends Resource
 {
@@ -109,36 +108,66 @@ class ApplicationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label("ID"),
-                Tables\Columns\TextColumn::make('user.name')->searchable(),
-                Tables\Columns\BadgeColumn::make('status')->enum(ApplicationStatus::cases())->formatStateUsing(function (Application $record) {
-                    return $record->status->name;
-                })->colors([
-                    'secondary',
-                    'success' => ApplicationStatus::TableAccepted->value,
-                    'danger' => ApplicationStatus::Canceled->value
-                ]),
-                Tables\Columns\TextColumn::make('requestedTable.name')->icon(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation' : '')->iconPosition('after')->color(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : ''),
-                Tables\Columns\SelectColumn::make('tableTypeAssignedAutoNull')->label('Assigned table')->options(TableType::pluck('name', 'id')->toArray()),
-                Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
-                    return ucfirst($state);
-                })->sortable(),
-                Tables\Columns\TextInputColumn::make('table_number')->sortable()->searchable(),
-                Tables\Columns\IconColumn::make('is_ready')->label('Ready')->getStateUsing(function (Application $record) {
-                    return $record->isReady();
-                })->boolean(),
-                Tables\Columns\TextColumn::make('dlrshp')->getStateUsing(function (Application $record) {
-                    return $record->parent ?: $record->id;
-                })->sortable(query: function (Builder $query, string $direction): Builder {
-                    return $query
-                        ->orderBy(DB::raw('IF(`type` = \'dealer\', `id`,`parent`)'), $direction);
-                })->searchable(query: function (Builder $query, string $search): Builder {
-                    return $query
-                        ->where('id', '=', $search)
-                        ->orWhere('parent', '=', $search);
-                }),
-                Tables\Columns\TextColumn::make('display_name')->searchable(),
-                Tables\Columns\IconColumn::make('wanted_neighbors')->label('N Wanted')->default(false)->boolean(),
-                Tables\Columns\IconColumn::make('comment')->default(false)->boolean(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->searchable(),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->enum(ApplicationStatus::cases())
+                    ->formatStateUsing(function (Application $record) {
+                        return $record->status->name;
+                    })
+                    ->colors([
+                        'secondary',
+                        'success' => ApplicationStatus::TableAccepted->value,
+                        'danger' => ApplicationStatus::Canceled->value
+                    ]),
+                Tables\Columns\TextColumn::make('requestedTable.name')
+                    ->icon(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation' : '')
+                    ->iconPosition('after')
+                    ->color(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : '')
+                    ->sortable(),
+                Tables\Columns\SelectColumn::make('tableTypeAssignedAutoNull')
+                    ->label('Assigned table')
+                    ->options(TableType::pluck('name', 'id')->toArray())
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->orderBy('table_type_assigned', $direction);
+                    }),
+                Tables\Columns\TextColumn::make('type')
+                    ->formatStateUsing(function (string $state) {
+                        return ucfirst($state);
+                    })
+                    ->sortable(),
+                Tables\Columns\TextInputColumn::make('table_number')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\IconColumn::make('is_ready')
+                    ->label('Ready')
+                    ->getStateUsing(function (Application $record) {
+                        return $record->isReady();
+                    })
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('dlrshp')
+                    ->getStateUsing(function (Application $record) {
+                        return $record->parent ?: $record->id;
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->orderBy(DB::raw('IF(`type` = \'dealer\', `id`,`parent`)'), $direction);
+                    })
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('id', '=', $search)
+                            ->orWhere('parent', '=', $search);
+                    }),
+                Tables\Columns\TextColumn::make('display_name')
+                    ->searchable(),
+                Tables\Columns\IconColumn::make('wanted_neighbors')
+                    ->label('N Wanted')
+                    ->default(false)
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('comment')
+                    ->default(false)
+                    ->boolean(),
                 Tables\Columns\IconColumn::make('is_afterdark')
                     ->label('AD')
                     ->sortable()
@@ -155,11 +184,41 @@ class ApplicationResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('parent')->query(fn (Builder $query): Builder => $query->where('type', 'dealer'))->label('Only Dealerships'),
-                Tables\Filters\Filter::make('assignedTable')->query(fn (Builder $query): Builder => $query->whereNull('table_type_assigned'))->label('Missing assigned table'),
-                Tables\Filters\Filter::make('table_number')->query(fn (Builder $query): Builder => $query->whereNull('table_number'))->label('Missing table number'),
-                Tables\Filters\Filter::make('is_afterdark')->query(fn (Builder $query): Builder => $query->where('is_afterdark', '=', '1'))->label('Is Afterdark'),
-                Tables\Filters\Filter::make('table_assigned')->query(fn (Builder $query): Builder => $query->whereNotNull('offer_sent_at'))->label('Table assigned'),
+                Tables\Filters\Filter::make('parent')
+                    ->query(fn (Builder $query): Builder => $query->where('type', 'dealer'))
+                    ->label('Only Dealerships'),
+                Tables\Filters\Filter::make('assignedTable')
+                    ->query(fn (Builder $query): Builder => $query->whereNull('table_type_assigned'))
+                    ->label('Missing assigned table'),
+                Tables\Filters\Filter::make('table_number')
+                    ->query(fn (Builder $query): Builder => $query->whereNull('table_number'))
+                    ->label('Missing table number'),
+                Tables\Filters\Filter::make('is_afterdark')
+                    ->query(fn (Builder $query): Builder => $query->where('is_afterdark', '=', '1'))
+                    ->label('Is Afterdark'),
+                Tables\Filters\Filter::make('table_assigned')
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('offer_sent_at'))
+                    ->label('Table assigned'),
+                Tables\Filters\SelectFilter::make('requestedTable')
+                    ->relationship('requestedTable', 'name')
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('assignedTable')
+                    ->relationship('assignedTable', 'name')
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('status')
+                    ->options(array_combine(array_column(ApplicationStatus::cases(), 'value'), array_column(ApplicationStatus::cases(), 'name')))
+                    ->query(function (Builder $query, array $data) {
+                        \Illuminate\Support\Facades\Log::debug(print_r($data, true));
+                        if (!key_exists('values', $data)) {
+                            return;
+                        }
+                        $query->where(function (Builder $query) use ($data) {
+                            foreach ($data['values'] as $value) {
+                                ApplicationStatus::tryFrom($value)?->orWhere($query);
+                            }
+                        });
+                    })
+                    ->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -237,7 +296,9 @@ class ApplicationResource extends Resource
     {
         return [
             RelationManagers\ChildrenRelationManager::class,
-            RelationManagers\ParentRelationManager::class
+            RelationManagers\ParentRelationManager::class,
+            RelationManagers\UserRelationManager::class,
+            RelationManagers\ProfileRelationManager::class,
         ];
     }
 

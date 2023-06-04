@@ -53,7 +53,7 @@ class EditApplication extends EditRecord
                     ->body("Notified application {$application->id} of user {$user->name} about being put on the waiting list.")
                     ->success();
                 break;
-            case StatusNotificationResult::SharesInvalid->name:
+            case StatusNotificationResult::SharesInvalid:
                 $frontendNotification->title('Notification not sent')
                     ->body("Application not notified because some uncanceled shares have not been assigned to the same table number!")
                     ->danger();

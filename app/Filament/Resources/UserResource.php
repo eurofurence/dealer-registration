@@ -3,14 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
 use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\User;
 use Filament\Forms;
-
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class UserResource extends Resource
@@ -38,9 +39,9 @@ class UserResource extends Resource
 
                 Forms\Components\Fieldset::make('Reg status')->inlineLabel()->columns(1)->schema([
                     Forms\Components\Placeholder::make('packages booked')
-                        ->content(fn(?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? '-'),
+                        ->content(fn(?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? ''),
                     Forms\Components\Placeholder::make('reg status')
-                        ->content(fn(?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? '-'),
+                        ->content(fn(?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? ''),
                 ]),
             ]);
     }
@@ -49,18 +50,25 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('reg_id'),
+                Tables\Columns\TextColumn::make('reg_id')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('identity_id'),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->url(fn(?User $record) => "mailto:{$record->email}"),
+                    ->url(fn(?User $record) => "mailto:{$record->email}")
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('reg_id')->query(fn(Builder $query): Builder => $query->whereNull('reg_id'))->label('Missing Reg ID'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -84,17 +92,15 @@ class UserResource extends Resource
                                 $record->reg_id = null;
                             }
                             $record->save();
-
                         }
                     }),
-            ])
-        ;
+            ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            // new ChildrenRelationManager()
+            RelationManagers\ApplicationRelationManager::class
         ];
     }
 
