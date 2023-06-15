@@ -22,6 +22,10 @@ class EditApplication extends EditRecord
                 ->action('sendStatusNotification')
                 ->requiresConfirmation()
                 ->icon('heroicon-o-mail'),
+            Actions\Action::make('Send reminder')
+                ->action('sendReminderNotification')
+                ->requiresConfirmation()
+                ->icon('heroicon-o-mail'),
         ];
     }
 
@@ -77,5 +81,38 @@ class EditApplication extends EditRecord
 
         $frontendNotification->persistent()->send();
         $this->refreshFormData(['status']);
+    }
+
+
+    public function sendReminderNotification()
+    {
+        $application = $this->getRecord();
+        $user = $application->user()->first();
+        $result = ApplicationController::sendReminderNotification($application);
+        $frontendNotification = Notification::make();
+
+        switch ($result) {
+            case StatusNotificationResult::Accepted:
+                $frontendNotification->title('Notification sent')
+                    ->body("Sent reminder for application {$application->id} of user {$user->name} to confirm their assigned table.")
+                    ->success();
+                break;
+            case StatusNotificationResult::NotDealer:
+                $frontendNotification->title('Notification not sent')
+                    ->body("Did not notify application {$application->id} of user {$user->name} because they are of type {$application->type->value}.")
+                    ->danger();
+                break;
+            case StatusNotificationResult::StatusNotApplicable:
+                $frontendNotification->title('Notification not sent')
+                    ->body("No applicable notification for current status '{$application->status->value}' or type '{$application->type->value}' of application {$application->id} of user {$user->name}.")
+                    ->warning();
+                break;
+            default:
+            $frontendNotification->title('Error')
+            ->body("Unexpected return value from ApplicationController::sendStatusNotification! Please inform the developers: [application={$application->id},result={$result->name}]")
+                ->danger();
+        }
+
+        $frontendNotification->persistent()->send();
     }
 }

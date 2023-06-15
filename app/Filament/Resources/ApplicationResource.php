@@ -287,6 +287,57 @@ class ApplicationResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-mail'),
+                    Tables\Actions\BulkAction::make('Send reminder')
+                    ->action(function (Collection $records): void {
+                        $resultsType = StatusNotificationResult::class;
+                        $results = array_fill_keys(
+                            array_map(
+                                fn (StatusNotificationResult $r) => $r->name,
+                                $resultsType::cases()
+                            ),
+                            0
+                        );
+                        foreach ($records as $record) {
+                            $result = ApplicationController::sendReminderNotification($record);
+                            $results[$result->name] += 1;
+                        }
+
+                        $statusCounts = '';
+                        $totalSentCount = 0;
+                        $frontendNotification = Notification::make();
+
+                        foreach ($results as $statusName => $count) {
+                            switch ($statusName) {
+                                case StatusNotificationResult::Accepted->name:
+                                    $statusCounts .= "<li>{$count} reminded about having to accept their table</li>";
+                                    $totalSentCount += $count;
+                                    break;
+                                case StatusNotificationResult::StatusNotApplicable->name:
+                                    $statusCounts .= "<li>{$count} not notified because status not applicable</li>";
+                                    break;
+                                case StatusNotificationResult::NotDealer->name:
+                                    $statusCounts .= "<li>{$count} not directly notified because share/assistant</li>";
+                                    break;
+                                default:
+                                    $statusCounts .= "<li>{$count} with unknown status {$statusName}</li>";
+                                    break;
+                            }
+                        }
+
+                        if ($totalSentCount > 0) {
+                            $frontendNotification->title("{$totalSentCount} bulk notifications sent")
+                                ->success();
+                        } else {
+                            $frontendNotification->title("No bulk notifications sent")
+                                ->warning();
+                        }
+
+                        $frontendNotification->body("<ul>
+                            {$statusCounts}
+                            </ul>")->persistent()->send();
+                    })
+                    ->requiresConfirmation()
+                    ->icon('heroicon-o-mail'),
             ]);
     }
 
