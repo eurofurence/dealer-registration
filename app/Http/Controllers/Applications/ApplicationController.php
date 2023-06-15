@@ -207,14 +207,14 @@ class ApplicationController extends Controller
         $status = $application->getStatus();
 
         if ($application->type !== ApplicationType::Dealer) {
-            Log::info("Not sending reminder notification for user {$user->id} for application {$application->id} since they are not a Dealer.");
+            Log::info("Not sending reminder to user {$user->id} for application {$application->id} since they are not a Dealer.");
             return StatusNotificationResult::NotDealer;
         } else {
             if ($status === ApplicationStatus::TableOffered) {
                 $user->notify(new TableAcceptanceReminderNotification());
                 return StatusNotificationResult::Accepted;
             } else {
-                Log::info("Not sending notification to user {$user->id} because application {$application->id} is not in an applicable status.");
+                Log::info("Not sending reminder to user {$user->id} because application {$application->id} is not in an applicable status.");
                 return StatusNotificationResult::StatusNotApplicable;
             }
         }

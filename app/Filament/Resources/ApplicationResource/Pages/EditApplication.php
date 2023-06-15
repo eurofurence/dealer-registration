@@ -99,18 +99,19 @@ class EditApplication extends EditRecord
                 break;
             case StatusNotificationResult::NotDealer:
                 $frontendNotification->title('Notification not sent')
-                    ->body("Did not notify application {$application->id} of user {$user->name} because they are of type {$application->type->value}.")
+                    ->body("Did not send reminder {$application->id} of user {$user->name} because they are of type {$application->type->value}.")
                     ->danger();
                 break;
             case StatusNotificationResult::StatusNotApplicable:
                 $frontendNotification->title('Notification not sent')
-                    ->body("No applicable notification for current status '{$application->status->value}' or type '{$application->type->value}' of application {$application->id} of user {$user->name}.")
+                    ->body("Reminder not applicable for current status '{$application->status->value}' or type '{$application->type->value}' of application {$application->id} of user {$user->name}.")
                     ->warning();
                 break;
             default:
-            $frontendNotification->title('Error')
-            ->body("Unexpected return value from ApplicationController::sendStatusNotification! Please inform the developers: [application={$application->id},result={$result->name}]")
-                ->danger();
+                $frontendNotification->title('Error')
+                    ->body("Unexpected return value from ApplicationController::sendStatusNotification! Please inform the developers: [application={$application->id},result={$result->name}]")
+                    ->danger();
+                break;
         }
 
         $frontendNotification->persistent()->send();

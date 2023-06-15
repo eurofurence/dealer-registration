@@ -287,7 +287,7 @@ class ApplicationResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-mail'),
-                    Tables\Actions\BulkAction::make('Send reminder')
+                Tables\Actions\BulkAction::make('Send reminder')
                     ->action(function (Collection $records): void {
                         $resultsType = StatusNotificationResult::class;
                         $results = array_fill_keys(
