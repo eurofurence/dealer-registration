@@ -8,6 +8,7 @@ use App\Enums\StatusNotificationResult;
 use App\Filament\Resources\ApplicationResource\Pages;
 use App\Filament\Resources\ApplicationResource\RelationManagers;
 use App\Http\Controllers\Applications\ApplicationController;
+use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\Application;
 use App\Models\TableType;
 use Filament\Forms;
@@ -161,6 +162,11 @@ class ApplicationResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('regstatus')
+                    ->getStateUsing(function (Application $record) {
+                        $reg = RegSysClientController::getSingleReg($record->user()->first()->reg_id);
+                        return  $reg != null ? $reg['status'] : "";
+                    }),
                 Tables\Columns\IconColumn::make('wanted_neighbors')
                     ->label('N Wanted')
                     ->default(false)
