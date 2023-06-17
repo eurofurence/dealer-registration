@@ -178,17 +178,33 @@ class ProfileController extends Controller
     {
         abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
 
-        $zip = new ZipArchive;
+        $zipName = 'profileImages.zip';
 
-        if (true === ($zip->open('profileImages.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
-            foreach (Storage::allFiles() as $file) {
-                $name = basename($file);
-                if ($name !== '.gitignore' && $name !== 'profileImages.zip') {
-                    $zip->addFile(Storage::path($name), $name);
+        $zip = new ZipArchive();
+
+        if (true === ($zip->open(Storage::path($zipName), ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
+
+            foreach (Profile::all() as $profile) {
+                $imgThumbnail = Storage::path('public/' . $profile->image_thumbnail);
+                if (file_exists($imgThumbnail) && is_file($imgThumbnail)) {
+                    $zip->addFile($imgThumbnail, $profile->image_thumbnail);
                 }
+                $imgArt = Storage::path('public/' . $profile->image_art);
+                if (file_exists($imgArt) && is_file($imgArt)) {
+                    $zip->addFile($imgArt, $profile->image_art);
+                }
+                $imgArtist = Storage::path('public/' . $profile->image_artist);
+                if (file_exists($imgArtist) && is_file($imgArtist)) {
+                    $zip->addFile($imgArtist, $profile->image_artist);
+                }
+
+                // prevent too many open files at once
+                $zip->close();
+                $zip->open(Storage::path($zipName));
             }
             $zip->close();
         }
-        return Storage::download('profileImages.zip');
+
+        return Storage::download($zipName);
     }
 }
