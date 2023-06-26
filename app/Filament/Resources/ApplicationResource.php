@@ -162,11 +162,12 @@ class ApplicationResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('regstatus')
-                    ->getStateUsing(function (Application $record) {
-                        $reg = RegSysClientController::getSingleReg($record->user()->first()->reg_id);
-                        return  $reg != null ? $reg['status'] : "";
-                    }),
+                // TODO fetch all regs at once rather than individual requests.
+                // Tables\Columns\TextColumn::make('regstatus')
+                //     ->getStateUsing(function (Application $record) {
+                //         $reg = RegSysClientController::getSingleReg($record->user()->first()->reg_id);
+                //         return  $reg != null ? $reg['status'] : "";
+                //     }),
                 Tables\Columns\IconColumn::make('wanted_neighbors')
                     ->label('N Wanted')
                     ->default(false)
