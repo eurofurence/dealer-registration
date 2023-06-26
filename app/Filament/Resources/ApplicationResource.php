@@ -8,6 +8,7 @@ use App\Enums\StatusNotificationResult;
 use App\Filament\Resources\ApplicationResource\Pages;
 use App\Filament\Resources\ApplicationResource\RelationManagers;
 use App\Http\Controllers\Applications\ApplicationController;
+use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\Application;
 use App\Models\TableType;
 use Filament\Forms;
@@ -161,6 +162,12 @@ class ApplicationResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
+                // TODO fetch all regs at once rather than individual requests.
+                // Tables\Columns\TextColumn::make('regstatus')
+                //     ->getStateUsing(function (Application $record) {
+                //         $reg = RegSysClientController::getSingleReg($record->user()->first()->reg_id);
+                //         return  $reg != null ? $reg['status'] : "";
+                //     }),
                 Tables\Columns\IconColumn::make('wanted_neighbors')
                     ->label('N Wanted')
                     ->default(false)
@@ -260,6 +267,57 @@ class ApplicationResource extends Resource
                                     break;
                                 case StatusNotificationResult::SharesInvalid->name:
                                     $statusCounts .= "<li>{$count} not notified because shares/assistants not assigned to same table</li>";
+                                    break;
+                                case StatusNotificationResult::StatusNotApplicable->name:
+                                    $statusCounts .= "<li>{$count} not notified because status not applicable</li>";
+                                    break;
+                                case StatusNotificationResult::NotDealer->name:
+                                    $statusCounts .= "<li>{$count} not directly notified because share/assistant</li>";
+                                    break;
+                                default:
+                                    $statusCounts .= "<li>{$count} with unknown status {$statusName}</li>";
+                                    break;
+                            }
+                        }
+
+                        if ($totalSentCount > 0) {
+                            $frontendNotification->title("{$totalSentCount} bulk notifications sent")
+                                ->success();
+                        } else {
+                            $frontendNotification->title("No bulk notifications sent")
+                                ->warning();
+                        }
+
+                        $frontendNotification->body("<ul>
+                            {$statusCounts}
+                            </ul>")->persistent()->send();
+                    })
+                    ->requiresConfirmation()
+                    ->icon('heroicon-o-mail'),
+                Tables\Actions\BulkAction::make('Send reminder')
+                    ->action(function (Collection $records): void {
+                        $resultsType = StatusNotificationResult::class;
+                        $results = array_fill_keys(
+                            array_map(
+                                fn (StatusNotificationResult $r) => $r->name,
+                                $resultsType::cases()
+                            ),
+                            0
+                        );
+                        foreach ($records as $record) {
+                            $result = ApplicationController::sendReminderNotification($record);
+                            $results[$result->name] += 1;
+                        }
+
+                        $statusCounts = '';
+                        $totalSentCount = 0;
+                        $frontendNotification = Notification::make();
+
+                        foreach ($results as $statusName => $count) {
+                            switch ($statusName) {
+                                case StatusNotificationResult::Accepted->name:
+                                    $statusCounts .= "<li>{$count} reminded about having to accept their table</li>";
+                                    $totalSentCount += $count;
                                     break;
                                 case StatusNotificationResult::StatusNotApplicable->name:
                                     $statusCounts .= "<li>{$count} not notified because status not applicable</li>";

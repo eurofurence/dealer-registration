@@ -14,6 +14,7 @@ use App\Notifications\AlternateTableOfferedNotification;
 use App\Notifications\AlternateTableOfferedShareNotification;
 use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
+use App\Notifications\TableAcceptanceReminderNotification;
 use App\Notifications\TableOfferedNotification;
 use App\Notifications\TableOfferedShareNotification;
 use App\Notifications\WaitingListNotification;
@@ -151,8 +152,8 @@ class ApplicationController extends Controller
                 case ApplicationStatus::TableAssigned:
                     // Do not send offer to dealerships where not all shares are accepted
                     if (!$application->isReady()) {
-                            Log::info("Not sending accepted notification for user {$user->id} for application {$application->id} since not all Shares or Assistants have been set to TableOffered or Canceled or been assigned the same table number during review.");
-                            return StatusNotificationResult::SharesInvalid;
+                        Log::info("Not sending accepted notification for user {$user->id} for application {$application->id} since not all Shares or Assistants have been set to TableOffered or Canceled or been assigned the same table number during review.");
+                        return StatusNotificationResult::SharesInvalid;
                     }
 
                     if ($application->table_type_assigned === $application->table_type_requested) {
@@ -180,8 +181,8 @@ class ApplicationController extends Controller
                 case ApplicationStatus::Open:
                     // Do not send dealerships to waiting list if some shares/assistants have a table number
                     if (!$application->isReady()) {
-                            Log::info("Not sending application {$application->id} of user {$user->id} to waiting list since some Shares or Assistants have been assigned a table number.");
-                            return StatusNotificationResult::SharesInvalid;
+                        Log::info("Not sending application {$application->id} of user {$user->id} to waiting list since some Shares or Assistants have been assigned a table number.");
+                        return StatusNotificationResult::SharesInvalid;
                     }
 
                     Log::info("Sending waiting list notification to user {$user->id} for application {$application->id}.");
@@ -196,6 +197,25 @@ class ApplicationController extends Controller
                 default:
                     Log::info("Not sending notification to user {$user->id} because application {$application->id} is not in an applicable status.");
                     return StatusNotificationResult::StatusNotApplicable;
+            }
+        }
+    }
+
+    public static function sendReminderNotification(Application $application): StatusNotificationResult
+    {
+        $user = $application->user()->first();
+        $status = $application->getStatus();
+
+        if ($application->type !== ApplicationType::Dealer) {
+            Log::info("Not sending reminder to user {$user->id} for application {$application->id} since they are not a Dealer.");
+            return StatusNotificationResult::NotDealer;
+        } else {
+            if ($status === ApplicationStatus::TableOffered) {
+                $user->notify(new TableAcceptanceReminderNotification());
+                return StatusNotificationResult::Accepted;
+            } else {
+                Log::info("Not sending reminder to user {$user->id} because application {$application->id} is not in an applicable status.");
+                return StatusNotificationResult::StatusNotApplicable;
             }
         }
     }
