@@ -109,10 +109,23 @@ class ApplicationController extends Controller
         return \Redirect::route('dashboard');
     }
 
-    public function exportCsv()
-    {
+    /**
+     * Export a CSV containing the complete application data.
+     */
+    public function exportCsvAdmin() {
         abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
+        return $this->exportCsv(false);
+    }
 
+    /**
+     * Export a CSV containing only the data required by the EF app.
+     */
+    public function exportCsvApp() {
+        return $this->exportCsv(true);
+    }
+
+    public function exportCsv(bool $appExport)
+    {
         $headers = [
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Content-type' => 'text/csv',
@@ -121,7 +134,12 @@ class ApplicationController extends Controller
             'Pragma' => 'public'
         ];
 
-        $applications = Application::getAllApplicationsForExport();
+        $applications = null;
+        if ($appExport) {
+            $applications = Application::getAllApplicationsForAppExport();
+        } else {
+            $applications = Application::getAllApplicationsForExport();
+        }
 
         if (!empty($applications)) {
             # add table headers

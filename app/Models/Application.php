@@ -7,6 +7,7 @@ use App\Enums\ApplicationType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Application extends Model
@@ -337,6 +338,43 @@ class Application extends Model
             ->get();
 
         return json_decode(json_encode($applications), true);
+    }
+
+    public static function getAllApplicationsForAppExport()  {
+        $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
+        ->leftJoin('users', 'user_id', '=', 'users.id')
+        ->select(
+            'applications.id AS Reg No.',
+            'users.name AS Nick',
+            'display_name AS Display Name',
+            'applications.website AS Website Reg',
+            'merchandise AS Merchandise',
+            DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
+            DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
+            DB::raw("CASE WHEN attends_sat = 1 THEN 'X' ELSE '' END AS 'Attends Sat'"),
+            DB::raw("'X' as 'Allows Use of Data'"),
+            DB::raw("CASE WHEN is_afterdark = 1 THEN 'X' ELSE '' END AS 'After Dark'"),
+            'short_desc AS Short Description',
+            'artist_desc AS About the Artist',
+            'art_desc AS About the Art',
+            'profiles.website as Website',
+            'twitter as Twitter',
+            'telegram as Telegram',
+            'art_preview_caption as Art Preview Caption',
+            DB::raw("CASE WHEN image_thumbnail IS NOT NULL THEN 'X' ELSE '' END AS 'ThumbailImg'"),
+            DB::raw("CASE WHEN image_artist IS NOT NULL THEN 'X' ELSE '' END AS 'ArtistImg'"),
+            DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
+            DB::raw("CASE WHEN is_print = 1 THEN 'X' ELSE '' END AS 'Cat. Prints'"),
+            DB::raw("CASE WHEN is_artwork = 1 THEN 'X' ELSE '' END AS 'Cat. Prints'"),
+            DB::raw("CASE WHEN is_fursuit = 1 THEN 'X' ELSE '' END AS 'Cat. Fursuit'"),
+            DB::raw("CASE WHEN is_commissions = 1 THEN 'X' ELSE '' END AS 'Cat. Commission'"),
+            DB::raw("CASE WHEN is_misc = 1 THEN 'X' ELSE '' END AS 'Cat. Misc'"),
+            'discord as Discord',
+            'tweet as Tweet',
+        )
+        ->get();
+
+    return json_decode(json_encode($applications), true);
     }
 
     /**
