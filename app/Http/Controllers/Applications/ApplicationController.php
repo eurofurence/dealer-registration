@@ -156,6 +156,12 @@ class ApplicationController extends Controller
 
         $handle = fopen(Storage::path($csvName), 'w');
         $applications = Application::getAllApplicationsForAppExport();
+
+        if (!empty($applications)) {
+            # add table headers
+            array_unshift($applications, array_keys($applications[0]));
+        }
+
         foreach ($applications as $row) {
             fputcsv($handle, $row);
         }
