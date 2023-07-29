@@ -57,14 +57,12 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
         return \Illuminate\Support\Facades\Redirect::route('dashboard');
     });
 
-    Route::get('admin/export/images', [ProfileController::class, 'exportImagesAdmin']);
+    Route::get('admin/export/appdata', [ApplicationController::class, 'exportAppDataAdmin']);
     Route::get('admin/export/csv', [ApplicationController::class, 'exportCsvAdmin']);
-    Route::get('admin/export/appcsv', [ApplicationController::class, 'exportCsvApp']);
 
 });
 
 // Basic auth using credentials from env
 Route::middleware('auth.api.basic')->group(function () {
-    Route::get('export/images', [ProfileController::class, 'exportImages']);
-    Route::get('export/csv', [ApplicationController::class, 'exportCsvApp']);
+    Route::get('export/appdata', [ApplicationController::class, 'exportAppData']);
 });
