@@ -16,6 +16,10 @@ class ApiBasicAuth
      */
     public function handle($request, Closure $next)
     {
+        if (config('services.api.user') == null || config('services.api.password') == null) {
+            return response('Unauthorized', 401);
+        }
+
         header('Cache-Control: no-cache, must-revalidate, max-age=0');
         if($request->getUser() != config('services.api.user') && $request->getPassword() != config('services.api.password')) {
             $headers = array('WWW-Authenticate' => 'Basic');
