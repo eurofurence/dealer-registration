@@ -22,6 +22,8 @@ use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class ApplicationController extends Controller
 {
@@ -109,10 +111,11 @@ class ApplicationController extends Controller
         return \Redirect::route('dashboard');
     }
 
-    public function exportCsv()
-    {
+    /**
+     * Export a CSV containing the complete application data.
+     */
+    public function exportCsvAdmin() {
         abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
-
         $headers = [
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Content-type' => 'text/csv',
@@ -138,6 +141,43 @@ class ApplicationController extends Controller
 
         return response()->stream($callback, 200, $headers)->sendContent();
     }
+
+    public function exportAppDataAdmin() {
+        abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
+        return $this->exportAppData();
+    }
+
+    /**
+     * Export a ZIP containing the CSV for the EF app and the images.
+     */
+    public function exportAppData() {
+        $zipFileName = "appdata.zip";
+        $csvName = "applications.csv";
+
+        $handle = fopen(Storage::path($csvName), 'w');
+        $applications = Application::getAllApplicationsForAppExport();
+
+        if (!empty($applications)) {
+            # add table headers
+            array_unshift($applications, array_keys($applications[0]));
+        }
+
+        foreach ($applications as $row) {
+            fputcsv($handle, $row);
+        }
+        fclose($handle);
+
+        $zip = new ZipArchive();
+        if (true === ($zip->open(Storage::path($zipFileName), ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
+            $zip->addFile(Storage::path($csvName), $csvName);
+            $zip->close();
+        }
+
+        ProfileController::addImagesToZip( $zip, $zipFileName);
+
+        return Storage::download($zipFileName);
+    }
+
 
     public static function sendStatusNotification(Application $application): StatusNotificationResult
     {

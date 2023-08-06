@@ -8,7 +8,7 @@
             </div>
 
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <a target="_blank" href="export/images" class="text-secondary small">Export images</a>
+                <a target="_blank" href="export/appdata" class="text-secondary small">Export data for EF App</a>
             </div>
 
         </div>

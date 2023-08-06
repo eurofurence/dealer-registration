@@ -174,37 +174,29 @@ class ProfileController extends Controller
         ];
     }
 
-    public function exportImages()
+    public static function addImagesToZip(ZipArchive $zip, string $zipFileName)
     {
-        abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
-
-        $zipName = 'profileImages.zip';
-
-        $zip = new ZipArchive();
-
-        if (true === ($zip->open(Storage::path($zipName), ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
+        if (true === ($zip->open(Storage::path($zipFileName)))) {
 
             foreach (Profile::all() as $profile) {
                 $imgThumbnail = Storage::path('public/' . $profile->image_thumbnail);
                 if (file_exists($imgThumbnail) && is_file($imgThumbnail)) {
-                    $zip->addFile($imgThumbnail, $profile->image_thumbnail);
+                    $zip->addFile($imgThumbnail, 'images/thumbnail_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_thumbnail, PATHINFO_EXTENSION));
                 }
                 $imgArt = Storage::path('public/' . $profile->image_art);
                 if (file_exists($imgArt) && is_file($imgArt)) {
-                    $zip->addFile($imgArt, $profile->image_art);
+                    $zip->addFile($imgArt, 'images/art' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION));
                 }
                 $imgArtist = Storage::path('public/' . $profile->image_artist);
                 if (file_exists($imgArtist) && is_file($imgArtist)) {
-                    $zip->addFile($imgArtist, $profile->image_artist);
+                    $zip->addFile($imgArtist, 'images/artist_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_artist, PATHINFO_EXTENSION));
                 }
 
                 // prevent too many open files at once
                 $zip->close();
-                $zip->open(Storage::path($zipName));
+                $zip->open(Storage::path($zipFileName));
             }
             $zip->close();
         }
-
-        return Storage::download($zipName);
     }
 }
