@@ -7,5 +7,7 @@ return [
     'idp_url' => 'https://identity.eurofurence.org',
     'dealers_email' => 'dealers@eurofurence.org',
     'con_name' => 'Eurofurence 27',
-    'payment_timeframe' => 'two weeks'
+    'payment_timeframe' => 'two weeks',
+    'admin_group' => 'QE3VMR2LK9X1PW07',
+    'frontdesk_group' => 'EN3GL42Q072JKZQO',
 ];
