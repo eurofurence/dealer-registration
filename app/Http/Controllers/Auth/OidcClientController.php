@@ -58,7 +58,7 @@ class OidcClientController extends Controller
             'code' => $data['code'],
         ]);
         $userinfoRequest = Http::identity()->withToken($accessToken->getToken())->get("/api/v1/userinfo");
-        if($userinfoRequest->successful() === false) {
+        if ($userinfoRequest->successful() === false) {
             return Redirect::route('auth.login');
         }
         $userinfo = $userinfoRequest->json()['data'];
@@ -74,11 +74,12 @@ class OidcClientController extends Controller
             "identity_id" => $userinfo['sub'],
             "name" => $userinfo['name'],
             "email" => $userinfo['email'],
+            "groups" => $userinfo['groups'],
         ]);
         $user = $user->fresh();
         Auth::loginUsingId($user->id);
         Session::put('access_token', $accessToken);
-        Session::put("avatar" , $userinfo['avatar']);
+        Session::put('avatar', $userinfo['avatar']);
         return $this->redirectDestination($request);
     }
 

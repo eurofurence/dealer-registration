@@ -23,6 +23,7 @@ class User extends Authenticatable implements FilamentUser
         'identity_id',
         'reg_id',
         'password',
+        'groups',
     ];
 
     /**
@@ -42,6 +43,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'groups' => 'array',
     ];
 
     public function application(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -51,13 +53,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessFilament(): bool
     {
-        return in_array($this->identity_id, [
-            "QL89R6583KNDG3WJ", // ???
-            "M728WGE7ZJKJVO63", // ???
-            "QL89R6580XKNDG3W", // Pattarchus(?)
-            "1243MK1XZWKXWJ68", // Jul
-            "QL89R65833KNDG3W", // Fenrikur
-            "ZV9Q6Y5O30EO73P8", // Rakan
-        ]);
+        return in_array(config('ef.admin_group'), $this->groups);
     }
 }
