@@ -171,7 +171,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 <div id="short_descHelp" class="form-text">
-                    A short description, 1 - 3 sentences, to appear in the dealer list next to your thumbnail image.
+                    A short description, 1 - 3 sentences, to appear in your profile header.
                 </div>
             </div>
         </div>
@@ -356,7 +356,7 @@
         <div class="row mb-3">
             <label for="discord" class="col-sm-2 col-form-label fw-bold">Dis&shy;cord</label>
             <div class="col-sm-10">
-                <input type="text" name="discord" placeholder="YourDiscordHandle#0000"
+                <input type="text" name="discord" placeholder="YourDiscordHandle"
                     class="form-control @error('discord') is-invalid @enderror" id="discord"
                     value="{{ old('_token') ? old('discord') : $profile?->discord }}">
                 @error('discord')
