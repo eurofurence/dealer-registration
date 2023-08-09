@@ -46,6 +46,11 @@ class User extends Authenticatable implements FilamentUser
         'groups' => 'array',
     ];
 
+    /**
+     * Default values for attributes.
+     *
+     * @var array<string, object>
+     */
     protected $attributes = [
         'groups' => [],
     ];
@@ -55,11 +60,17 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Application::class);
     }
 
+    /**
+     * @return bool true if user is part of the IDP group specified in ef.admin_group.
+     */
     public function isAdmin(): bool
     {
         return !empty($this->groups) && in_array(config('ef.admin_group'), $this->groups);
     }
 
+    /**
+     * @return bool true if user is part of the IDP group specified in ef.frontdesk_group or an admin.
+     */
     public function isFrontdesk(): bool
     {
         return !empty($this->groups) && $this->isAdmin() || in_array(config('ef.frontdesk_group'), $this->groups);
