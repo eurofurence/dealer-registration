@@ -151,7 +151,7 @@ class ProfileController extends Controller
                 'nullable',
                 // Discord user name validation: https://discord.com/developers/docs/resources/user
                 // (simplified because we don't need to check all edge cases)
-                'regex:/^[a-z0-9_\.\#]{2,32}$/i',
+                'regex:/^[^@:]{2,32}$/i',
             ],
             "tweet" => [
                 'max:280',
