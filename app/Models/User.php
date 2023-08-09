@@ -46,13 +46,27 @@ class User extends Authenticatable implements FilamentUser
         'groups' => 'array',
     ];
 
+    protected $attributes = [
+        'groups' => [],
+    ];
+
     public function application(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Application::class);
     }
 
+    public function isAdmin(): bool
+    {
+        return !empty($this->groups) && in_array(config('ef.admin_group'), $this->groups);
+    }
+
+    public function isFrontdesk(): bool
+    {
+        return !empty($this->groups) && $this->isAdmin() || in_array(config('ef.frontdesk_group'), $this->groups);
+    }
+
     public function canAccessFilament(): bool
     {
-        return in_array(config('ef.admin_group'), $this->groups);
+        return $this->isAdmin();
     }
 }
