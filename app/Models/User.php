@@ -52,7 +52,7 @@ class User extends Authenticatable implements FilamentUser
      * @var array<string, object>
      */
     protected $attributes = [
-        'groups' => [],
+        'groups' => '[]',
     ];
 
     public function application(): \Illuminate\Database\Eloquent\Relations\HasOne
