@@ -21,7 +21,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'identity_id' => fake()->uuid(),
-            'groups' => [],
+            'groups' => '[]',
         ];
     }
 

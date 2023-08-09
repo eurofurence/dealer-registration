@@ -32,6 +32,7 @@ class Application extends Model
         "canceled_at" => "datetime",
         "waiting_at" => "datetime",
         "checked_in_at" => "datetime",
+        "checked_out_at" => "datetime",
         "offer_sent_at" => "datetime",
         "offer_accepted_at" => "datetime",
     ];
@@ -120,8 +121,14 @@ class Application extends Model
         return $this->hasMany(__CLASS__, 'parent');
     }
 
-    public function profile() {
+    public function profile()
+    {
         return $this->belongsTo(Profile::class, 'id', 'application_id', 'profiles');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'application_id');
     }
 
     public function getStatus()
@@ -132,6 +139,20 @@ class Application extends Model
     public function isActive()
     {
         return $this->getStatus() !== ApplicationStatus::Canceled;
+    }
+
+    public function checkIn() {
+        if ($this->status === ApplicationStatus::TableAccepted) {
+            $this->status = ApplicationStatus::CheckedIn;
+            $this->save();
+        }
+    }
+
+    public function checkOut() {
+        if ($this->status === ApplicationStatus::CheckedIn) {
+            $this->status = ApplicationStatus::CheckedOut;
+            $this->save();
+        }
     }
 
     public function cancel()
@@ -272,6 +293,14 @@ class Application extends Model
         if ($status === ApplicationStatus::CheckedIn) {
             $this->update([
                 'checked_in_at' => now(),
+                'checked_out_at' => null,
+                'canceled_at' => null,
+            ]);
+        }
+
+        if ($status === ApplicationStatus::CheckedOut) {
+            $this->update([
+                'checked_out_at' => now(),
                 'canceled_at' => null,
             ]);
         }
@@ -333,6 +362,7 @@ class Application extends Model
                 'offer_sent_at',
                 'offer_accepted_at',
                 'checked_in_at',
+                'checked_out_at',
                 'canceled_at',
                 'profiles.*',
             )
