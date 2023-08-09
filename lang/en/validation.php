@@ -33,7 +33,7 @@ return [
             'regex' => 'Please verify your Telegram handle, it must be between 5 and 32 characters and only contain letters, numbers and underscores (_).'
         ],
         'discord' => [
-            'regex' => 'Please verify your Discord handle, it must consist of your username (between 2 and 32 characters) followed by a # and four digits (e.g. "mynick#1234").'
+            'regex' => 'Please verify your Discord handle, it must be between 2 and 32 characters.'
         ],
         'attends_sat' => [
             'required_without_all' => 'Please select at least one day when you will be in the Dealers\' Den.'
