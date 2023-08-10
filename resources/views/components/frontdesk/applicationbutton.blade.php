@@ -7,9 +7,9 @@
         'btn-primary',
         'fs-4',
         'btn-success' => $application->status === \App\Enums\ApplicationStatus::CheckedIn,
-        'btn-warning' => $application->status === \App\Enums\ApplicationStatus::TableOffered ||
+        'btn-warning' => $application->status === \App\Enums\ApplicationStatus::TableAccepted ||
         $application->status === \App\Enums\ApplicationStatus::CheckedOut,
-        'btn-danger' => $application->status !== \App\Enums\ApplicationStatus::CheckedIn && $application->status !== \App\Enums\ApplicationStatus::TableOffered &&
+        'btn-danger' => $application->status !== \App\Enums\ApplicationStatus::CheckedIn && $application->status !== \App\Enums\ApplicationStatus::TableAccepted &&
         $application->status !== \App\Enums\ApplicationStatus::CheckedOut,
         ])>
     {{ $applicant->name }} ({{$applicant->reg_id}}) – {{ $application->status->name }}</a>
