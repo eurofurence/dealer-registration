@@ -32,10 +32,10 @@ class ApplicationRelationManager extends RelationManager
                 Tables\Columns\BadgeColumn::make('status')->enum(ApplicationStatus::cases())->formatStateUsing(function (Application $record) {
                     return $record->status->name;
                 })->colors([
-                        'secondary',
-                        'success' => ApplicationStatus::TableAccepted->value,
-                        'danger' => ApplicationStatus::Canceled->value
-                    ]),
+                            'secondary',
+                            'success' => ApplicationStatus::TableAccepted->value,
+                            'danger' => ApplicationStatus::Canceled->value
+                        ]),
                 Tables\Columns\TextColumn::make('assignedTable.name'),
                 Tables\Columns\TextColumn::make('table_number'),
 

@@ -3,10 +3,7 @@
 namespace App\Filament\Resources\ApplicationResource\RelationManagers;
 
 use App\Filament\Resources\CommentResource;
-use App\Filament\Resources\UserResource;
-use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\Comment;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -16,7 +13,6 @@ use Filament\Tables;
 class CommentRelationManager extends RelationManager
 {
     protected static string $relationship = 'comments';
-
     protected static ?string $title = "Comments";
     protected static ?string $label = "Comment";
     protected static ?string $recordTitleAttribute = 'text';

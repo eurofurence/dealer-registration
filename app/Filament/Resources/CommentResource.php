@@ -11,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CommentResource extends Resource
 {
@@ -39,7 +38,7 @@ class CommentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('uuid')->hidden()->url(fn ($record) => CommentResource::getUrl('edit', ['record' => $record->uuid])),
+                Tables\Columns\TextColumn::make('uuid')->hidden()->url(fn($record) => CommentResource::getUrl('edit', ['record' => $record->uuid])),
                 Tables\Columns\TextColumn::make('application_id')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author.name')
@@ -50,7 +49,7 @@ class CommentResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('admin_only')
-                    ->query(fn (Builder $query): Builder => $query->where('admin_only', '=', '1'))
+                    ->query(fn(Builder $query): Builder => $query->where('admin_only', '=', '1'))
                     ->label('Is Admin only'),
             ])
             ->actions([

@@ -348,8 +348,6 @@ class ApplicationResource extends Resource
             ]);
     }
 
-
-
     public static function getRelations(): array
     {
         return [
