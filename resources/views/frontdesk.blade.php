@@ -17,11 +17,11 @@
             height: 9.99% !important;
         }
 
-        @media (max-width: 575.98px) {
+        @media (max-width: 767.98px) {
 
             /* Avoid scrolling once overflowable columns get wrapped into a single column. */
-            .overflow-auto.col-sm.mh-100,
-            .overflow-auto.col-sm-6.mh-100 {
+            .overflow-auto.col-md.mh-100,
+            .overflow-auto.col-md-6.mh-100 {
                 max-height: none !important;
             }
 
@@ -38,9 +38,9 @@
         <!-- Navigation Bar -->
         <nav id="navbar" class="bg-primary navbar-dark text-light border-bottom">
             <div class="d-flex align-items-center h-100 mx-3">
-                <div class="fs-2 me-auto">
-                    <a href="{{ route('frontdesk') }}" class="text-light text-decoration-none stretched-link ">Dealers' Den Frontdesk</a>
-                </div>
+                <a href="{{ route('frontdesk') }}"
+                    class="fs-2 me-auto d-block text-light text-decoration-none flex-fill">Dealers' Den
+                    Frontdesk</a>
                 <div class="my-1 z-1">
                     <span class="fs-5 align-middle">{{ $user->name }}</span>
                     <img src="{{ Session::get('avatar') ? 'https://identity.eurofurence.org/storage/avatars/' : '' }}{{ Session::get('avatar') ?? asset('default.jpg') }}"
@@ -58,7 +58,7 @@
             <div class="row h-100">
 
                 <!-- Numpad & Search Column -->
-                <div class="col-sm-3 mh-100">
+                <div class="col-md-3 mh-100">
                     <form method="get" action="{{ route('frontdesk') }}" name="search">
                         <input type="text" class="form-control my-2 text-center fs-1" id="search" name="search"
                             autofocus>
@@ -110,23 +110,26 @@
                 </div>
 
                 <!-- Application Column -->
-                <div class="col-sm-6 fs-3 mh-100 overflow-auto">
+                <div class="col-md-6 fs-3 mh-100 overflow-auto">
                     @if (empty($search))
                         <div class="card my-2">
                             <div class="card-header text-center fs-3">
                                 Welcome to the Dealers' Den Frontdesk!
                             </div>
                             <div class="card-body fs-4">
-                                    You can search Dealers, Shares or Assistants by:
-                                    <ul>
-                                        <li><strong>registration ID</strong> (exact match; no checksum!),</li>
-                                        <li><strong>attendee nickname</strong> (supports <code>%</code> as wildcard; not case-sensitive),</li>
-                                        <li><strong>table number</strong> (exact match) or</li>
-                                        <li><strong>display name</strong> (supports <code>%</code> as wildcard; not case-sensitive).</li>
-                                    </ul>
+                                You can search Dealers, Shares or Assistants by:
+                                <ul>
+                                    <li><strong>registration ID</strong> (exact match; no checksum!),</li>
+                                    <li><strong>attendee nickname</strong> (supports <code>%</code> as wildcard; not
+                                        case-sensitive),</li>
+                                    <li><strong>table number</strong> (exact match) or</li>
+                                    <li><strong>display name</strong> (supports <code>%</code> as wildcard; not
+                                        case-sensitive).</li>
+                                </ul>
                             </div>
                             <div class="card-footer fs-5">
-                                The first matching result will be loaded automatically. If it's not who you were looking for, please try making your search more specific.
+                                The first matching result will be loaded automatically. If it's not who you were looking
+                                for, please try making your search more specific.
                             </div>
                         </div>
                     @elseif ($applicant === null)
@@ -195,7 +198,7 @@
                                                         ? $applicant->name
                                                         : $application->display_name)
                                                     : (empty($parent->display_name)
-                                                        ? $parent->user()->first()->name
+                                                        ? $parent->user->name
                                                         : $parent->display_name) }}">
                                         </div>
                                         <div class="mb-3">
@@ -219,7 +222,7 @@
                                             <div class="mb-3">
                                                 <span class="form-label">Shares</label>
                                                     @foreach ($shares as $share)
-                                                        @php($shareApplicant = $share->user()->first())
+                                                        @php($shareApplicant = $share->user)
                                                         <x-frontdesk.applicationbutton :applicant="$shareApplicant"
                                                             :application="$share"></x-frontdesk.applicationbutton>
                                                     @endforeach
@@ -231,7 +234,7 @@
                                             <div class="mb-3">
                                                 <span class="form-label">Assistants</label>
                                                     @foreach ($assistants as $assistant)
-                                                        @php($assistantApplicant = $assistant->user()->first())
+                                                        @php($assistantApplicant = $assistant->user)
                                                         <x-frontdesk.applicationbutton :applicant="$assistantApplicant"
                                                             :application="$assistant"></x-frontdesk.applicationbutton>
                                                     @endforeach
@@ -251,16 +254,49 @@
                                 <div id="applicationDataAddition" class="accordion-collapse collapse"
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
-
+                                        <div class="alert alert-info">Work in Progress</div>
                                     </div>
                                 </div>
                             </div>
+                            @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fs-3" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#checkIn" aria-expanded="false"
+                                            aria-controls="checkIn">
+                                            Check-In Checklist
+                                        </button>
+                                    </h2>
+                                    <div id="checkIn" class="accordion-collapse collapse"
+                                        data-bs-parent="#applicationData">
+                                        <div class="accordion-body">
+                                            <div class="alert alert-info">Work in Progress</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @elseif ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fs-3" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#checkOut"
+                                            aria-expanded="false" aria-controls="checkOut">
+                                            Check-Out Checklist
+                                        </button>
+                                    </h2>
+                                    <div id="checkOut" class="accordion-collapse collapse"
+                                        data-bs-parent="#checkOut">
+                                        <div class="accordion-body">
+                                            <div class="alert alert-info">Work in Progress</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     @endif
                 </div>
 
                 <!-- Comments Column -->
-                <div class="col-sm mh-100 overflow-auto">
+                <div class="col-md mh-100 overflow-auto">
                     <form method="post" action="{{ route('frontdesk.comment') }}" name="comment">
                         <div class="card my-2">
                             <div class="card-header fs-3">
@@ -272,7 +308,7 @@
                             <div
                                 class="card-footer text-muted d-flex justify-content-between align-items-center text-center">
                                 <div class="">
-                                    <input class="form-check-input fs-4" type="checkbox" value=""
+                                    <input class="form-check-input fs-4" type="checkbox"
                                         name="admin_only" id="adminOnly" @disabled(empty($application))>
                                     <label class="form-check-label fs-4" for="adminOnly">
                                         admin-only
@@ -287,6 +323,7 @@
                             </div>
                         </div>
                         @csrf
+                        <input type="hidden" name="application" value="{{ $application ? $application->id : ''}}">
                     </form>
                     @if ($application)
                         @foreach ($application->comments()->orderBy('created_at', 'desc')->get() as $comment)
@@ -296,7 +333,7 @@
                                         {{ $comment->text }}
                                     </div>
                                     <div class="card-footer text-muted fs-5">
-                                        by {{ $comment->author()->first()->name }} on {{ $comment->created_at }}
+                                        by {{ $comment->author->name }} on {{ $comment->created_at }}
                                         @if ($comment->admin_only)
                                             <span class="badge bg-warning text-dark">Admin only!</span>
                                         @endif
