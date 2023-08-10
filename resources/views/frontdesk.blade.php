@@ -303,9 +303,7 @@
                                 Comments
                             </div>
                             <div class="card-body">
-                                <textarea class="form-control my-2 fs-4 w-100 @error('comment') is-invalid @enderror" id="comment" name="comment" @disabled(empty($application))>
-                                    {{ old('_token') ? old('comment') : $comment?->text }}
-                                </textarea>
+                                <textarea class="form-control my-2 fs-4 w-100 @error('comment') is-invalid @enderror" id="comment" name="comment" @disabled(empty($application))>{{ old('_token') ? old('comment') : isset($comment) && $comment?->text }}</textarea>
                                 @error('comment')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -314,7 +312,7 @@
                                 class="card-footer text-muted d-flex justify-content-between align-items-center text-center">
                                 <div class="">
                                     <input class="form-check-input fs-4" type="checkbox"
-                                        name="admin_only" id="adminOnly" @checked(old('_token') ? old('admin_only') : $comment?->admin_only === true) @disabled(empty($application))>
+                                        name="admin_only" id="adminOnly" @checked(old('_token') ? old('admin_only') : isset($comment) && $comment?->admin_only === true) @disabled(empty($application))>
                                     <label class="form-check-label fs-4" for="adminOnly">
                                         admin-only
                                     </label>
