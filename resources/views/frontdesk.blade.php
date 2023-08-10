@@ -39,14 +39,14 @@
         <nav id="navbar" class="bg-primary navbar-dark text-light border-bottom">
             <div class="d-flex align-items-center h-100 mx-3">
                 <div class="fs-2 me-auto">
-                    Dealers' Den Frontdesk
+                    <a href="{{ route('frontdesk') }}" class="text-light text-decoration-none stretched-link ">Dealers' Den Frontdesk</a>
                 </div>
-                <div class="my-1">
+                <div class="my-1 z-1">
                     <span class="fs-5 align-middle">{{ $user->name }}</span>
                     <img src="{{ Session::get('avatar') ? 'https://identity.eurofurence.org/storage/avatars/' : '' }}{{ Session::get('avatar') ?? asset('default.jpg') }}"
                         alt="mdo" width="40" height="40" class="rounded-circle">
                     @if ($user->isAdmin())
-                        <a href="{{ route('filament.pages.dashboard') }}" class="btn btn-info">Admin</a>
+                        <a href="{{ route('filament.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
                     @endif
                     <a href="{{ route('auth.frontchannel-logout') }}" class="btn btn-danger">Logout</a>
                 </div>
@@ -112,26 +112,27 @@
                 <!-- Application Column -->
                 <div class="col-sm-6 fs-3 mh-100 overflow-auto">
                     @if (empty($search))
-                        <div class="card text-center my-2">
-                            <div class="card-header fs-3">
+                        <div class="card my-2">
+                            <div class="card-header text-center fs-3">
                                 Welcome to the Dealers' Den Frontdesk!
                             </div>
                             <div class="card-body fs-4">
-                                Please start by using the search field to search for a Dealer, Share or Assistant by
-                                their registration ID, display name, dealership or table number.
+                                    You can search Dealers, Shares or Assistants by:
+                                    <ul>
+                                        <li><strong>registration ID</strong> (exact match; no checksum!),</li>
+                                        <li><strong>attendee nickname</strong> (supports <code>%</code> as wildcard; not case-sensitive),</li>
+                                        <li><strong>table number</strong> (exact match) or</li>
+                                        <li><strong>display name</strong> (supports <code>%</code> as wildcard; not case-sensitive).</li>
+                                    </ul>
+                            </div>
+                            <div class="card-footer fs-5">
+                                The first matching result will be loaded automatically. If it's not who you were looking for, please try making your search more specific.
                             </div>
                         </div>
                     @elseif ($applicant === null)
                         <div class="card text-bg-danger text-center my-2">
                             <div class="card-body">
                                 User or application <em>"{{ $search }}"</em> not found.
-                            </div>
-                        </div>
-                    @elseif ($application === null)
-                        <div class="card text-bg-danger text-center my-2">
-                            <div class="card-body">
-                                No application found for user <em>{{ $applicant->name }}
-                                    ({{ $applicant->reg_id }})</em>.
                             </div>
                         </div>
                     @else

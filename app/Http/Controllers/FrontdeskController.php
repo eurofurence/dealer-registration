@@ -27,14 +27,16 @@ class FrontdeskController extends Controller
         }
 
         // 1. search by user user_id
-        $user = User::where('reg_id', $search)->first();
+        // 2. search by user name
+        $user = User::where('reg_id', $search)->orWhere('name', 'like', $search)->first();
+        $application = $user ? Application::where('user_id', $user->id)->first() : null;
 
         // 2. search by application table_number
-        // 3. search by user name
         // 4. search by dealership display_name
-
-
-        $application = $user ? Application::where('user_id', $user->id)->first() : null;
+        if ($application === null) {
+            $application = Application::where('table_number', strtoupper($search))->orWhere('display_name', 'like', $search)->first();
+            $user = $application ? $application->user()->first() : null;
+        }
 
         $table = $application && $application->assignedTable ? $application->assignedTable->first() : null;
 
@@ -42,7 +44,6 @@ class FrontdeskController extends Controller
         $parentApplicant = $parent ? $parent->user()->first() : null;
 
         $children = $application && $application->children() ? $application->children()->get() : [];
-        Log::info(print_r($children, true));
         $shares = [];
         $assistants = [];
         foreach ($children as $child) {
