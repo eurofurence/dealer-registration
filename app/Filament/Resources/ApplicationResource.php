@@ -357,6 +357,7 @@ class ApplicationResource extends Resource
             RelationManagers\ParentRelationManager::class,
             RelationManagers\UserRelationManager::class,
             RelationManagers\ProfileRelationManager::class,
+            RelationManagers\CommentRelationManager::class,
         ];
     }
 

@@ -10,12 +10,17 @@ class Comment extends Model
 {
     use HasFactory, HasUuids;
     public $timestamps = true;
+
+    protected $primaryKey = 'uuid';
+
+    protected $guarded = [];
+
     protected $casts = [
-        'adminOnly' => 'boolean',
+        'admin_only' => 'boolean',
         'text' => 'string',
     ];
     protected $attributes = [
-        'adminOnly' => false,
+        'admin_only' => false,
     ];
 
     public function application()

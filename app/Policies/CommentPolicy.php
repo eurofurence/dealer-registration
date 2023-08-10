@@ -40,7 +40,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-        return false;
+        return $user->isAdmin();
     }
 
     /**
