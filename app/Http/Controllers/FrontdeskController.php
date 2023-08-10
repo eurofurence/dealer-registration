@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Enums\ApplicationType;
+use App\Http\Requests\CommentRequest;
+use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 class FrontdeskController extends Controller
 {
@@ -35,15 +38,15 @@ class FrontdeskController extends Controller
         // 4. search by dealership display_name
         if ($application === null) {
             $application = Application::where('table_number', strtoupper($search))->orWhere('display_name', 'like', $search)->first();
-            $user = $application ? $application->user()->first() : null;
+            $user = $application ? $application->user : null;
         }
 
-        $table = $application && $application->assignedTable ? $application->assignedTable->first() : null;
+        $table = $application ? $application->assignedTable : null;
 
-        $parent = $application && $application->parent() ? $application->parent()->first() : null;
-        $parentApplicant = $parent ? $parent->user()->first() : null;
+        $parent = $application && $application->type !== ApplicationType::Dealer ? $application->parent()->first() : null;
+        $parentApplicant = $parent ? $parent->user : null;
 
-        $children = $application && $application->children() ? $application->children()->get() : [];
+        $children = $application && $application->type === ApplicationType::Dealer ? $application->children : [];
         $shares = [];
         $assistants = [];
         foreach ($children as $child) {
@@ -66,6 +69,43 @@ class FrontdeskController extends Controller
             'parentApplicant' => $parentApplicant,
             'shares' => $shares,
             'assistants' => $assistants,
+        ]);
+    }
+
+    public function comment(CommentRequest $request)
+    {
+        $this->authorize('create', Comment::class);
+
+        $text = $request->get('comment');
+        $application = Application::where('id', $request->get('application'))->first();
+
+        // TODO: Store comment in database
+        Log::info($request->get('admin_only'));
+        $author = \Auth::user();
+        $comment = Comment::create([
+            'text' => $text,
+            'admin_only' => !empty($request->get('admin_only')),
+            'user_id' => $author->id,
+            'application_id' => $application->id,
+        ]);
+        return Redirect::route('frontdesk', [
+            "search" => $application->reg_id,
+        ]);
+    }
+
+    public function checkIn(Request $request)
+    {
+        // TODO: Check prerequisites for check-in and status transition as applicable
+        return Redirect::route('frontdesk', [
+            "search" => $request->get('search'),
+        ]);
+    }
+
+    public function checkOut(Request $request)
+    {
+        // TODO: Check prerequisites for check-out and status transition as applicable
+        return Redirect::route('frontdesk', [
+            "search" => $request->get('search'),
         ]);
     }
 }
