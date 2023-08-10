@@ -61,7 +61,9 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
 
     Route::get('admin/export/appdata', [ApplicationController::class, 'exportAppDataAdmin']);
     Route::get('admin/export/csv', [ApplicationController::class, 'exportCsvAdmin']);
+});
 
+Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddleware::class])->group(function () {
     Route::get('frontdesk',\App\Http\Controllers\FrontdeskController::class)->name('frontdesk')->can('viewAny', Application::class);
     Route::put('frontdesk/check-in',[\App\Http\Controllers\FrontdeskController::class,'checkIn'])->name('frontdesk.check-in')->can('checkIn', Application::class);
     Route::put('frontdesk/check-out',[\App\Http\Controllers\FrontdeskController::class,'checkOut'])->name('frontdesk.check-out')->can('checkOut', Application::class);
