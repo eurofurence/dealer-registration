@@ -18,7 +18,7 @@ class CommentRequest extends FormRequest
     {
         return [
             "comment" => [
-                "min:1",
+                "filled",
                 "max:4096",
             ],
             "application" => [

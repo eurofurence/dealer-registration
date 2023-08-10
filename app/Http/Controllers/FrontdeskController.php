@@ -79,10 +79,8 @@ class FrontdeskController extends Controller
         $text = $request->get('comment');
         $application = Application::where('id', $request->get('application'))->first();
 
-        // TODO: Store comment in database
-        Log::info($request->get('admin_only'));
         $author = \Auth::user();
-        $comment = Comment::create([
+        Comment::create([
             'text' => $text,
             'admin_only' => !empty($request->get('admin_only')),
             'user_id' => $author->id,
