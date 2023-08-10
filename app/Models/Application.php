@@ -371,11 +371,12 @@ class Application extends Model
             DB::raw("CASE WHEN is_misc = 1 THEN 'X' ELSE '' END AS 'Cat. Misc'"),
             'discord as Discord',
             'tweet as Tweet',
+            'table_number as Table Number',
             'type as Type',
         )
+        ->whereNotNull('offer_accepted_at')
         ->where('type', ApplicationType::Dealer)
         ->orWhere('type', ApplicationType::Share)
-        ->whereNotNull('offer_accepted_at')
         ->get();
     return json_decode(json_encode($applications), true);
     }
