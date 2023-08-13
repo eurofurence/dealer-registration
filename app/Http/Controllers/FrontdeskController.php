@@ -104,7 +104,7 @@ class FrontdeskController extends Controller
         $author = \Auth::user();
         Comment::create([
             'text' => trim(join("\n", ['Check-In Performed', $comment])),
-            'admin_only' => $request->has('ci_admin_only'),
+            'admin_only' => false,
             'user_id' => $author->id,
             'application_id' => $application->id,
         ]);
@@ -125,7 +125,7 @@ class FrontdeskController extends Controller
         $author = \Auth::user();
         Comment::create([
             'text' => trim(join("\n", ['Check-Out Performed', $comment])),
-            'admin_only' => $request->has('co_admin_only'),
+            'admin_only' => false,
             'user_id' => $author->id,
             'application_id' => $application->id,
         ]);

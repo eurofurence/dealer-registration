@@ -17,6 +17,10 @@
             height: 9.99% !important;
         }
 
+        .form-check-input.is-invalid ~ .form-check-label {
+            font-weight: bold;
+        }
+
         @media (max-width: 767.98px) {
 
             /* Avoid scrolling once overflowable columns get wrapped into a single column. */
@@ -321,14 +325,6 @@
                                                 </div>
                                                 <textarea class="form-control my-2 fs-4 w-100 @error('comment', 'check-in') is-invalid @enderror" id="ci_comment"
                                                     name="ci_comment" tabindex="2" placeholder="Additional notes on check-in">{{ old('_token') ? old('ci_comment') : '' }}</textarea>
-                                                <div class="form-check fs-4">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        name="ci_admin_only" id="ci_admin_only"
-                                                        @checked(old('_token') && old('ci_admin_only')) tabindex="2">
-                                                    <label class="form-check-label" for="ci_admin_only">
-                                                        comment visible for admins only
-                                                    </label>
-                                                </div>
                                                 <button class="form-control btn btn-success my-2 fs-3" type="submit"
                                                     tabindex="2">Perform
                                                     Check-In</button>
@@ -410,14 +406,6 @@
                                                 </div>
                                                 <textarea class="form-control my-2 fs-4 w-100 @error('co_comment', 'check-out') is-invalid @enderror" id="co_comment"
                                                     name="co_comment" tabindex="2" placeholder="Additional notes on check-out">{{ old('_token') ? old('co_comment') : '' }}</textarea>
-                                                <div class="form-check fs-4">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        name="ci_admin_only" id="co_admin_only"
-                                                        @checked(old('_token') && old('co_admin_only')) tabindex="2">
-                                                    <label class="form-check-label" for="co_admin_only">
-                                                        comment visible for admins only
-                                                    </label>
-                                                </div>
                                                 <button class="form-control btn btn-success my-2 fs-3" type="submit"
                                                     tabindex="2">Perform
                                                     Check-Out</button>
