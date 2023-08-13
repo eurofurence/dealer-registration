@@ -348,7 +348,6 @@ class Application extends Model
             'applications.id AS Reg No.',
             'users.name AS Nick',
             'display_name AS Display Name',
-            'applications.website AS Website Reg',
             'merchandise AS Merchandise',
             DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
             DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
@@ -366,15 +365,19 @@ class Application extends Model
             DB::raw("CASE WHEN image_artist IS NOT NULL THEN 'X' ELSE '' END AS 'ArtistImg'"),
             DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
             DB::raw("CASE WHEN is_print = 1 THEN 'X' ELSE '' END AS 'Cat. Prints'"),
-            DB::raw("CASE WHEN is_artwork = 1 THEN 'X' ELSE '' END AS 'Cat. Prints'"),
+            DB::raw("CASE WHEN is_artwork = 1 THEN 'X' ELSE '' END AS 'Cat. Artwork'"),
             DB::raw("CASE WHEN is_fursuit = 1 THEN 'X' ELSE '' END AS 'Cat. Fursuit'"),
-            DB::raw("CASE WHEN is_commissions = 1 THEN 'X' ELSE '' END AS 'Cat. Commission'"),
+            DB::raw("CASE WHEN is_commissions = 1 THEN 'X' ELSE '' END AS 'Cat. Commissions'"),
             DB::raw("CASE WHEN is_misc = 1 THEN 'X' ELSE '' END AS 'Cat. Misc'"),
             'discord as Discord',
             'tweet as Tweet',
+            'table_number as Table Number',
+            'type as Type',
         )
+        ->whereNotNull('offer_accepted_at')
+        ->where('type', ApplicationType::Dealer)
+        ->orWhere('type', ApplicationType::Share)
         ->get();
-
     return json_decode(json_encode($applications), true);
     }
 
