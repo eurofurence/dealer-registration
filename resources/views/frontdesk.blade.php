@@ -34,6 +34,12 @@
 </head>
 
 <body class="bg-light">
+    <!--
+    Tab Index:
+        1 -> Search field
+        2 -> Comment inputs or Check-In/Check-Out controls if visible
+        3 -> Accordion tabs
+    -->
     <div class="vh-100 vw-100">
         <!-- Navigation Bar -->
         <nav id="navbar" class="bg-primary navbar-dark text-light border-bottom">
@@ -163,9 +169,16 @@
                         <div class="accordion my-2" id="applicationData">
                             <div class="accordion-item">
                                 <span class="accordion-header">
-                                    <button class="accordion-button d-flex align-items-center fs-3" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#applicationDataGeneral"
-                                        aria-expanded="true" aria-controls="applicationDataGeneral">
+                                    <button @class([
+                                        'accordion-button',
+                                        'fs-3',
+                                        'd-flex',
+                                        'align-items-center',
+                                        'collapsed' => $errors->hasBag('check-in') || $errors->hasBag('check-out'),
+                                    ]) type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#applicationDataGeneral"
+                                        aria-expanded="{{ $errors->hasBag('check-in') || $errors->hasBag('check-out') ? 'false' : 'true' }}"
+                                        aria-controls="applicationDataGeneral" tabindex="3">
                                         {{ $applicant->name }} ({{ $applicant->reg_id }})
                                         @switch($application->type)
                                             @case(\App\Enums\ApplicationType::Dealer)
@@ -188,7 +201,11 @@
                                         @endif
                                     </button>
                                 </span>
-                                <div id="applicationDataGeneral" class="accordion-collapse collapse show"
+                                <div id="applicationDataGeneral" @class([
+                                    'accordion-collapse',
+                                    'collapse',
+                                    'show' => !$errors->hasBag('check-in') && !$errors->hasBag('check-out'),
+                                ])
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
                                         <div class="mb-3">
@@ -250,7 +267,7 @@
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed fs-3" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#applicationDataAddition"
-                                        aria-expanded="false" aria-controls="applicationDataAddition">
+                                        aria-expanded="false" aria-controls="applicationDataAddition" tabindex="3">
                                         Additional Information
                                     </button>
                                 </h2>
@@ -264,32 +281,150 @@
                             @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed fs-3" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#checkIn" aria-expanded="false"
-                                            aria-controls="checkIn">
-                                            Check-In Checklist
+                                        <button @class([
+                                            'accordion-button',
+                                            'fs-3',
+                                            'collapsed' => !$errors->hasBag('check-in'),
+                                        ]) type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#checkIn"
+                                            aria-expanded="{{ $errors->hasBag('check-in') ? 'true' : 'false' }}"
+                                            aria-controls="checkIn" tabindex="3">
+                                            Check-In
                                         </button>
                                     </h2>
-                                    <div id="checkIn" class="accordion-collapse collapse"
+                                    <div id="checkIn" @class([
+                                        'accordion-collapse',
+                                        'collapse',
+                                        'show' => $errors->hasBag('check-in'),
+                                    ])
                                         data-bs-parent="#applicationData">
                                         <div class="accordion-body">
-                                            <div class="alert alert-info">Work in Progress</div>
+                                            <form method="post" action="{{ route('frontdesk.check-in') }}"
+                                                name="check-in">
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('waiver_signed', 'check-in') is-invalid @enderror"
+                                                        type="checkbox" name="waiver_signed" id="waiver_signed"
+                                                        @checked(old('_token') && old('waiver_signed')) tabindex="2">
+                                                    <label class="form-check-label" for="waiver_signed">
+                                                        waiver signed and received
+                                                    </label>
+                                                </div>
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('badge_received', 'check-in') is-invalid @enderror"
+                                                        type="checkbox" name="badge_received" id="badge_received"
+                                                        @checked(old('_token') && old('badge_received')) tabindex="2">
+                                                    <label class="form-check-label" for="badge_received">
+                                                        badge handed out
+                                                    </label>
+                                                </div>
+                                                <textarea class="form-control my-2 fs-4 w-100 @error('comment', 'check-in') is-invalid @enderror" id="ci_comment"
+                                                    name="ci_comment" tabindex="2" placeholder="Additional notes on check-in">{{ old('_token') ? old('ci_comment') : '' }}</textarea>
+                                                <div class="form-check fs-4">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="ci_admin_only" id="ci_admin_only"
+                                                        @checked(old('_token') && old('ci_admin_only')) tabindex="2">
+                                                    <label class="form-check-label" for="ci_admin_only">
+                                                        comment visible for admins only
+                                                    </label>
+                                                </div>
+                                                <button class="form-control btn btn-success my-2 fs-3" type="submit"
+                                                    tabindex="2">Perform
+                                                    Check-In</button>
+                                                <input type="hidden" name="application"
+                                                    value="{{ $application->id }}">
+                                                @csrf
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             @elseif ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed fs-3" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#checkOut"
-                                            aria-expanded="false" aria-controls="checkOut">
-                                            Check-Out Checklist
+                                        <button @class([
+                                            'accordion-button',
+                                            'fs-3',
+                                            'collapsed' => !$errors->hasBag('check-out'),
+                                        ]) type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#checkOut"
+                                            aria-expanded="{{ $errors->hasBag('check-out') ? 'true' : 'false' }}"
+                                            aria-controls="checkOut" tabindex="3">
+                                            Check-Out
                                         </button>
                                     </h2>
-                                    <div id="checkOut" class="accordion-collapse collapse"
-                                        data-bs-parent="#checkOut">
+                                    <div id="checkOut" @class([
+                                        'accordion-collapse',
+                                        'collapse',
+                                        'show' => $errors->hasBag('check-out'),
+                                    ])
+                                        data-bs-parent="#applicationData">
                                         <div class="accordion-body">
-                                            <div class="alert alert-info">Work in Progress</div>
+                                            <form method="post" action="{{ route('frontdesk.check-out') }}"
+                                                name="check-out">
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('table_clean', 'check-out') is-invalid @enderror"
+                                                        type="checkbox" name="table_clean" id="table_clean"
+                                                        @checked(old('_token') && old('table_clean')) tabindex="2">
+                                                    <label class="form-check-label" for="table_clean">
+                                                        table clean
+                                                    </label>
+                                                </div>
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('waste_disposed', 'check-out') is-invalid @enderror"
+                                                        type="checkbox" name="waste_disposed" id="waste_disposed"
+                                                        @checked(old('_token') && old('waste_disposed')) tabindex="2">
+                                                    <label class="form-check-label" for="waste_disposed">
+                                                        waste disposed of
+                                                    </label>
+                                                </div>
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('floor_undamaged', 'check-out') is-invalid @enderror"
+                                                        type="checkbox" name="floor_undamaged" id="floor_undamaged"
+                                                        @checked(old('_token') && old('floor_undamaged')) tabindex="2">
+                                                    <label class="form-check-label" for="floor_undamaged">
+                                                        floor undamaged
+                                                    </label>
+                                                </div>
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('materials_removed', 'check-out') is-invalid @enderror"
+                                                        type="checkbox" name="materials_removed"
+                                                        id="materials_removed" @checked(old('_token') && old('materials_removed'))
+                                                        tabindex="2">
+                                                    <label class="form-check-label" for="materials_removed">
+                                                        all materials (e.g. boxes, merch) removed
+                                                    </label>
+                                                </div>
+                                                <div class="form-check fs-3">
+                                                    <input
+                                                        class="form-check-input @error('power_strip', 'check-out') is-invalid @enderror"
+                                                        type="checkbox" name="power_strip" id="power_strip"
+                                                        @checked(old('_token') && old('power_strip')) tabindex="2">
+                                                    <label class="form-check-label" for="power_strip">
+                                                        power strip in good state or not applicable
+                                                    </label>
+                                                </div>
+                                                <textarea class="form-control my-2 fs-4 w-100 @error('co_comment', 'check-out') is-invalid @enderror" id="co_comment"
+                                                    name="co_comment" tabindex="2" placeholder="Additional notes on check-out">{{ old('_token') ? old('co_comment') : '' }}</textarea>
+                                                <div class="form-check fs-4">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="ci_admin_only" id="co_admin_only"
+                                                        @checked(old('_token') && old('co_admin_only')) tabindex="2">
+                                                    <label class="form-check-label" for="co_admin_only">
+                                                        comment visible for admins only
+                                                    </label>
+                                                </div>
+                                                <button class="form-control btn btn-success my-2 fs-3" type="submit"
+                                                    tabindex="2">Perform
+                                                    Check-Out</button>
+                                                <input type="hidden" name="application"
+                                                    value="{{ $application->id }}">
+                                                @csrf
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -314,19 +449,17 @@
                             </div>
                             <div
                                 class="card-footer text-muted d-flex justify-content-between align-items-center text-center">
-                                <div class="">
+                                <div>
                                     <input class="form-check-input fs-4" type="checkbox" name="admin_only"
                                         id="admin_only" @checked(old('_token') ? old('admin_only') : isset($comment) && $comment?->admin_only === true) @disabled(empty($application))
-                                        tabindex="3">
+                                        tabindex="2">
                                     <label class="form-check-label fs-4" for="admin_only">
                                         admin-only
                                     </label>
                                 </div>
-                                <div class="">
-                                    <button class="btn btn-success mx-2 fs-3" type="submit"
-                                        @disabled(empty($application)) tabindex="4">↵</button>
-                                    <button class="btn btn-danger mx-2 fs-3" type="reset"
-                                        @disabled(empty($application)) tabindex="5">✗</button>
+                                <div class="flex-fill">
+                                    <button class="btn btn-success mx-2 fs-3 w-100" type="submit"
+                                        @disabled(empty($application)) tabindex="2">↵</button>
                                 </div>
                             </div>
                         </div>
@@ -337,9 +470,7 @@
                         @foreach ($application->comments()->orderBy('created_at', 'desc')->get() as $comment)
                             @can('view', $comment)
                                 <div class="card my-2">
-                                    <div class="card-body fs-4">
-                                        {{ $comment->text }}
-                                    </div>
+                                    <div class="card-body fs-4" style="white-space: pre-line;">{{ $comment->text }}</div>
                                     <div class="card-footer text-muted fs-5">
                                         by {{ $comment->author->name }} on {{ $comment->created_at }}
                                         @if ($comment->admin_only)

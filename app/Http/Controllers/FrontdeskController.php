@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Enums\ApplicationType;
+use App\Http\Requests\CheckInRequest;
+use App\Http\Requests\CheckOutRequest;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\User;
@@ -76,12 +78,12 @@ class FrontdeskController extends Controller
     {
         $this->authorize('create', Comment::class);
 
-        $text = $request->get('comment');
+        $text = strip_tags($request->get('comment'));
         $application = Application::findOrFail($request->get('application'));
 
         $author = \Auth::user();
         Comment::create([
-            'text' => $text,
+            'text' => trim($text),
             'admin_only' => $request->has('admin_only'),
             'user_id' => $author->id,
             'application_id' => $application->id,
@@ -91,19 +93,45 @@ class FrontdeskController extends Controller
         ]);
     }
 
-    public function checkIn(Request $request)
+    public function checkIn(CheckInRequest $request)
     {
-        // TODO: Check prerequisites for check-in and status transition as applicable
+        $this->authorize('check-in', Application::class);
+        $application = Application::findOrFail($request->get('application'));
+
+        abort_if(!$application->checkIn(), 403, 'Application status does not allow check-in.');
+
+        $comment = strip_tags($request->get('ci_comment'));
+        $author = \Auth::user();
+        Comment::create([
+            'text' => trim(join("\n", ['Check-In Performed', $comment])),
+            'admin_only' => $request->has('ci_admin_only'),
+            'user_id' => $author->id,
+            'application_id' => $application->id,
+        ]);
+
         return Redirect::route('frontdesk', [
-            "search" => $request->get('search'),
+            "search" => $application->user->reg_id,
         ]);
     }
 
-    public function checkOut(Request $request)
+    public function checkOut(CheckOutRequest $request)
     {
-        // TODO: Check prerequisites for check-out and status transition as applicable
+        $this->authorize('check-out', Application::class);
+        $application = Application::findOrFail($request->get('application'));
+
+        abort_if(!$application->checkOut(), 403, 'Application status does not allow check-out.');
+
+        $comment = strip_tags($request->get('co_comment'));
+        $author = \Auth::user();
+        Comment::create([
+            'text' => trim(join("\n", ['Check-Out Performed', $comment])),
+            'admin_only' => $request->has('co_admin_only'),
+            'user_id' => $author->id,
+            'application_id' => $application->id,
+        ]);
+
         return Redirect::route('frontdesk', [
-            "search" => $request->get('search'),
+            "search" => $application->user->reg_id,
         ]);
     }
 }

@@ -145,14 +145,18 @@ class Application extends Model
         if ($this->status === ApplicationStatus::TableAccepted) {
             $this->status = ApplicationStatus::CheckedIn;
             $this->save();
+            return true;
         }
+        return false;
     }
 
     public function checkOut() {
         if ($this->status === ApplicationStatus::CheckedIn) {
             $this->status = ApplicationStatus::CheckedOut;
             $this->save();
+            return true;
         }
+        return false;
     }
 
     public function cancel()

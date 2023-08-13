@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    const MAX_LENGTH = 4096;
+
     use HasFactory, HasUuids;
     public $timestamps = true;
 

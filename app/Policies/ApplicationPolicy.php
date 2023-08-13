@@ -12,12 +12,12 @@ class ApplicationPolicy
         return $user->isFrontdesk();
     }
 
-    public function checkIn(User $user, Application $application): bool
+    public function checkIn(User $user): bool
     {
         return $user->isFrontdesk();
     }
 
-    public function checkOut(User $user, Application $application): bool
+    public function checkOut(User $user): bool
     {
         return $user->isFrontdesk();
     }

@@ -65,8 +65,8 @@ Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddlewa
 
 Route::middleware(['auth:web',\App\Http\Middleware\AccessTokenValidationMiddleware::class])->group(function () {
     Route::get('frontdesk',\App\Http\Controllers\FrontdeskController::class)->name('frontdesk')->can('viewAny', Application::class);
-    Route::put('frontdesk/check-in',[\App\Http\Controllers\FrontdeskController::class,'checkIn'])->name('frontdesk.check-in')->can('checkIn', Application::class);
-    Route::put('frontdesk/check-out',[\App\Http\Controllers\FrontdeskController::class,'checkOut'])->name('frontdesk.check-out')->can('checkOut', Application::class);
+    Route::post('frontdesk/check-in',[\App\Http\Controllers\FrontdeskController::class,'checkIn'])->name('frontdesk.check-in')->can('checkIn', Application::class);
+    Route::post('frontdesk/check-out',[\App\Http\Controllers\FrontdeskController::class,'checkOut'])->name('frontdesk.check-out')->can('checkOut', Application::class);
     Route::post('frontdesk/comment',[\App\Http\Controllers\FrontdeskController::class,'comment'])->name('frontdesk.comment')->can('create', Comment::class);
 });
 
