@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\ApplicationResource\RelationManagers;
 
 use App\Filament\Resources\CommentResource;
+use App\Filament\Resources\CommentResource\Pages\CreateComment;
 use App\Models\Comment;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -21,9 +23,7 @@ class CommentRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('text')
-                    ->required()
-                    ->maxLength(4096),
+                //
             ]);
     }
 
@@ -45,8 +45,31 @@ class CommentRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\Action::make('New comment')
-                    ->url(fn () => CommentResource::getUrl('create'))
+                    ->form([
+                        Forms\Components\TextInput::make('application_id')
+                            ->default(function (RelationManager $livewire) {
+                                return $livewire->ownerRecord->id;
+                            })
+                            ->required(),
+                        Forms\Components\TextInput::make('user_id')
+                            ->default(\Auth::user()->id)
+                            ->required(),
+                        Forms\Components\Toggle::make('admin_only'),
+                        Forms\Components\Textarea::make('text')
+                            ->required()
+                            ->maxLength(4096),
+
+                    ])
+                    ->action(function (array $data): void {
+                        Comment::create([
+                            'text' => $data['text'],
+                            'admin_only' => $data['admin_only'],
+                            'application_id' => $data['application_id'],
+                            'user_id' => $data['user_id'],
+                        ]);
+                    })
                     ->icon('heroicon-o-pencil'),
+
             ])
             ->actions([
                 Tables\Actions\Action::make('Show')
