@@ -77,17 +77,17 @@ class FrontdeskController extends Controller
         $this->authorize('create', Comment::class);
 
         $text = $request->get('comment');
-        $application = Application::where('id', $request->get('application'))->first();
+        $application = Application::findOrFail($request->get('application'));
 
         $author = \Auth::user();
         Comment::create([
             'text' => $text,
-            'admin_only' => !empty($request->get('admin_only')),
+            'admin_only' => $request->has('admin_only'),
             'user_id' => $author->id,
             'application_id' => $application->id,
         ]);
         return Redirect::route('frontdesk', [
-            "search" => $application->user()->first()->reg_id,
+            "search" => $application->user->reg_id,
         ]);
     }
 
