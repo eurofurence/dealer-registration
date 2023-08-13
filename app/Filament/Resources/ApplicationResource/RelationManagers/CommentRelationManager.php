@@ -52,6 +52,7 @@ class CommentRelationManager extends RelationManager
                             })
                             ->required(),
                         Forms\Components\TextInput::make('user_id')
+                            ->label("User ID (Author)")
                             ->default(\Auth::user()->id)
                             ->required(),
                         Forms\Components\Toggle::make('admin_only'),
