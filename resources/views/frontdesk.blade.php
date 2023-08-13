@@ -61,50 +61,51 @@
                 <div class="col-md-3 mh-100">
                     <form method="get" action="{{ route('frontdesk') }}" name="search">
                         <input type="text" class="form-control my-2 text-center fs-1" id="search" name="search"
-                            autofocus>
+                            tabindex="1" autofocus>
                     </form>
                     <div class="container text-center h-75">
                         <div class="row row-cols-3 h-25">
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">7</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">7</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">8</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">8</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">9</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">9</button>
                         </div>
                         <div class="row row-cols-3 h-25">
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">4</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">4</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">5</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">5</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">6</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">6</button>
                         </div>
                         <div class="row row-cols-3 h-25">
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">1</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">1</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">2</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">2</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">3</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">3</button>
                         </div>
                         <div class="row row-cols-3 h-25">
                             <button type="button" class="btn btn-danger align-self-center h-100 border fs-1"
-                                onclick="document.forms.search.reset();document.forms.search.submit()">✗</button>
+                                onclick="document.forms.search.reset();document.forms.search.submit()"
+                                tabindex="-1">✗</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
-                                class="btn btn-primary align-self-center h-100 border fs-1">0</button>
+                                class="btn btn-primary align-self-center h-100 border fs-1" tabindex="-1">0</button>
                             <button type="button" onclick="document.forms.search.submit()"
-                                class="btn btn-success align-self-center h-100 border fs-1">↵</button>
+                                class="btn btn-success align-self-center h-100 border fs-1" tabindex="-1">↵</button>
                         </div>
                     </div>
                 </div>
@@ -199,12 +200,14 @@
                                                         : $application->display_name)
                                                     : (empty($parent->display_name)
                                                         ? $parent->user->name
-                                                        : $parent->display_name) }}">
+                                                        : $parent->display_name) }}"
+                                                tabindex="-1">
                                         </div>
                                         <div class="mb-3">
                                             <label for="table" class="form-label">Table</label>
                                             <input type="text" readonly class="form-control fs-4" id="table"
-                                                value="{{ $application->table_number }}{{ $table ? ' – ' . $table->name : '' }}">
+                                                value="{{ $application->table_number }}{{ $table ? ' – ' . $table->name : '' }}"
+                                                tabindex="-1">
                                         </div>
 
                                         <!-- Related Applications -->
@@ -303,7 +306,8 @@
                                 Comments
                             </div>
                             <div class="card-body">
-                                <textarea class="form-control my-2 fs-4 w-100 @error('comment') is-invalid @enderror" id="comment" name="comment" @disabled(empty($application))>{{ old('_token') ? old('comment') : isset($comment) && $comment?->text }}</textarea>
+                                <textarea class="form-control my-2 fs-4 w-100 @error('comment') is-invalid @enderror" id="comment" name="comment"
+                                    @disabled(empty($application)) tabindex="2">{{ old('_token') ? old('comment') : isset($comment) && $comment?->text }}</textarea>
                                 @error('comment')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -311,22 +315,23 @@
                             <div
                                 class="card-footer text-muted d-flex justify-content-between align-items-center text-center">
                                 <div class="">
-                                    <input class="form-check-input fs-4" type="checkbox"
-                                        name="admin_only" id="admin_only" @checked(old('_token') ? old('admin_only') : isset($comment) && $comment?->admin_only === true) @disabled(empty($application))>
+                                    <input class="form-check-input fs-4" type="checkbox" name="admin_only"
+                                        id="admin_only" @checked(old('_token') ? old('admin_only') : isset($comment) && $comment?->admin_only === true) @disabled(empty($application))
+                                        tabindex="3">
                                     <label class="form-check-label fs-4" for="admin_only">
                                         admin-only
                                     </label>
                                 </div>
                                 <div class="">
-                                    <button class="btn btn-danger mx-2 fs-3" type="reset"
-                                        @disabled(empty($application))>✗</button>
                                     <button class="btn btn-success mx-2 fs-3" type="submit"
-                                        @disabled(empty($application))>↵</button>
+                                        @disabled(empty($application)) tabindex="4">↵</button>
+                                    <button class="btn btn-danger mx-2 fs-3" type="reset"
+                                        @disabled(empty($application)) tabindex="5">✗</button>
                                 </div>
                             </div>
                         </div>
                         @csrf
-                        <input type="hidden" name="application" value="{{ $application ? $application->id : ''}}">
+                        <input type="hidden" name="application" value="{{ $application ? $application->id : '' }}">
                     </form>
                     @if ($application)
                         @foreach ($application->comments()->orderBy('created_at', 'desc')->get() as $comment)
