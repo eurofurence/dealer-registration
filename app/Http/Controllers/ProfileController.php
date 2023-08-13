@@ -188,7 +188,7 @@ class ProfileController extends Controller
                 }
                 $imgArt = Storage::path('public/' . $profile->image_art);
                 if (file_exists($imgArt) && is_file($imgArt)) {
-                    $zip->addFile($imgArt, 'images/art' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION));
+                    $zip->addFile($imgArt, 'images/art_' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION));
                     $fileCnt++;
                 }
                 $imgArtist = Storage::path('public/' . $profile->image_artist);

@@ -153,6 +153,7 @@ class ApplicationController extends Controller
     public function exportAppData() {
         $zipFileName = "appdata.zip";
         $csvName = "applications.csv";
+        $separator = ";";
 
         $handle = fopen(Storage::path($csvName), 'w');
         $applications = Application::getAllApplicationsForAppExport();
@@ -163,7 +164,7 @@ class ApplicationController extends Controller
         }
 
         foreach ($applications as $row) {
-            fputcsv($handle, $row);
+            fputcsv($handle, $row, $separator);
         }
         fclose($handle);
 
