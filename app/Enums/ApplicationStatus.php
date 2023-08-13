@@ -41,7 +41,7 @@ enum ApplicationStatus: string
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '!=', null)
             ),
-            ApplicationStatus::CheckedIn => $query->orWhere(
+            ApplicationStatus::CheckedOut => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
                     ->where('checked_out_at', '!=', null)

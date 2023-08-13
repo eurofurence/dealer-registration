@@ -68,7 +68,8 @@ class ApplicationResource extends Resource
                             "table_assigned" => "Table assigned (Open)",
                             "table_offered" => "Table offered",
                             "table_accepted" => "Table accepted",
-                            "checked_in" => "Checked in (on-site)"
+                            "checked_in" => "Checked in (on-site)",
+                            "checked_out" => "Checked out (on-site)",
                         ])->disablePlaceholderSelection()->required()->reactive(),
                         Forms\Components\TextInput::make('table_number')
                             ->maxLength(255),
@@ -96,6 +97,7 @@ class ApplicationResource extends Resource
                         Forms\Components\Placeholder::make('offer_accepted_at')->content(fn (?Application $record): string => $record?->offer_accepted_at?->diffForHumans() ?? '-'),
                         Forms\Components\Placeholder::make('waiting_at')->content(fn (?Application $record): string => $record?->waiting_at?->diffForHumans() ?? '-'),
                         Forms\Components\Placeholder::make('checked_in_at')->content(fn (?Application $record): string => $record?->checked_in_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('checked_out_at')->content(fn (?Application $record): string => $record?->checked_out_at?->diffForHumans() ?? '-'),
                         Forms\Components\Placeholder::make('canceled_at')->content(fn (?Application $record): string => $record?->canceled_at?->diffForHumans() ?? '-'),
                         Forms\Components\Placeholder::make('updated_at')->content(fn (?Application $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
                         Forms\Components\Placeholder::make('created_at')->content(fn (?Application $record): string => $record?->created_at?->diffForHumans() ?? '-'),
