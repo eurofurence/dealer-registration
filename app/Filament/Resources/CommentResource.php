@@ -16,7 +16,7 @@ class CommentResource extends Resource
 {
     protected static ?string $model = Comment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-pencil';
 
     public static function form(Form $form): Form
     {
@@ -33,7 +33,7 @@ class CommentResource extends Resource
                     ]),
                     Forms\Components\Textarea::make('text')
                             ->required()
-                            ->maxLength(2048),
+                            ->maxLength(4096),
                 ]),
                 Forms\Components\Fieldset::make('Dates')->columnSpan(1)->columns()->schema([
                     Forms\Components\Placeholder::make('created_at')->content(fn (?Comment $record): string => $record?->created_at?->diffForHumans() ?? '-'),
@@ -49,12 +49,17 @@ class CommentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('uuid')->hidden()->url(fn($record) => CommentResource::getUrl('edit', ['record' => $record->uuid])),
                 Tables\Columns\TextColumn::make('application_id')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author.name')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('admin_only')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('text'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('admin_only')

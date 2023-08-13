@@ -87,7 +87,7 @@ class FrontdeskController extends Controller
             'application_id' => $application->id,
         ]);
         return Redirect::route('frontdesk', [
-            "search" => $application->reg_id,
+            "search" => $application->user()->first()->reg_id,
         ]);
     }
 

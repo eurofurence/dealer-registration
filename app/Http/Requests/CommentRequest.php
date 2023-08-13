@@ -24,9 +24,6 @@ class CommentRequest extends FormRequest
             "application" => [
                 "integer",
             ],
-            "admin_only" => [
-                "accepted",
-            ],
         ];
     }
 }

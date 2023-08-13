@@ -312,8 +312,8 @@
                                 class="card-footer text-muted d-flex justify-content-between align-items-center text-center">
                                 <div class="">
                                     <input class="form-check-input fs-4" type="checkbox"
-                                        name="admin_only" id="adminOnly" @checked(old('_token') ? old('admin_only') : isset($comment) && $comment?->admin_only === true) @disabled(empty($application))>
-                                    <label class="form-check-label fs-4" for="adminOnly">
+                                        name="admin_only" id="admin_only" @checked(old('_token') ? old('admin_only') : isset($comment) && $comment?->admin_only === true) @disabled(empty($application))>
+                                    <label class="form-check-label fs-4" for="admin_only">
                                         admin-only
                                     </label>
                                 </div>

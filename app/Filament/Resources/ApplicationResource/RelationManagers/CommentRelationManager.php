@@ -23,7 +23,7 @@ class CommentRelationManager extends RelationManager
             ->schema([
                 Forms\Components\TextInput::make('text')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(4096),
             ]);
     }
 
@@ -35,11 +35,18 @@ class CommentRelationManager extends RelationManager
                 Tables\Columns\IconColumn::make('admin_only')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('text'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
+                Tables\Actions\Action::make('New comment')
+                    ->url(fn () => CommentResource::getUrl('create'))
+                    ->icon('heroicon-o-pencil'),
             ])
             ->actions([
                 Tables\Actions\Action::make('Show')
