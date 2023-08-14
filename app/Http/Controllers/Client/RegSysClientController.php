@@ -103,7 +103,13 @@ class RegSysClientController extends Controller
         ]);
 
         if ($response->ok()) {
-            return $response->json('result')[0];
+            if (!empty($response->json('result'))) {
+                return $response->json('result')[0];
+            } else {
+                // If reg ID is invalid, regsys returns HTTP 200 but an empty array.
+                self::logError("Registration with id " . $reg_id . " could not be retrieved, reg id invalid.");
+                return null;
+            }
         } else {
             self::logError("Registration with id " . $reg_id . " could not be retrieved, reason: " . $response->reason());
             return null;
