@@ -345,6 +345,7 @@ class Application extends Model
                 'applications.id AS app_id',
                 'users.name AS user_name',
                 'users.email AS email',
+                'users.reg_id AS reg_id',
                 'type AS app_type',
                 'parent',
                 'display_name',
