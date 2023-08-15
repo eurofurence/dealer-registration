@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -376,8 +377,10 @@ class Application extends Model
             'type as Type',
         )
         ->whereNotNull('offer_accepted_at')
-        ->where('type', ApplicationType::Dealer)
-        ->orWhere('type', ApplicationType::Share)
+        ->where(function (Builder $query){
+            $query->where('type', ApplicationType::Dealer)
+            ->orWhere('type', ApplicationType::Share);
+        })
         ->get();
     return json_decode(json_encode($applications), true);
     }
