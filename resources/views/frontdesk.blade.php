@@ -17,7 +17,7 @@
             height: 9.99% !important;
         }
 
-        .form-check-input.is-invalid ~ .form-check-label {
+        .form-check-input.is-invalid~.form-check-label {
             font-weight: bold;
         }
 
@@ -170,7 +170,11 @@
                                 </div>
                             </div>
                         @endif
+
+                        <!-- Application Data -->
                         <div class="accordion my-2" id="applicationData">
+
+                            <!-- Main Application Data -->
                             <div class="accordion-item">
                                 <span class="accordion-header">
                                     <button @class([
@@ -178,10 +182,10 @@
                                         'fs-3',
                                         'd-flex',
                                         'align-items-center',
-                                        'collapsed' => $errors->hasBag('check-in') || $errors->hasBag('check-out'),
+                                        'collapsed' => $errors->hasBag('check-in') || $errors->hasBag('check-out') || isset($showAdditional),
                                     ]) type="button" data-bs-toggle="collapse"
                                         data-bs-target="#applicationDataGeneral"
-                                        aria-expanded="{{ $errors->hasBag('check-in') || $errors->hasBag('check-out') ? 'false' : 'true' }}"
+                                        aria-expanded="{{ $errors->hasBag('check-in') || $errors->hasBag('check-out') || isset($showAdditional) ? 'false' : 'true' }}"
                                         aria-controls="applicationDataGeneral" tabindex="3">
                                         {{ $applicant->name }} ({{ $applicant->reg_id }})
                                         @switch($application->type)
@@ -208,7 +212,7 @@
                                 <div id="applicationDataGeneral" @class([
                                     'accordion-collapse',
                                     'collapse',
-                                    'show' => !$errors->hasBag('check-in') && !$errors->hasBag('check-out'),
+                                    'show' => !$errors->hasBag('check-in') && !$errors->hasBag('check-out') && !isset($showAdditional),
                                 ])
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
@@ -267,21 +271,58 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Additional Information -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed fs-3" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#applicationDataAddition"
-                                        aria-expanded="false" aria-controls="applicationDataAddition" tabindex="3">
+                                    <button @class([
+                                        'accordion-button',
+                                        'fs-3',
+                                        'collapsed' => !isset($showAdditional),
+                                    ]) type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#applicationDataAdditional"
+                                        aria-expanded="{{ isset($showAdditional) ? 'true' : 'false' }}" aria-controls="applicationDataAdditional" tabindex="3">
                                         Additional Information
                                     </button>
                                 </h2>
-                                <div id="applicationDataAddition" class="accordion-collapse collapse"
+                                <div id="applicationDataAdditional" @class([
+                                    'accordion-collapse',
+                                    'collapse',
+                                    'show' => isset($showAdditional),
+                                ])
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
-                                        <div class="alert alert-info">Work in Progress</div>
+                                        <div class="mb-3">
+                                            @if ($profile)
+                                            <span class="form-label">Attendance</span>
+
+                                            <div class="btn-group mx-auto form-input">
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'btn-primary' => $profile->attends_thu,
+                                                    'btn-secondary' => !$profile->attends_thu,
+                                                ])>Day 2 (Monday)</label>
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'btn-primary' => $profile->attends_fri,
+                                                    'btn-secondary' => !$profile->attends_fri,
+                                                ])>Day 3 (Tuesday)</label>
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'btn-primary' => $profile->attends_sat,
+                                                    'btn-secondary' => !$profile->attends_sat,
+                                                ])>Day 4 (Wednesday)</label>
+                                            </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Check-In Form -->
                             @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
@@ -335,6 +376,8 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Check-Out Form -->
                             @elseif ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">

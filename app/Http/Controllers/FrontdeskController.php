@@ -61,6 +61,8 @@ class FrontdeskController extends Controller
             }
         }
 
+        $profile = $application ? $application->profile : null;
+
         return view('frontdesk', [
             'user' => \Auth::user(),
             'search' => $search,
@@ -71,6 +73,8 @@ class FrontdeskController extends Controller
             'parentApplicant' => $parentApplicant,
             'shares' => $shares,
             'assistants' => $assistants,
+            'profile' => $profile,
+            'showAdditional' => $request->has('show_additional'),
         ]);
     }
 
