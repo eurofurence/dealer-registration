@@ -356,7 +356,8 @@ class Application extends Model
             DB::raw("CASE WHEN attends_sat = 1 THEN 'X' ELSE '' END AS 'Attends Sat'"),
             DB::raw("'X' as 'Allows Use of Data'"),
             DB::raw("CASE WHEN is_afterdark = 1 THEN 'X' ELSE '' END AS 'After Dark'"),
-            'short_desc AS Short Description',
+            // TODO: Temporary fix for EF27 since "Table Number" is not supported by the app backend & apps
+            DB::raw("TRIM('\n' FROM CONCAT(IFNULL(CONCAT('Table ', table_number), ''), '\\n\\n', IFNULL(short_desc, ''))) AS 'Short Description'"),
             'artist_desc AS About the Artist',
             'art_desc AS About the Art',
             'profiles.website as Website',
