@@ -186,14 +186,16 @@
                     </div>
                 </div>
             @endif
-            <div class="card mb-2">
-                <div class="card-body text-center">
-                    <h5 class="card-title display-6">Become a Dealer Assistant</h5>
-                    <p class="card-text lead">You have been invited to support an existing Dealership as a Dealer Assistant.
-                    </p>
-                    <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have an invitation code</a>
+            @if (Carbon\Carbon::parse(config('ef.assistant_end_date'))->isFuture())
+                <div class="card mb-2">
+                    <div class="card-body text-center">
+                        <h5 class="card-title display-6">Become a Dealer Assistant</h5>
+                        <p class="card-text lead">You have been invited to support an existing Dealership as a Dealer Assistant.
+                        </p>
+                        <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have an invitation code</a>
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 

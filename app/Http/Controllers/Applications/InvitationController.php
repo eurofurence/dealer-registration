@@ -27,6 +27,11 @@ class InvitationController extends Controller
                 "code" => "The registration period for new dealers has ended, please check back next year.",
             ]);
         }
+        if ($applicationType === ApplicationType::Assistant && !Carbon::parse(config('ef.assistant_end_date'))->isFuture()) {
+            throw ValidationException::withMessages([
+                "code" => "The registration period for new assistants has ended.",
+            ]);
+        }
 
         $applications = Application::where('type', ApplicationType::Dealer)
             ->where(function ($q) use ($request) {

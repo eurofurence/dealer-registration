@@ -68,7 +68,7 @@
                         <div class="card-title h5 mb-0"><span class="badge bg-secondary">{{ $assistants_active_count }}/{{ $assistants_count }}</span> Invite assistants to your space</div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if($assistants_active_count < $assistants_count)
+                        @if($assistants_active_count < $assistants_count && Carbon\Carbon::parse(config('ef.assistant_end_date'))->isFuture())
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.regenerate-keys') }}">
                                     @csrf
