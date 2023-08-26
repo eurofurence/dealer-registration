@@ -350,7 +350,7 @@ class Application extends Model
             'applications.id AS Reg No.',
             'users.name AS Nick',
             'display_name AS Display Name',
-            'merchandise AS Merchandise',
+            DB::raw("'' as 'Merchandise'"),
             DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
             DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
             DB::raw("CASE WHEN attends_sat = 1 THEN 'X' ELSE '' END AS 'Attends Sat'"),
