@@ -69,7 +69,7 @@
 
                 <!-- Numpad & Search Column -->
                 <div class="col-md-3 mh-100">
-                    <form method="get" action="{{ route('frontdesk') }}" name="search">
+                    <form method="get" action="{{ route('frontdesk') }}" name="search" autocomplete="off">
                         <input type="text" class="form-control my-2 text-center fs-1" id="search" name="search"
                             tabindex="1" autofocus>
                     </form>
@@ -345,7 +345,7 @@
                                         data-bs-parent="#applicationData">
                                         <div class="accordion-body">
                                             <form method="post" action="{{ route('frontdesk.check-in') }}"
-                                                name="check-in">
+                                                name="check-in" autocomplete="off">
                                                 <div class="form-check fs-3">
                                                     <input
                                                         class="form-check-input @error('waiver_signed', 'check-in') is-invalid @enderror"
@@ -400,7 +400,7 @@
                                         data-bs-parent="#applicationData">
                                         <div class="accordion-body">
                                             <form method="post" action="{{ route('frontdesk.check-out') }}"
-                                                name="check-out">
+                                                name="check-out" autocomplete="off">
                                                 <div class="form-check fs-3">
                                                     <input
                                                         class="form-check-input @error('table_clean', 'check-out') is-invalid @enderror"
@@ -466,7 +466,7 @@
 
                 <!-- Comments Column -->
                 <div class="col-md mh-100 overflow-auto">
-                    <form method="post" action="{{ route('frontdesk.comment') }}" name="comment">
+                    <form method="post" action="{{ route('frontdesk.comment') }}" name="comment" autocomplete="off">
                         <div class="card my-2">
                             <div class="card-header fs-3">
                                 Comments
