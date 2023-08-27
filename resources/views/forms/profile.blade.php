@@ -184,7 +184,7 @@
                     accept="image/jpeg, image/png"
                     onchange="document.getElementById('image_artist_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_artist_preview_large').src = window.URL.createObjectURL(this.files[0]);">
                 <div id="image_artistHelp" class="form-text">This image is shown on your dedicated page in the EF app.
-                    Aim for a size of 400×450 pixels (max file size is 1 MB).
+                    Aim for a size of 400×400 pixels (max file size is 1 MB).
                 </div>
                 @error('image_artist')
                     <span class="invalid-feedback" role="alert">
@@ -237,7 +237,7 @@
                     name="image_art" accept="image/jpeg, image/png"
                     onchange="document.getElementById('image_art_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_art_preview_large').src = window.URL.createObjectURL(this.files[0]);">
                 <div id="image_artHelp" class="form-text">You can upload a preview image of your art or merchandise,
-                    which will be shown on a separate page in the EF app. The size of this image should be 400×400
+                    which will be shown on your dedicated page in the EF app. The size of this image should be 400×450
                     pixels (max file size is 1 MB).
                 </div>
                 @error('image_art')
