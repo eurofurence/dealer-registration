@@ -21,6 +21,16 @@
             font-weight: bold;
         }
 
+        button.check-button.btn-primary::before {
+            content: '✅';
+            margin-right: 0.5ex;
+        }
+
+        button.check-button.btn-secondary::before {
+            content: '❌';
+            margin-right: 0.5ex;
+        }
+
         @media (max-width: 767.98px) {
 
             /* Avoid scrolling once overflowable columns get wrapped into a single column. */
@@ -58,6 +68,8 @@
                     @if ($user->isAdmin())
                         <a href="{{ route('filament.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
                     @endif
+                    <a href="https://app.eurofurence.org/tools/dealers.html" target="_blank"
+                        class="btn btn-secondary">Dealer Profiles ⎋</a>
                     <a href="{{ route('auth.frontchannel-logout') }}" class="btn btn-danger">Logout</a>
                 </div>
             </div>
@@ -182,10 +194,13 @@
                                         'fs-3',
                                         'd-flex',
                                         'align-items-center',
-                                        'collapsed' => $errors->hasBag('check-in') || $errors->hasBag('check-out') || isset($showAdditional),
+                                        'collapsed' =>
+                                            $errors->hasBag('check-in') ||
+                                            $errors->hasBag('check-out') ||
+                                            $showAdditional,
                                     ]) type="button" data-bs-toggle="collapse"
                                         data-bs-target="#applicationDataGeneral"
-                                        aria-expanded="{{ $errors->hasBag('check-in') || $errors->hasBag('check-out') || isset($showAdditional) ? 'false' : 'true' }}"
+                                        aria-expanded="{{ $errors->hasBag('check-in') || $errors->hasBag('check-out') || $showAdditional ? 'false' : 'true' }}"
                                         aria-controls="applicationDataGeneral" tabindex="3">
                                         {{ $applicant->name }} ({{ $applicant->reg_id }})
                                         @switch($application->type)
@@ -212,7 +227,10 @@
                                 <div id="applicationDataGeneral" @class([
                                     'accordion-collapse',
                                     'collapse',
-                                    'show' => !$errors->hasBag('check-in') && !$errors->hasBag('check-out') && !isset($showAdditional),
+                                    'show' =>
+                                        !$errors->hasBag('check-in') &&
+                                        !$errors->hasBag('check-out') &&
+                                        !$showAdditional,
                                 ])
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
@@ -278,46 +296,100 @@
                                     <button @class([
                                         'accordion-button',
                                         'fs-3',
-                                        'collapsed' => !isset($showAdditional),
-                                    ]) type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#applicationDataAdditional"
-                                        aria-expanded="{{ isset($showAdditional) ? 'true' : 'false' }}" aria-controls="applicationDataAdditional" tabindex="3">
+                                        'collapsed' => !$showAdditional,
+                                    ]) type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#applicationDataAdditional"
+                                        aria-expanded="{{ $showAdditional ? 'true' : 'false' }}"
+                                        aria-controls="applicationDataAdditional" tabindex="3">
                                         Additional Information
                                     </button>
                                 </h2>
                                 <div id="applicationDataAdditional" @class([
                                     'accordion-collapse',
                                     'collapse',
-                                    'show' => isset($showAdditional),
+                                    'show' => $showAdditional,
                                 ])
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
-                                        <div class="mb-3">
-                                            @if ($profile)
-                                            <span class="form-label">Attendance</span>
-
-                                            <div class="btn-group mx-auto form-input">
-                                                <button type="button" @class([
-                                                    'btn',
-                                                    'fs-4',
-                                                    'btn-primary' => $profile->attends_thu,
-                                                    'btn-secondary' => !$profile->attends_thu,
-                                                ])>Day 2 (Monday)</label>
-                                                <button type="button" @class([
-                                                    'btn',
-                                                    'fs-4',
-                                                    'btn-primary' => $profile->attends_fri,
-                                                    'btn-secondary' => !$profile->attends_fri,
-                                                ])>Day 3 (Tuesday)</label>
-                                                <button type="button" @class([
-                                                    'btn',
-                                                    'fs-4',
-                                                    'btn-primary' => $profile->attends_sat,
-                                                    'btn-secondary' => !$profile->attends_sat,
-                                                ])>Day 4 (Wednesday)</label>
+                                        @if ($profile)
+                                            <div class="mb-3 text-center">
+                                                <div class="btn-group mx-auto form-input d-flex">
+                                                    <button type="button" @class([
+                                                        'btn',
+                                                        'fs-4',
+                                                        'check-button',
+                                                        'btn-primary' => $profile->attends_thu,
+                                                        'btn-secondary' => !$profile->attends_thu,
+                                                    ])>Day 2
+                                                        (Mon)</button>
+                                                    <button type="button" @class([
+                                                        'btn',
+                                                        'fs-4',
+                                                        'check-button',
+                                                        'btn-primary' => $profile->attends_fri,
+                                                        'btn-secondary' => !$profile->attends_fri,
+                                                    ])>Day 3
+                                                        (Tue)</button>
+                                                    <button type="button" @class([
+                                                        'btn',
+                                                        'fs-4',
+                                                        'check-button',
+                                                        'btn-primary' => $profile->attends_sat,
+                                                        'btn-secondary' => !$profile->attends_sat,
+                                                    ])>Day 4
+                                                        (Wed)</button>
+                                                </div>
                                             </div>
-                                            @endif
-                                        </div>
+                                            <div class="mb-3 d-flex justify-content-evenly">
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'check-button',
+                                                    'btn-primary' => $application->is_afterdark,
+                                                    'btn-secondary' => !$application->is_afterdark,
+                                                ])>After Dark</button>
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'check-button',
+                                                    'btn-primary' => $application->is_wallseat,
+                                                    'btn-secondary' => !$application->is_wallseat,
+                                                ])>Wallseat</button>
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'check-button',
+                                                    'btn-primary' => $application->is_power,
+                                                    'btn-secondary' => !$application->is_power,
+                                                ])>Power</button>
+                                            </div>
+                                            <div class="mb-3 fs-3">
+                                                <span>Categories:</span>
+                                                @if($profile->is_print)
+                                                    <button type="button" class="btn btn-primary fs-4 my-1">🖨️&nbsp;Print</button>
+                                                @endif
+                                                @if($profile->is_artwork)
+                                                    <button type="button" class="btn btn-primary fs-4 my-1">🎨&nbsp;Artwork</button>
+                                                @endif
+                                                @if($profile->is_fursuit)
+                                                    <button type="button" class="btn btn-primary fs-4 my-1">🧵&nbsp;Fursuit</button>
+                                                @endif
+                                                @if($profile->is_commissions)
+                                                    <button type="button" class="btn btn-primary fs-4 my-1">🧾&nbsp;Commissions</button>
+                                                @endif
+                                                @if($profile->is_misc)
+                                                    <button type="button" class="btn btn-primary fs-4 my-1">⛲️&nbsp;Miscellaneous</button>
+                                                @endif
+                                                @if(!$profile->is_print && !$profile->is_artwork && !$profile->is_fursuit && !$profile->is_commissions && !$profile->is_misc)
+                                                    <button type="button" class="btn btn-secondary fs-4 my-1">🤷&nbsp;None</button>
+                                                @endif
+                                            </div>
+                                            <!--
+                                            Categories
+                                            -->
+                                        @else
+                                            n/a
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -466,7 +538,8 @@
 
                 <!-- Comments Column -->
                 <div class="col-md mh-100 overflow-auto">
-                    <form method="post" action="{{ route('frontdesk.comment') }}" name="comment" autocomplete="off">
+                    <form method="post" action="{{ route('frontdesk.comment') }}" name="comment"
+                        autocomplete="off">
                         <div class="card my-2">
                             <div class="card-header fs-3">
                                 Comments

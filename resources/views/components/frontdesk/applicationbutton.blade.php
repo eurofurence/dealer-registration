@@ -6,6 +6,7 @@
         'btn',
         'btn-primary',
         'fs-4',
+        'my-1',
         'btn-success' => $application->status === \App\Enums\ApplicationStatus::CheckedIn,
         'btn-warning' => $application->status === \App\Enums\ApplicationStatus::TableAccepted ||
         $application->status === \App\Enums\ApplicationStatus::CheckedOut,
