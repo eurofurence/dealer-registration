@@ -20,6 +20,8 @@ class FrontdeskController extends Controller
      */
     public function __invoke(Request $request)
     {
+        $this->authorize('view-any', Application::class);
+
         $search = $request->get('search');
 
         if (empty($search)) {
