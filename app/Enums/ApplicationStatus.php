@@ -11,11 +11,14 @@ enum ApplicationStatus: string
     case TableOffered = 'table_offered';
     case TableAccepted = 'table_accepted';
     case CheckedIn = 'checked_in';
+    case CheckedOut = 'checked_out';
 
     static function for(\App\Models\Application $application): ApplicationStatus
     {
         if (!is_null($application->canceled_at)) {
             return ApplicationStatus::Canceled;
+        } elseif (!is_null($application->checked_out_at)) {
+            return ApplicationStatus::CheckedOut;
         } elseif (!is_null($application->checked_in_at)) {
             return ApplicationStatus::CheckedIn;
         } elseif (!is_null($application->waiting_at)) {
@@ -38,20 +41,28 @@ enum ApplicationStatus: string
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '!=', null)
             ),
+            ApplicationStatus::CheckedOut => $query->orWhere(
+                fn (\Illuminate\Database\Eloquent\Builder $query) =>
+                $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '!=', null)
+            ),
             ApplicationStatus::CheckedIn => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '=', null)
                     ->where('checked_in_at', '!=', null)
             ),
             ApplicationStatus::Waiting => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '=', null)
                     ->where('checked_in_at', '=', null)
                     ->where('waiting_at', '!=', null)
             ),
             ApplicationStatus::TableAccepted => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '=', null)
                     ->where('checked_in_at', '=', null)
                     ->where('waiting_at', '=', null)
                     ->where('offer_accepted_at', '!=', null)
@@ -59,6 +70,7 @@ enum ApplicationStatus: string
             ApplicationStatus::TableOffered => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '=', null)
                     ->where('checked_in_at', '=', null)
                     ->where('waiting_at', '=', null)
                     ->where('offer_accepted_at', '=', null)
@@ -67,6 +79,7 @@ enum ApplicationStatus: string
             ApplicationStatus::TableAssigned => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '=', null)
                     ->where('checked_in_at', '=', null)
                     ->where('waiting_at', '=', null)
                     ->where('offer_accepted_at', '=', null)
@@ -81,6 +94,7 @@ enum ApplicationStatus: string
             ApplicationStatus::Open => $query->orWhere(
                 fn (\Illuminate\Database\Eloquent\Builder $query) =>
                 $query->where('canceled_at', '=', null)
+                    ->where('checked_out_at', '=', null)
                     ->where('checked_in_at', '=', null)
                     ->where('waiting_at', '=', null)
                     ->where('offer_accepted_at', '=', null)
