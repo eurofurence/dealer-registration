@@ -158,7 +158,7 @@
                     @elseif ($applicant === null)
                         <div class="card text-bg-danger text-center my-2">
                             <div class="card-body">
-                                User or application <em>"{{ $search }}"</em> not found.
+                                No dealer, share or assistant found for search query <em>"{{ $search }}"</em>.
                             </div>
                         </div>
                     @else
