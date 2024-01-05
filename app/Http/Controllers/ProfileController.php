@@ -60,16 +60,15 @@ class ProfileController extends Controller
 
     private static function storeImage(Request $request, string $fileName, int|null $width, int|null $height)
     {
-        $imagePath = $request->file($fileName)->store('public');
-        $image = Image::make(Storage::get($imagePath))->resize($width, $height)->encode();
-        Storage::put($imagePath, $image);
-        $imagePath = explode('/', $imagePath);
-        return $imagePath[1];
+        $imagePath = $request->file($fileName)->storePublicly('', ['disk' => 'public']);
+        $image = Image::make(Storage::disk('public')->get($imagePath))->resize($width, $height)->encode();
+        Storage::disk('public')->put($imagePath, $image);
+        return $imagePath;
     }
 
     public static function getImage(string $fileName)
     {
-        Storage::get($fileName);
+        Storage::disk('public')->get($fileName);
     }
 
     public static function getOrCreate(int|null $applicationId): Profile
@@ -174,6 +173,7 @@ class ProfileController extends Controller
         ];
     }
 
+    // FIXME: migrate to support non-local storage like S3
     public static function addImagesToZip(ZipArchive $zip, string $zipFileName)
     {
         if (true === ($zip->open(Storage::path($zipFileName)))) {
@@ -181,18 +181,18 @@ class ProfileController extends Controller
             $fileCnt = 0;
 
             foreach (Profile::all() as $profile) {
-                $imgThumbnail = Storage::path('public/' . $profile->image_thumbnail);
-                if (file_exists($imgThumbnail) && is_file($imgThumbnail)) {
+                $imgThumbnail = $profile->image_thumbnail;
+                if (Storage::disk('public')->exists($imgThumbnail)) {
                     $zip->addFile($imgThumbnail, 'images/thumbnail_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_thumbnail, PATHINFO_EXTENSION));
                     $fileCnt++;
                 }
-                $imgArt = Storage::path('public/' . $profile->image_art);
-                if (file_exists($imgArt) && is_file($imgArt)) {
+                $imgArt = $profile->image_art;
+                if (Storage::disk('public')->exists($imgArt)) {
                     $zip->addFile($imgArt, 'images/art_' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION));
                     $fileCnt++;
                 }
-                $imgArtist = Storage::path('public/' . $profile->image_artist);
-                if (file_exists($imgArtist) && is_file($imgArtist)) {
+                $imgArtist = $profile->image_artist;
+                if (Storage::disk('public')->exists($imgArtist)) {
                     $zip->addFile($imgArtist, 'images/artist_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_artist, PATHINFO_EXTENSION));
                     $fileCnt++;
                 }
