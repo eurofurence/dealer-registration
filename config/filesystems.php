@@ -38,7 +38,7 @@ return [
 
         'public' => [
             'driver' => 'scoped',
-            'disk' => 's3',
+            'disk' => env('FILESYSTEM_DISK', 'local'),
             'prefix' => 'public',
         ],
 
