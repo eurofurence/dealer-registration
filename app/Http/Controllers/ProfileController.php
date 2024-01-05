@@ -176,35 +176,19 @@ class ProfileController extends Controller
     // FIXME: migrate to support non-local storage like S3
     public static function addImagesToZip(ZipArchive $zip, string $zipFileName)
     {
-        if (true === ($zip->open(Storage::path($zipFileName)))) {
-
-            $fileCnt = 0;
-
-            foreach (Profile::all() as $profile) {
-                $imgThumbnail = $profile->image_thumbnail;
-                if (Storage::disk('public')->exists($imgThumbnail)) {
-                    $zip->addFile($imgThumbnail, 'images/thumbnail_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_thumbnail, PATHINFO_EXTENSION));
-                    $fileCnt++;
-                }
-                $imgArt = $profile->image_art;
-                if (Storage::disk('public')->exists($imgArt)) {
-                    $zip->addFile($imgArt, 'images/art_' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION));
-                    $fileCnt++;
-                }
-                $imgArtist = $profile->image_artist;
-                if (Storage::disk('public')->exists($imgArtist)) {
-                    $zip->addFile($imgArtist, 'images/artist_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_artist, PATHINFO_EXTENSION));
-                    $fileCnt++;
-                }
-
-                // prevent too many open files at once (assuming low limit of 256 files)
-                if ($fileCnt >= 253) {
-                    $zip->close();
-                    $zip->open(Storage::path($zipFileName));
-                    $fileCnt = 0;
-                }
+        foreach (Profile::all() as $profile) {
+            $imgThumbnail = $profile->image_thumbnail;
+            if (!empty($imgThumbnail) && Storage::disk('public')->exists($imgThumbnail)) {
+                $zip->addFromString('images/thumbnail_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_thumbnail, PATHINFO_EXTENSION), Storage::disk('public')->get($imgThumbnail));
             }
-            $zip->close();
+            $imgArt = $profile->image_art;
+            if (!empty($imgArt) && Storage::disk('public')->exists($imgArt)) {
+                $zip->addFromString('images/art_' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION), Storage::disk('public')->exists($imgArt));
+            }
+            $imgArtist = $profile->image_artist;
+            if (!empty($imgArtist) && Storage::disk('public')->exists($imgArtist)) {
+                $zip->addFromString('images/artist_' . $profile->application()->first()->id . '.' . pathinfo($profile->image_artist, PATHINFO_EXTENSION), Storage::disk('public')->get($imgArtist));
+            }
         }
     }
 }
