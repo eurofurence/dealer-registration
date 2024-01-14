@@ -9,7 +9,7 @@
         "doctrine/dbal": "^3.6",
         "filament/filament": "^3.1",
         "guzzlehttp/guzzle": "^7.2",
-        "intervention/image": "^2.7",
+        "intervention/image": "^3.2",
         "laravel/framework": "^10.0",
         "laravel/horizon": "^5.14",
         "laravel/octane": "^1.4",
