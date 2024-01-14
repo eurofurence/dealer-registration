@@ -64,9 +64,9 @@
                 <div class="my-1 z-1">
                     <span class="fs-5 align-middle">{{ $user->name }}</span>
                     <img src="{{ Session::get('avatar') ? 'https://identity.eurofurence.org/storage/avatars/' : '' }}{{ Session::get('avatar') ?? asset('default.jpg') }}"
-                        alt="mdo" width="40" height="40" class="rounded-circle">
+                        alt="{{ $user->name }}" width="40" height="40" class="rounded-circle">
                     @if ($user->isAdmin())
-                        <a href="{{ route('filament.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
+                        <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
                     @endif
                     <a href="https://app.eurofurence.org/tools/dealers.html" target="_blank"
                         class="btn btn-secondary">Dealer Profiles ⎋</a>

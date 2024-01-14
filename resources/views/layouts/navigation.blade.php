@@ -18,7 +18,7 @@
                 <a href="#" class="d-block link-light text-decoration-none " data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <img src="{{ Session::get('avatar') ? 'https://identity.eurofurence.org/storage/avatars/' : '' }}{{ Session::get('avatar') ?? asset('default.jpg') }}"
-                        alt="mdo" width="40" height="40" class="rounded-circle">
+                        alt="{{ $user->name }}" width="40" height="40" class="rounded-circle">
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     <li><a class="dropdown-item" href="https://identity.eurofurence.org/settings/profile">Your
