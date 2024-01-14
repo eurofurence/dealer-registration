@@ -137,7 +137,7 @@
                 @enderror
 
                 <img id='image_thumbnail_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                    data-bs-target="#imageThumbnailModal" src="{{ asset("storage/$profile?->image_thumbnail") }}"
+                    data-bs-target="#imageThumbnailModal" src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
                     alt="" style="height: 100px;">
 
                 <!-- Modal -->
@@ -151,7 +151,7 @@
                             </div>
                             <div class="modal-body">
                                 <img id='image_thumbnail_preview_large'class="mx-auto d-block w-100"
-                                    src="{{ asset("storage/$profile?->image_thumbnail") }}" alt="">
+                                    src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
@@ -192,7 +192,7 @@
                     </span>
                 @enderror
                 <img id='image_artist_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                    data-bs-target="#imageArtistModal" src="{{ asset("storage/$profile?->image_artist") }}"
+                    data-bs-target="#imageArtistModal" src="{{ Storage::disk('public')->url("$profile?->image_artist") }}"
                     alt="" style="height: 100px;">
 
                 <!-- Modal -->
@@ -206,7 +206,7 @@
                             </div>
                             <div class="modal-body">
                                 <img id='image_artist_preview_large' class="mx-auto d-block w-100"
-                                    src="{{ asset("storage/$profile?->image_artist") }}" alt="">
+                                    src="{{ Storage::disk('public')->url("$profile?->image_artist") }}" alt="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
@@ -246,7 +246,7 @@
                     </span>
                 @enderror
                 <img id='image_art_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                    data-bs-target="#imageArtModal" src="{{ asset("storage/$profile?->image_art") }}" alt=""
+                    data-bs-target="#imageArtModal" src="{{ Storage::disk('public')->url("$profile?->image_art") }}" alt=""
                     style="height: 100px;">
 
                 <!-- Modal -->
@@ -260,7 +260,7 @@
                             </div>
                             <div class="modal-body">
                                 <img id='image_art_preview_large' class="mx-auto d-block w-100"
-                                    src="{{ asset("storage/$profile?->image_art") }}" alt="">
+                                    src="{{ Storage::disk('public')->url("$profile?->image_art") }}" alt="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"

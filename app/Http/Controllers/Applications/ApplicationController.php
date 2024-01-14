@@ -152,10 +152,11 @@ class ApplicationController extends Controller
      */
     public function exportAppData() {
         $zipFileName = "appdata.zip";
-        $csvName = "applications.csv";
+        $csvFileName = "applications.csv";
         $separator = ";";
 
-        $handle = fopen(Storage::path($csvName), 'w');
+        $csvFile = tmpfile();
+        $csvFileUri = stream_get_meta_data($csvFile)['uri'];
         $applications = Application::getAllApplicationsForAppExport();
 
         if (!empty($applications)) {
@@ -164,19 +165,22 @@ class ApplicationController extends Controller
         }
 
         foreach ($applications as $row) {
-            fputcsv($handle, $row, $separator);
+            fputcsv($csvFile, $row, $separator);
         }
-        fclose($handle);
+        fflush($csvFile);
 
+        $zipFile = tmpfile();
+        $zipFileUri = stream_get_meta_data($zipFile)['uri'];
         $zip = new ZipArchive();
-        if (true === ($zip->open(Storage::path($zipFileName), ZipArchive::CREATE | ZipArchive::OVERWRITE))) {
-            $zip->addFile(Storage::path($csvName), $csvName);
-            $zip->close();
-        }
+        abort_if(!$zip->open($zipFileUri, ZipArchive::CREATE), 500, 'Failed to create ZIP archive for export');
 
-        ProfileController::addImagesToZip( $zip, $zipFileName);
+        $zip->addFromString($csvFileName, file_get_contents($csvFileUri));
+        ProfileController::addImagesToZip($zip, $zipFileName);
+        fflush($zipFile);
 
-        return Storage::download($zipFileName);
+        return response()->streamDownload(function() use ($zipFile, $zipFileUri) {
+            echo file_get_contents($zipFileUri);
+        }, $zipFileName);
     }
 
 
