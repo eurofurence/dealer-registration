@@ -6,16 +6,16 @@ use App\Filament\Resources\ProfileResource\Pages;
 use App\Filament\Resources\ProfileResource\RelationManagers;
 use App\Models\Profile;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class ProfileResource extends Resource
 {
     protected static ?string $model = Profile::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-annotation';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
     public static function form(Form $form): Form
     {

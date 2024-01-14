@@ -3,13 +3,11 @@
 namespace App\Filament\Resources\ApplicationResource\RelationManagers;
 
 use App\Filament\Resources\CommentResource;
-use App\Filament\Resources\CommentResource\Pages\CreateComment;
 use App\Models\Comment;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class CommentRelationManager extends RelationManager
@@ -19,7 +17,7 @@ class CommentRelationManager extends RelationManager
     protected static ?string $label = "Comment";
     protected static ?string $recordTitleAttribute = 'text';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -27,7 +25,7 @@ class CommentRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

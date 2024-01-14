@@ -6,9 +6,9 @@ use App\Filament\Resources\TableTypeResource\Pages;
 use App\Filament\Resources\TableTypeResource\RelationManagers;
 use App\Models\TableType;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class TableTypeResource extends Resource
 {
     protected static ?string $model = TableType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-table';
+    protected static ?string $navigationIcon = 'heroicon-o-table-cells';
 
     public static function form(Form $form): Form
     {

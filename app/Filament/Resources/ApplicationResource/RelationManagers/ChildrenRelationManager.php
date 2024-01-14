@@ -3,12 +3,13 @@
 namespace App\Filament\Resources\ApplicationResource\RelationManagers;
 
 use App\Enums\ApplicationStatus;
+use App\Enums\ApplicationType;
 use App\Filament\Resources\ApplicationResource;
 use App\Models\Application;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class ChildrenRelationManager extends RelationManager
@@ -19,7 +20,7 @@ class ChildrenRelationManager extends RelationManager
     protected static ?string $label = "application";
     protected static ?string $recordTitleAttribute = 'user.name';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -29,30 +30,32 @@ class ChildrenRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name'),
-                Tables\Columns\TextColumn::make('type')->formatStateUsing(function (string $state) {
-                    return ucfirst($state);
+                Tables\Columns\TextColumn::make('type')->formatStateUsing(function (ApplicationType $state) {
+                    return ucfirst($state->name);
                 })->sortable(),
-                Tables\Columns\BadgeColumn::make('status')->enum(ApplicationStatus::cases())->formatStateUsing(function (Application $record) {
-                    return $record->status->name;
-                })->colors([
-                        'secondary',
-                        'success' => ApplicationStatus::TableAccepted->value,
-                        'danger' => ApplicationStatus::Canceled->value
-                    ]),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(function (Application $record) {
+                        return $record->status->name;
+                    })
+                    ->color(fn (ApplicationStatus $state): string => match ($state) {
+                        ApplicationStatus::TableAccepted->value => 'success',
+                        ApplicationStatus::Canceled->value => 'danger',
+                        default => 'secondary',
+                    }),
             ])
             ->filters([
                 //
             ])
-            ->headerActions([
-            ])
+            ->headerActions([])
             ->actions([
                 Tables\Actions\Action::make('Show')
-                    ->url(fn(Application $record): string => ApplicationResource::getUrl('edit', ['record' => $record])),
+                    ->url(fn (Application $record): string => ApplicationResource::getUrl('edit', ['record' => $record])),
                 Tables\Actions\Action::make('Delete')
                     ->action(function (Application $record): void {
                         $record->setStatusAttribute(ApplicationStatus::Canceled);
@@ -60,7 +63,6 @@ class ChildrenRelationManager extends RelationManager
                     ->requiresConfirmation()
                     ->color('danger'),
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
 }
