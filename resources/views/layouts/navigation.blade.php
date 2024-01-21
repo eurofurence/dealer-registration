@@ -14,11 +14,12 @@
             </li>
         </ul>
         <ul class="nav">
-            <div class="dropdown">
-                <a href="#" class="d-block link-light text-decoration-none " data-bs-toggle="dropdown"
+            <div class="dropdown nav-item">
+                <a href="#" class="d-block link-light text-decoration-none" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    <img src="{{ Session::get('avatar') ? 'https://identity.eurofurence.org/storage/avatars/' : '' }}{{ Session::get('avatar') ?? asset('default.jpg') }}"
-                        alt="{{ $user->name }}" width="40" height="40" class="rounded-circle">
+                    <img src="{{ Session::get('avatar') ?? asset('default.jpg') }}"
+                        alt="{{ Session::get('name') ?? 'avatar' }}" width="40" height="40" class="rounded-circle">
+                    <span class="align-middle">{{ Session::get('name') ?? 'User' }}</span>
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     <li><a class="dropdown-item" href="https://identity.eurofurence.org/settings/profile">Your
