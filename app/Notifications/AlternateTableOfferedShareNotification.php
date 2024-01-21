@@ -30,7 +30,7 @@ class AlternateTableOfferedShareNotification extends Notification implements Sho
     {
         return (new MailMessage)
             ->greeting("Dear " . $notifiable->name . ",")
-            ->subject(config('ef.con_name') . ' Dealers\' Den - Alternate Table Size')
+            ->subject(config('con.con_name') . ' Dealers\' Den - Alternate Table Size')
             ->line('Thank you for your interest as share in a Dealership at Eurofurence. We appreciate your application and are excited to have you as a potential dealer at the convention.')
             ->line('Unfortunately, we regret to inform you that the table size your Dealership has applied for is no longer available. However, we have offered your Dealership an alternative table size that may be suitable for your needs.')
             ->line('Currently, the following table size is available:')

@@ -6,17 +6,17 @@
     <div class="px-4 py-5 my-5 text-center">
         <h1 class="display-5 fw-bold">Register</h1>
         <div class="col-lg-6 mx-auto">
-            @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+            @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                 <p class="lead mb-4">
                     Application for a Dealership is open until
-                    <b>{{ Carbon\Carbon::parse(config('ef.reg_end_date'))->format('d.m.Y H:i') }}</b>.
+                    <b>{{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
             @else
                 <p class="lead mb-4">The registration period has ended. You can still update your profile data which will be
                     displayed in the EF app.</p>
             @endif
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <a target="_blank" href="{{ config('ef.dealers_tos_url') }}" class="text-secondary small">Rules and
+                <a target="_blank" href="{{ config('con.dealers_tos_url') }}" class="text-secondary small">Rules and
                     Information</a>
             </div>
         </div>
@@ -161,7 +161,7 @@
                     </div>
                 </div>
             </div>
-        @elseif (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+        @elseif (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
             <div class="col-md-6">
                 <div class="card mb-2">
                     <div class="card-body text-center">
@@ -176,7 +176,7 @@
             </div>
         @endif
         <div class="col-md-6 mx-auto">
-            @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+            @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                 <div class="card mb-2">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Join an existing Dealership</h5>
@@ -186,7 +186,7 @@
                     </div>
                 </div>
             @endif
-            @if (Carbon\Carbon::parse(config('ef.assistant_end_date'))->isFuture())
+            @if (Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
                 <div class="card mb-2">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Become a Dealer Assistant</h5>

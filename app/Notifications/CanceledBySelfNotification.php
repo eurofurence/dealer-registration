@@ -24,7 +24,7 @@ class CanceledBySelfNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(config('ef.con_name') . ' Dealers\' Den - Application Canceled')
+            ->subject(config('con.con_name') . ' Dealers\' Den - Application Canceled')
             ->greeting("Dear ".$notifiable->name.",")
             ->line('This mail confirms that you have successfully canceled your registration for the Dealers\' Den at this year\'s Eurofurence. We are sorry to see you go and would love to see you back next year.')
             ->line('Should you change your mind, you can resubmit your application or join another dealership until the end of the application phase.')

@@ -24,7 +24,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(config('ef.con_name') . ' Dealers\' Den - Application Received')
+            ->subject(config('con.con_name') . ' Dealers\' Den - Application Received')
             ->greeting("Dear ".$notifiable->name.",")
             ->line('Thank you for your application for a Dealership at the upcoming Eurofurence. Your interest in being a part of this year\'s Dealers\' Den is very much appreciated.')
             ->line('We have received your application and will review it once the Dealership application period has ended. We understand that waiting can be difficult, but please know that we are working hard to review all applications in a timely manner. Once we have reviewed all the applications, we will get in touch with you to provide you with all the necessary information about the next steps.')

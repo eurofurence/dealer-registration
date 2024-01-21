@@ -27,7 +27,7 @@
             <ul class="nav justify-content-center border-bottom pb-3 mb-3">
                 <li class="nav-item"><a href="https://help.eurofurence.org/legal/imprint" class="nav-link px-2 text-muted">Imprint & Legal Notice</a></li>
                 <li class="nav-item"><a href="https://help.eurofurence.org/legal/privacy" class="nav-link px-2 text-muted">Privacy Statement</a></li>
-                <li class="nav-item"><a href="{{ config('ef.dealers_tos_url') }}" class="nav-link px-2 text-muted">Rules and Information</a></li>
+                <li class="nav-item"><a href="{{ config('con.dealers_tos_url') }}" class="nav-link px-2 text-muted">Rules and Information</a></li>
             </ul>
             <p class="text-center text-muted">© Eurofurence e.V. (MIT Licensed Software)</p>
         </footer>

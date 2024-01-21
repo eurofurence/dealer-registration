@@ -30,7 +30,7 @@
                         <div class="card-title h5 mb-0"><span class="badge bg-secondary">{{ $shares_active_count }}/{{ $shares_count }}</span> Share your space with other dealers</div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if($shares_active_count < $shares_count && Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+                        @if($shares_active_count < $shares_count && Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.regenerate-keys') }}">
                                     @csrf
@@ -49,7 +49,7 @@
                                     @method('DELETE')
                                     @csrf
                                     <input type="hidden" name="invitee_id" value="{{ $share->id }}">
-                                    @if ($application->status === \App\Enums\ApplicationStatus::Open && Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+                                    @if ($application->status === \App\Enums\ApplicationStatus::Open && Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                                     <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>
                                     @endif
                                     {{ $share->display_name ?? $share->user->name }}
@@ -68,7 +68,7 @@
                         <div class="card-title h5 mb-0"><span class="badge bg-secondary">{{ $assistants_active_count }}/{{ $assistants_count }}</span> Invite assistants to your space</div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if($assistants_active_count < $assistants_count && Carbon\Carbon::parse(config('ef.assistant_end_date'))->isFuture())
+                        @if($assistants_active_count < $assistants_count && Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.regenerate-keys') }}">
                                     @csrf
