@@ -7,25 +7,25 @@ use App\Filament\Resources\ApplicationResource;
 use App\Http\Controllers\Applications\ApplicationController;
 use App\Models\Application;
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditApplication extends EditRecord
 {
     protected static string $resource = ApplicationResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
             Actions\Action::make('Send status notification')
                 ->action('sendStatusNotification')
                 ->requiresConfirmation()
-                ->icon('heroicon-o-mail'),
+                ->icon('heroicon-o-envelope'),
             Actions\Action::make('Send reminder')
                 ->action('sendReminderNotification')
                 ->requiresConfirmation()
-                ->icon('heroicon-o-mail'),
+                ->icon('heroicon-o-envelope'),
         ];
     }
 

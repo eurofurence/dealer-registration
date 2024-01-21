@@ -80,6 +80,7 @@ class OidcClientController extends Controller
         Auth::loginUsingId($user->id);
         Session::put('access_token', $accessToken);
         Session::put('avatar', $userinfo['avatar']);
+        Session::put('name', $userinfo['name']);
         return $this->redirectDestination($request);
     }
 

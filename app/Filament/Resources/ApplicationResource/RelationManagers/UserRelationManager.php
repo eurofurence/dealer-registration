@@ -6,9 +6,9 @@ use App\Filament\Resources\UserResource;
 use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class UserRelationManager extends RelationManager
@@ -19,7 +19,7 @@ class UserRelationManager extends RelationManager
     protected static ?string $label = "user";
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -29,7 +29,7 @@ class UserRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -37,28 +37,28 @@ class UserRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('reg_id'),
                 Tables\Columns\TextColumn::make('email'),
 
-                Tables\Columns\BadgeColumn::make('packages booked')
-                    ->formatStateUsing(fn(?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? ''),
-                Tables\Columns\BadgeColumn::make('reg status')
-                    ->formatStateUsing(fn(?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? '')
-                    ->colors([
-                        'secondary',
-                        'success' => 'paid',
-                        'danger' => 'cancelled',
-                    ])
+                Tables\Columns\TextColumn::make('packages booked')
+                    ->badge()
+                    ->formatStateUsing(fn (?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? ''),
+                Tables\Columns\TextColumn::make('reg status')
+                    ->badge()
+                    ->formatStateUsing(fn (?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? '')
+                    ->color(fn (string $state): string => match ($state) {
+                        'paid' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'secondary',
+                    })
 
             ])
             ->filters([
                 //
             ])
-            ->headerActions([
-            ])
+            ->headerActions([])
             ->actions([
                 Tables\Actions\Action::make('Show')
-                    ->url(fn(User $record): string => UserResource::getUrl('edit', ['record' => $record])),
+                    ->url(fn (User $record): string => UserResource::getUrl('edit', ['record' => $record])),
 
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
 }

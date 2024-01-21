@@ -8,9 +8,9 @@ use App\Http\Controllers\Client\RegSysClientController;
 use App\Models\Profile;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 
@@ -22,7 +22,7 @@ class ProfileRelationManager extends RelationManager
     protected static ?string $label = "profile";
     protected static ?string $recordTitleAttribute = 'short_desc';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -32,7 +32,7 @@ class ProfileRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

@@ -13,9 +13,9 @@ use App\Models\Application;
 use App\Models\TableType;
 use Filament\Forms;
 use Filament\Notifications\Notification;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -82,14 +82,14 @@ class ApplicationResource extends Resource
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
                             ->required(),
                         Forms\Components\Select::make('parent')->searchable()->options(Application::getEligibleParents()->pluck('name', 'id'))
-                            ->hidden(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value)
-                            ->required(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value),
+                            ->hidden(fn (\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value)
+                            ->required(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')
-                            ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->required(fn (\Closure $get) => $get('type') === ApplicationType::Dealer->value),
+                            ->hidden(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->required(fn (\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
-                            ->hidden(fn (\Closure $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->nullable(fn (\Closure $get) => $get('status') !== ApplicationStatus::TableOffered->value),
+                            ->hidden(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->nullable(fn (\Filament\Forms\Get $get) => $get('status') !== ApplicationStatus::TableOffered->value),
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
@@ -113,18 +113,17 @@ class ApplicationResource extends Resource
                 Tables\Columns\TextColumn::make('id')->label("ID"),
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable(),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->enum(ApplicationStatus::cases())
-                    ->formatStateUsing(function (Application $record) {
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (ApplicationStatus $state): string => match ($state) {
+                        ApplicationStatus::TableAccepted => 'success',
+                        ApplicationStatus::Canceled => 'danger',
+                        default => 'secondary',
+                    })->formatStateUsing(function (Application $record) {
                         return $record->status->name;
-                    })
-                    ->colors([
-                        'secondary',
-                        'success' => ApplicationStatus::TableAccepted->value,
-                        'danger' => ApplicationStatus::Canceled->value
-                    ]),
+                    }),
                 Tables\Columns\TextColumn::make('requestedTable.name')
-                    ->icon(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation' : '')
+                    ->icon(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation-triangle' : '')
                     ->iconPosition('after')
                     ->color(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : '')
                     ->sortable(),
@@ -136,8 +135,8 @@ class ApplicationResource extends Resource
                             ->orderBy('table_type_assigned', $direction);
                     }),
                 Tables\Columns\TextColumn::make('type')
-                    ->formatStateUsing(function (string $state) {
-                        return ucfirst($state);
+                    ->formatStateUsing(function (ApplicationType $state) {
+                        return ucfirst($state->value);
                     })
                     ->sortable(),
                 Tables\Columns\TextInputColumn::make('table_number')
@@ -295,7 +294,7 @@ class ApplicationResource extends Resource
                             </ul>")->persistent()->send();
                     })
                     ->requiresConfirmation()
-                    ->icon('heroicon-o-mail'),
+                    ->icon('heroicon-o-envelope'),
                 Tables\Actions\BulkAction::make('Send reminder')
                     ->action(function (Collection $records): void {
                         $resultsType = StatusNotificationResult::class;
@@ -346,7 +345,7 @@ class ApplicationResource extends Resource
                             </ul>")->persistent()->send();
                     })
                     ->requiresConfirmation()
-                    ->icon('heroicon-o-mail'),
+                    ->icon('heroicon-o-envelope'),
             ]);
     }
 

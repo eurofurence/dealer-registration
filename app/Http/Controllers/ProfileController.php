@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use ZipArchive;
 
 class ProfileController extends Controller
 {
+    private static ImageManager $manager;
+
     public function index()
     {
 
@@ -60,8 +63,11 @@ class ProfileController extends Controller
 
     private static function storeImage(Request $request, string $fileName, int|null $width, int|null $height)
     {
+        if (!isset(self::$manager)) {
+            self::$manager = new ImageManager(new Driver());
+        }
         $imagePath = $request->file($fileName)->storePublicly('', ['disk' => 'public']);
-        $image = Image::make(Storage::disk('public')->get($imagePath))->resize($width, $height)->encode();
+        $image = self::$manager->read(Storage::disk('public')->get($imagePath))->cover($width, $height)->toWebp();
         Storage::disk('public')->put($imagePath, $image);
         return $imagePath;
     }
