@@ -81,7 +81,7 @@ class ApplicationRequest extends FormRequest
 
         $profileValidations = ProfileController::getValidations();
 
-        if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
+        if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
             return array_merge($appValidations, $profileValidations);
         } else {
             return $profileValidations;
@@ -117,7 +117,7 @@ class ApplicationRequest extends FormRequest
             $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
             // Only allow access to applications.store route if no active application exists or type changes
             // while reg is still open …
-            if (Carbon::parse(config('ef.reg_end_date'))->isFuture()) {
+            if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
                 return is_null($application) || !$application->isActive() || $newApplicationType !== $application->type;
             }
             // … or somebody wants to become an assistant …
@@ -148,7 +148,7 @@ class ApplicationRequest extends FormRequest
     {
         $application = null;
         // Only allow changes to applications while reg is still open
-        if (Carbon::parse(config('ef.reg_end_date'))->isFuture() || $applicationType === ApplicationType::Assistant) {
+        if (Carbon::parse(config('con.reg_end_date'))->isFuture() || $applicationType === ApplicationType::Assistant) {
             $application = Application::updateOrCreate([
                 "user_id" => \Auth::id(),
             ], [

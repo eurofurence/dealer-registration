@@ -14,7 +14,7 @@
         @elseif (Session::exists('table-confirmation-error'))
             <div class="alert alert-danger text-center fw-bold">An error has occurred, please try again. If the error
                 persists, please get in touch with the Dealer's Den team at <a
-                    href="mailto:{{ config('ef.dealers_email') }}">{{ config('ef.dealers_email') }}</a></div>
+                    href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
         @endif
 
         @if ($application->status === \App\Enums\ApplicationStatus::TableOffered)
@@ -30,7 +30,7 @@
                                 </p>
                                 <p>
                                     It's our pleasure to inform you that your table assignment for the
-                                    {{ config('ef.con_name') }} Dealers' Den has been confirmed! We are excited to have
+                                    {{ config('con.con_name') }} Dealers' Den has been confirmed! We are excited to have
                                     you
                                     join us as a dealer at the convention!<br />
                                     Your table assignment details are as follows:
@@ -61,12 +61,12 @@
                                     about your table assignment or the payment process, please do not hesitate to
                                     contact us
                                     at <a
-                                        href="mailto:{{ config('ef.dealers_email') }}">{{ config('ef.dealers_email') }}</a>.
+                                        href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a>.
                                     We are here to help ensure a smooth and enjoyable experience for all our dealers.
                                 </p>
                                 <p>
                                     Thank you once again for your interest in participating in
-                                    {{ config('ef.con_name') }}
+                                    {{ config('con.con_name') }}
                                     Dealers' Den. We hope to see you at the event, and we look forward to your continued
                                     support.
                                 </p>

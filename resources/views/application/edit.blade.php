@@ -5,10 +5,10 @@
 @section('content')
     <div class="">
         <h1>Update your application</h1>
-        @if (Carbon\Carbon::parse(config('ef.reg_end_date'))->isFuture())
+        @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
             <p>Please fill out this application form to apply for a Dealership at the Dealers’ Den. You may edit your
                 application at any time before the deadline of
-                <b>{{ Carbon\Carbon::parse(config('ef.reg_end_date'))->format('d.m.Y H:i') }}</b>.
+                <b>{{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</b>.
                 Please read the help texts carefully, and enter your information to the best of your ability.
             </p>
             <p>
