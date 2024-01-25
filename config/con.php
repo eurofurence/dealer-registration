@@ -3,8 +3,8 @@
 use Carbon\Carbon;
 
 return [
-    'reg_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_REG_END_DATETIME_ISO'), env('CON_TIMEZONE')),
-    'assistant_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_ASSISTANT_END_DATETIME_ISO'), env('CON_TIMEZONE')),
+    'reg_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_REG_END_DATETIME_ISO', '3024-01-01T00:00:00'), env('CON_TIMEZONE')),
+    'assistant_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_ASSISTANT_END_DATETIME_ISO', '3024-01-01T23:59:59'), env('CON_TIMEZONE')),
     'dealers_tos_url' => env('CON_DEALERS_TOS_URL'),
     'idp_url' => env('CON_IDP_URL'),
     'dealers_email' => env('CON_DEALERS_EMAIL'),
