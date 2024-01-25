@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -11,15 +12,15 @@ class Profile extends Model
 
     protected $guarded = [];
 
-     protected $casts = [
-      "is_print" => "boolean",
-      "is_artwork" => "boolean",
-      "is_fursuit" => "boolean",
-      "is_commissions" => "boolean",
-      "is_misc" => "boolean",
-      "attends_thu" => "boolean",
-      "attends_fri" => "boolean",
-      "attends_sat" => "boolean",
+    protected $casts = [
+        "is_print" => "boolean",
+        "is_artwork" => "boolean",
+        "is_fursuit" => "boolean",
+        "is_commissions" => "boolean",
+        "is_misc" => "boolean",
+        "attends_thu" => "boolean",
+        "attends_fri" => "boolean",
+        "attends_sat" => "boolean",
     ];
 
     protected $attributes = [
@@ -33,13 +34,14 @@ class Profile extends Model
         return $this->belongsTo(Application::class);
     }
 
-    public function categories() {
+    public function categories()
+    {
         return $this->hasManyThrough(Category::class, Keyword::class)->orderBy('name', 'asc');;
     }
 
     public function keywords()
     {
-        return $this->belongsToMany(Keyword::class, 'profile_keywords')->withTimestamps()->orderBy('name', 'asc');;
+        return $this->belongsToMany(Keyword::class, 'keyword_profile')->withTimestamps()->orderBy('name', 'asc');;
     }
 
     public function keywordUuids()
