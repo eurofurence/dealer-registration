@@ -216,7 +216,6 @@ class ApplicationResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->options(array_combine(array_column(ApplicationStatus::cases(), 'value'), array_column(ApplicationStatus::cases(), 'name')))
                     ->query(function (Builder $query, array $data) {
-                        \Illuminate\Support\Facades\Log::debug(print_r($data, true));
                         if (!key_exists('values', $data)) {
                             return;
                         }

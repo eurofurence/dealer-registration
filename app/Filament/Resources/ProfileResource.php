@@ -132,7 +132,8 @@ class ProfileResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ApplicationRelationManager::class
+            RelationManagers\ApplicationRelationManager::class,
+            RelationManagers\KeywordRelationManager::class
         ];
     }
 

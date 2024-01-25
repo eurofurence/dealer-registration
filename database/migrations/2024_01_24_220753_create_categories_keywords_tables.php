@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('profile_keywords', function (Blueprint $table) {
+        Schema::create('keyword_profile', function (Blueprint $table) {
             $table->foreignIdFor(\App\Models\Profile::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete()->primary();
             $table->foreignIdFor(\App\Models\Keyword::class)->constrained('keywords', 'uuid')->cascadeOnUpdate()->cascadeOnDelete()->primary();
             $table->timestamps();
@@ -37,7 +37,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profile_keywords');
+        Schema::dropIfExists('keyword_profile');
         Schema::dropIfExists('keywords');
         Schema::dropIfExists('categories');
     }
