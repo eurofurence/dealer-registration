@@ -33,6 +33,20 @@ class Profile extends Model
         return $this->belongsTo(Application::class);
     }
 
+    public function categories() {
+        return $this->hasManyThrough(Category::class, Keyword::class)->orderBy('name', 'asc');;
+    }
+
+    public function keywords()
+    {
+        return $this->belongsToMany(Keyword::class, 'profile_keywords')->withTimestamps()->orderBy('name', 'asc');;
+    }
+
+    public function keywordUuids()
+    {
+        return $this->keywords()->pluck('uuid')->toArray();
+    }
+
     public static function findByApplicationId(int|null $application_id): Profile|null
     {
         return self::where('application_id', $application_id)->first();

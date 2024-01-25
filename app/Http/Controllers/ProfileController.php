@@ -56,9 +56,11 @@ class ProfileController extends Controller
             $profileData["image_art"] = ProfileController::storeImage($request, "image_art", 400, 450);
         }
 
-        return Profile::updateOrCreate([
+        $profile = Profile::updateOrCreate([
             "application_id" => $applicationId,
         ], $profileData);
+        $profile->keywords()->sync($request->get('keywords'));
+        return $profile;
     }
 
     private static function storeImage(Request $request, string $fileName, int|null $width, int|null $height)
