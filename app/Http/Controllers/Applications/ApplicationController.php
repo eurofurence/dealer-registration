@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
+use App\Models\Category;
 use App\Models\TableType;
 use App\Notifications\AlternateTableOfferedNotification;
 use App\Notifications\AlternateTableOfferedShareNotification;
@@ -64,11 +65,13 @@ class ApplicationController extends Controller
     public function edit(Request $request)
     {
         $application = \Auth::user()->application;
+        $categories = Category::orderBy('name', 'asc')->get();
         abort_if(is_null($application), 403, 'No Registration');
         $applicationType = ($request->get('code')) ? Application::determineApplicationTypeByCode($request->get('code')) : $application->type;
         return view('application.edit', [
             'table_types' => TableType::all(['id', 'name', 'price']),
-            "application" => $application,
+            'application' => $application,
+            'categories' => $categories,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
             'profile' => ProfileController::getByApplicationId($application->id)

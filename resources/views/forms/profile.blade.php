@@ -56,6 +56,21 @@
             </div>
         </div>
         <div class="row mb-3">
+            <label class="col-sm-2 col-form-label fw-bold">Keywords</label>
+        </div>
+        <div class="row mb-1">
+            <div class="col-sm-10 offset-sm-2">
+                <x-profile.keywords :categories="$categories" :keywordUuids="$profile->keywordUuids()"></x-profile.keywords>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-sm-10 offset-sm-2">
+                <div id="keywordsHelp" class="form-text">Select the keywords that apply to your goods to make
+                    it easier to find you!
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
             <label class="col-sm-2 col-form-label fw-bold">Catego&shy;ries</label>
         </div>
         <div class="row mb-1">
@@ -137,8 +152,9 @@
                 @enderror
 
                 <img id='image_thumbnail_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                    data-bs-target="#imageThumbnailModal" src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
-                    alt="" style="height: 100px;">
+                    data-bs-target="#imageThumbnailModal"
+                    src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
+                    style="height: 100px;">
 
                 <!-- Modal -->
                 <div class="modal fade" id="imageThumbnailModal" tabindex="-1"
@@ -151,7 +167,8 @@
                             </div>
                             <div class="modal-body">
                                 <img id='image_thumbnail_preview_large'class="mx-auto d-block w-100"
-                                    src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt="">
+                                    src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
+                                    alt="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
@@ -192,8 +209,9 @@
                     </span>
                 @enderror
                 <img id='image_artist_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                    data-bs-target="#imageArtistModal" src="{{ Storage::disk('public')->url("$profile?->image_artist") }}"
-                    alt="" style="height: 100px;">
+                    data-bs-target="#imageArtistModal"
+                    src="{{ Storage::disk('public')->url("$profile?->image_artist") }}" alt=""
+                    style="height: 100px;">
 
                 <!-- Modal -->
                 <div class="modal fade" id="imageArtistModal" tabindex="-1" aria-labelledby="imageArtistModalLabel"
@@ -206,7 +224,8 @@
                             </div>
                             <div class="modal-body">
                                 <img id='image_artist_preview_large' class="mx-auto d-block w-100"
-                                    src="{{ Storage::disk('public')->url("$profile?->image_artist") }}" alt="">
+                                    src="{{ Storage::disk('public')->url("$profile?->image_artist") }}"
+                                    alt="">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary"
@@ -246,8 +265,8 @@
                     </span>
                 @enderror
                 <img id='image_art_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                    data-bs-target="#imageArtModal" src="{{ Storage::disk('public')->url("$profile?->image_art") }}" alt=""
-                    style="height: 100px;">
+                    data-bs-target="#imageArtModal" src="{{ Storage::disk('public')->url("$profile?->image_art") }}"
+                    alt="" style="height: 100px;">
 
                 <!-- Modal -->
                 <div class="modal fade" id="imageArtModal" tabindex="-1" aria-labelledby="imageArtModalLabel"
@@ -272,8 +291,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="art_preview_caption"
-                class="col-sm-2 col-form-label fw-bold">Show&shy;case
+            <label for="art_preview_caption" class="col-sm-2 col-form-label fw-bold">Show&shy;case
                 Cap&shy;tion</label>
             <div class="col-sm-10">
                 <textarea rows="1" type="text" name="art_preview_caption"

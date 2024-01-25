@@ -142,7 +142,8 @@ class Application extends Model
         return $this->getStatus() !== ApplicationStatus::Canceled;
     }
 
-    public function checkIn() {
+    public function checkIn()
+    {
         if ($this->status === ApplicationStatus::TableAccepted) {
             $this->status = ApplicationStatus::CheckedIn;
             $this->save();
@@ -151,7 +152,8 @@ class Application extends Model
         return false;
     }
 
-    public function checkOut() {
+    public function checkOut()
+    {
         if ($this->status === ApplicationStatus::CheckedIn) {
             $this->status = ApplicationStatus::CheckedOut;
             $this->save();
@@ -377,47 +379,48 @@ class Application extends Model
         return json_decode(json_encode($applications), true);
     }
 
-    public static function getAllApplicationsForAppExport()  {
+    public static function getAllApplicationsForAppExport()
+    {
         $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
-        ->leftJoin('users', 'user_id', '=', 'users.id')
-        ->select(
-            'applications.id AS Reg No.',
-            'users.name AS Nick',
-            'display_name AS Display Name',
-            DB::raw("'' as 'Merchandise'"),
-            DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
-            DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
-            DB::raw("CASE WHEN attends_sat = 1 THEN 'X' ELSE '' END AS 'Attends Sat'"),
-            DB::raw("'X' as 'Allows Use of Data'"),
-            DB::raw("CASE WHEN is_afterdark = 1 THEN 'X' ELSE '' END AS 'After Dark'"),
-            // TODO: Temporary fix for EF27 since "Table Number" is not supported by the app backend & apps
-            DB::raw("TRIM('\n' FROM CONCAT(IFNULL(CONCAT('Table ', table_number), ''), '\\n\\n', IFNULL(short_desc, ''))) AS 'Short Description'"),
-            'artist_desc AS About the Artist',
-            'art_desc AS About the Art',
-            'profiles.website as Website',
-            'twitter as Twitter',
-            'telegram as Telegram',
-            'art_preview_caption as Art Preview Caption',
-            DB::raw("CASE WHEN image_thumbnail IS NOT NULL THEN 'X' ELSE '' END AS 'ThumbailImg'"),
-            DB::raw("CASE WHEN image_artist IS NOT NULL THEN 'X' ELSE '' END AS 'ArtistImg'"),
-            DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
-            DB::raw("CASE WHEN is_print = 1 THEN 'X' ELSE '' END AS 'Cat. Prints'"),
-            DB::raw("CASE WHEN is_artwork = 1 THEN 'X' ELSE '' END AS 'Cat. Artwork'"),
-            DB::raw("CASE WHEN is_fursuit = 1 THEN 'X' ELSE '' END AS 'Cat. Fursuit'"),
-            DB::raw("CASE WHEN is_commissions = 1 THEN 'X' ELSE '' END AS 'Cat. Commissions'"),
-            DB::raw("CASE WHEN is_misc = 1 THEN 'X' ELSE '' END AS 'Cat. Misc'"),
-            'discord as Discord',
-            'tweet as Tweet',
-            'table_number as Table Number',
-            'type as Type',
-        )
-        ->whereNotNull('offer_accepted_at')
-        ->where(function (Builder $query){
-            $query->where('type', ApplicationType::Dealer)
-            ->orWhere('type', ApplicationType::Share);
-        })
-        ->get();
-    return json_decode(json_encode($applications), true);
+            ->leftJoin('users', 'user_id', '=', 'users.id')
+            ->select(
+                'applications.id AS Reg No.',
+                'users.name AS Nick',
+                'display_name AS Display Name',
+                DB::raw("'' as 'Merchandise'"),
+                DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
+                DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
+                DB::raw("CASE WHEN attends_sat = 1 THEN 'X' ELSE '' END AS 'Attends Sat'"),
+                DB::raw("'X' as 'Allows Use of Data'"),
+                DB::raw("CASE WHEN is_afterdark = 1 THEN 'X' ELSE '' END AS 'After Dark'"),
+                // TODO: Temporary fix for EF27 since "Table Number" is not supported by the app backend & apps
+                DB::raw("TRIM('\n' FROM CONCAT(IFNULL(CONCAT('Table ', table_number), ''), '\\n\\n', IFNULL(short_desc, ''))) AS 'Short Description'"),
+                'artist_desc AS About the Artist',
+                'art_desc AS About the Art',
+                'profiles.website as Website',
+                'twitter as Twitter',
+                'telegram as Telegram',
+                'art_preview_caption as Art Preview Caption',
+                DB::raw("CASE WHEN image_thumbnail IS NOT NULL THEN 'X' ELSE '' END AS 'ThumbailImg'"),
+                DB::raw("CASE WHEN image_artist IS NOT NULL THEN 'X' ELSE '' END AS 'ArtistImg'"),
+                DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
+                DB::raw("CASE WHEN is_print = 1 THEN 'X' ELSE '' END AS 'Cat. Prints'"),
+                DB::raw("CASE WHEN is_artwork = 1 THEN 'X' ELSE '' END AS 'Cat. Artwork'"),
+                DB::raw("CASE WHEN is_fursuit = 1 THEN 'X' ELSE '' END AS 'Cat. Fursuit'"),
+                DB::raw("CASE WHEN is_commissions = 1 THEN 'X' ELSE '' END AS 'Cat. Commissions'"),
+                DB::raw("CASE WHEN is_misc = 1 THEN 'X' ELSE '' END AS 'Cat. Misc'"),
+                'discord as Discord',
+                'tweet as Tweet',
+                'table_number as Table Number',
+                'type as Type',
+            )
+            ->whereNotNull('offer_accepted_at')
+            ->where(function (Builder $query) {
+                $query->where('type', ApplicationType::Dealer)
+                    ->orWhere('type', ApplicationType::Share);
+            })
+            ->get();
+        return json_decode(json_encode($applications), true);
     }
 
     /**
@@ -427,7 +430,8 @@ class Application extends Model
      * which will attempt to set the int field 'table_type_assigned' to '' instead of null and
      * triggers an exception in the process instead of storing the value.
      */
-    public function tableTypeAssignedAutoNull(): Attribute {
+    public function tableTypeAssignedAutoNull(): Attribute
+    {
         return Attribute::make(
             get: fn (int|null $value, array $attributes) => $attributes['table_type_assigned'],
             set: fn (mixed $value) => [
@@ -458,7 +462,7 @@ class Application extends Model
         }
 
         foreach ($dealership->children()->get() as $child) {
-            if($child->status === ApplicationStatus::Canceled) {
+            if ($child->status === ApplicationStatus::Canceled) {
                 continue;
             }
             if ($child->status !== $dealership->status) {
