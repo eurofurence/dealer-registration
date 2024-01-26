@@ -24,7 +24,7 @@ jobs:
       - run: mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE dealers;'
       - uses: actions/checkout@v3
       - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+        run: php -r "file_exists('.env') || copy('.env.dist', '.env');"
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Generate key
