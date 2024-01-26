@@ -30,6 +30,8 @@ class TableTypeResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('package')
                     ->maxLength(255),
+                Forms\Components\TextInput::make('price')
+                    ->integer(true)->hint('in cents'),
             ]);
     }
 
@@ -37,13 +39,14 @@ class TableTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('seats'),
-                Tables\Columns\TextColumn::make('package'),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('seats')->sortable(),
+                Tables\Columns\TextColumn::make('package')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('price')->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()->sortable(),
             ])
             ->filters([
                 //
