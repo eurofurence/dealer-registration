@@ -25,7 +25,7 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('slug')->hint('only lower-case letters (a-z), digits (0-9) and underscores (_)')
                     ->required()
                     ->maxLength(255)
-                    ->regex('/^[a-z0-9_]$/'),
+                    ->regex('/^[a-z0-9_]+$/'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
