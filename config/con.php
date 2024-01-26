@@ -13,4 +13,8 @@ return [
     'payment_timeframe' => env('CON_PAYMENT_TIMEFRAME'),
     'admin_group' => env('CON_IDP_GROUP_ADMIN'),
     'frontdesk_group' => env('CON_IDP_GROUP_FRONTDESK'),
+    'day_1_name' => env('CON_DAY_1', 'Wednesday'),
+    'day_2_name' => env('CON_DAY_2', 'Thursday'),
+    'day_3_name' => env('CON_DAY_3', 'Friday'),
+    'day_4_name' => env('CON_DAY_4', 'Saturday'),
 ];
