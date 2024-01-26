@@ -5,7 +5,6 @@ namespace App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Filament\Resources\KeywordResource;
 use App\Models\Keyword;
 use Filament\Forms\Form;
-use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -21,18 +20,14 @@ class KeywordRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-        ->schema([
-            Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
-        ]);
+        return $form;
     }
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('slug'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('created_at')->datetime(),
                 Tables\Columns\TextColumn::make('updated_at')->datetime()

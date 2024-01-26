@@ -27,6 +27,7 @@ class KeywordRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('slug'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('category.name')
             ])

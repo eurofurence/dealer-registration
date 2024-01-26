@@ -22,6 +22,10 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('slug')->hint('only lower-case letters (a-z), digits (0-9) and underscores (_)')
+                    ->required()
+                    ->maxLength(255)
+                    ->regex('/^[a-z0-9_]$/'),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -34,6 +38,7 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('slug')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('description')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
