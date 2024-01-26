@@ -44,9 +44,9 @@ class Profile extends Model
         return $this->belongsToMany(Keyword::class, 'keyword_profile')->withTimestamps()->orderBy('name', 'asc');;
     }
 
-    public function keywordUuids()
+    public function keywordIds()
     {
-        return $this->keywords()->pluck('uuid')->toArray();
+        return $this->keywords()->pluck('id')->toArray();
     }
 
     public static function findByApplicationId(int|null $application_id): Profile|null

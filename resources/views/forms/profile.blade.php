@@ -60,7 +60,7 @@
         </div>
         <div class="row mb-1">
             <div class="col-sm-10 offset-sm-2">
-                <x-profile.keywords :categories="$categories" :keywordUuids="$profile->keywordUuids()"></x-profile.keywords>
+                <x-profile.keywords :categories="$categories" :keywordIds="$profile->keywordIds()"></x-profile.keywords>
             </div>
         </div>
         <div class="row mb-1">
