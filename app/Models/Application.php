@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -340,10 +341,19 @@ class Application extends Model
 
     public static function getAllApplicationsForExport()
     {
+        $keywords = DB::table('profiles')
+            ->leftJoin('keyword_profile', 'keyword_profile.profile_id', '=', 'profiles.id')
+            ->leftJoin('keywords', 'keywords.id', '=', 'keyword_profile.keyword_id')
+            ->leftJoin('categories', 'keywords.id', '=', 'categories.id')
+            ->groupBy('profiles.id')
+            ->select(DB::raw('GROUP_CONCAT(`keywords`.`name` SEPARATOR \',\') AS `keywords`, GROUP_CONCAT(`categories`.`name` SEPARATOR \',\') AS `categories`, `profiles`.`id` AS `profile_id`'));
         $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
             ->leftJoin('users', 'user_id', '=', 'users.id')
             ->leftJoin('table_types AS t1', 'table_type_requested', '=', 't1.id')
             ->leftJoin('table_types AS t2', 'table_type_assigned', '=', 't2.id')
+            ->joinSub($keywords, 'profile_keywords', function (JoinClause $join) {
+                $join->on('profiles.id', '=', 'profile_keywords.profile_id');
+            })
             ->select(
                 'applications.id AS app_id',
                 'users.name AS user_name',
@@ -373,6 +383,8 @@ class Application extends Model
                 'checked_out_at',
                 'canceled_at',
                 'profiles.*',
+                'profile_keywords.keywords',
+                'profile_keywords.categories'
             )
             ->get();
 
