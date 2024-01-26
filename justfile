@@ -1,3 +1,29 @@
+###
+# Simplify development of the Laravel application using Homestead!
+# (your milage on Windows may vary…)
+#
+# Prerequisites:
+# - vagrant
+# - yq
+# - Homestead (https://laravel.com/docs/10.x/homestead)
+#   - features mariadb & minio must be installed and enabled
+#   - additional port forwards:
+#     - 5173:5173 (vite)
+#     - 9600:9600 (MinIO)
+#     - 9601:9601 (MinIO console)
+#   - ensure that both a database and a writeable bucket are available
+# - tailspin (optional; but you'll love it!)
+#
+# The up command will patch your Homestead.yaml to mount the correct directory
+# to your Homestead VM.
+#
+# Create a .just.env file to configure just how you need it:
+# - HOMESTEAD_PATH: path to the directory of your local Homestead repo
+# - HOMESTEAD_APP_PATH: path at which you expect your app directory (this one)
+#                       to be mounted within the Homestead VM (must be one of
+#                       the folders mapped in Homestead.yaml at folders[].to)
+###
+
 set dotenv-load := true
 set dotenv-path := '.just.env'
 
@@ -16,7 +42,7 @@ _homestead COMMAND:
   {{COMMAND}};\
   popd
 
-# mount app directory to Homestead and reload VM with provisioning
+# patch Homestead.yaml with app directory and reload VM with provisioning to apply
 up: (_homestead_activate invocation_directory())
 
 # resume Homestead instance
