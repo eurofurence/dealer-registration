@@ -118,7 +118,7 @@ class ApplicationController extends Controller
      * Export a CSV containing the complete application data.
      */
     public function exportCsvAdmin() {
-        abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
+        abort_if(!\Auth::user()->isAdmin(), 403, 'Insufficient permissions');
         $headers = [
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Content-type' => 'text/csv',
@@ -146,7 +146,7 @@ class ApplicationController extends Controller
     }
 
     public function exportAppDataAdmin() {
-        abort_if(!\Auth::user()->canAccessFilament(), 403, 'Insufficient permissions');
+        abort_if(!\Auth::user()->isAdmin(), 403, 'Insufficient permissions');
         return $this->exportAppData();
     }
 
