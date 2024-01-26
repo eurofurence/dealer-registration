@@ -64,13 +64,6 @@ class ProfileResource extends Resource
                 ]),
 
                 Forms\Components\Group::make()->schema([
-                    Forms\Components\Fieldset::make('Categories')->inlineLabel()->columns(1)->schema([
-                        Forms\Components\Toggle::make('is_print'),
-                        Forms\Components\Toggle::make('is_artwork'),
-                        Forms\Components\Toggle::make('is_fursuit'),
-                        Forms\Components\Toggle::make('is_commissions'),
-                        Forms\Components\Toggle::make('is_misc'),
-                    ]),
                     Forms\Components\Fieldset::make('Attendance')->inlineLabel()->columns(1)->schema([
                         Forms\Components\Toggle::make('attends_thu'),
                         Forms\Components\Toggle::make('attends_fri'),
@@ -97,16 +90,6 @@ class ProfileResource extends Resource
                 Tables\Columns\TextColumn::make('image_thumbnail'),
                 Tables\Columns\TextColumn::make('image_artist'),
                 Tables\Columns\TextColumn::make('image_art'),
-                Tables\Columns\IconColumn::make('is_print')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_artwork')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_fursuit')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_commissions')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_misc')
-                    ->boolean(),
                 Tables\Columns\IconColumn::make('attends_thu')
                     ->boolean(),
                 Tables\Columns\IconColumn::make('attends_fri')

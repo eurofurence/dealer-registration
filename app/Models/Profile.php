@@ -12,11 +12,6 @@ class Profile extends Model
     protected $guarded = [];
 
     protected $casts = [
-        "is_print" => "boolean",
-        "is_artwork" => "boolean",
-        "is_fursuit" => "boolean",
-        "is_commissions" => "boolean",
-        "is_misc" => "boolean",
         "attends_thu" => "boolean",
         "attends_fri" => "boolean",
         "attends_sat" => "boolean",
