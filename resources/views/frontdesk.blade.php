@@ -63,8 +63,8 @@
                     Frontdesk</a>
                 <div class="my-1 z-1">
                     <span class="fs-5 align-middle">{{ $user->name }}</span>
-                    <img src="{{ Session::get('avatar') ?? asset('default.jpg') }}"
-                        alt="{{ $user->name }}" width="40" height="40" class="rounded-circle">
+                    <img src="{{ Session::get('avatar') ?? asset('default.jpg') }}" alt="{{ $user->name }}"
+                        width="40" height="40" class="rounded-circle">
                     @if ($user->isAdmin())
                         <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
                     @endif
@@ -293,22 +293,14 @@
                             <!-- Additional Information -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button @class([
-                                        'accordion-button',
-                                        'fs-3',
-                                        'collapsed' => !$showAdditional,
-                                    ]) type="button" data-bs-toggle="collapse"
+                                    <button @class(['accordion-button', 'fs-3', 'collapsed' => !$showAdditional]) type="button" data-bs-toggle="collapse"
                                         data-bs-target="#applicationDataAdditional"
                                         aria-expanded="{{ $showAdditional ? 'true' : 'false' }}"
                                         aria-controls="applicationDataAdditional" tabindex="3">
                                         Additional Information
                                     </button>
                                 </h2>
-                                <div id="applicationDataAdditional" @class([
-                                    'accordion-collapse',
-                                    'collapse',
-                                    'show' => $showAdditional,
-                                ])
+                                <div id="applicationDataAdditional" @class(['accordion-collapse', 'collapse', 'show' => $showAdditional])
                                     data-bs-parent="#applicationData">
                                     <div class="accordion-body">
                                         @if ($profile)
@@ -365,23 +357,26 @@
                                             </div>
                                             <div class="mb-3 fs-3">
                                                 <span>Categories:</span>
-                                                @if($profile->is_print)
-                                                    <button type="button" class="btn btn-primary fs-4 my-1">🖨️&nbsp;Print</button>
+                                                @php($categories = $profile->categories()->get())
+                                                @if ($categories->count() === 0)
+                                                    <span class="badge bg-secondary fw-normal">🤷&nbsp;None</span>
+                                                @else
+                                                    @foreach ($categories as $category)
+                                                        <span
+                                                            class="badge bg-primary fw-normal">{{ $category->name }}</span>
+                                                    @endforeach
                                                 @endif
-                                                @if($profile->is_artwork)
-                                                    <button type="button" class="btn btn-primary fs-4 my-1">🎨&nbsp;Artwork</button>
-                                                @endif
-                                                @if($profile->is_fursuit)
-                                                    <button type="button" class="btn btn-primary fs-4 my-1">🧵&nbsp;Fursuit</button>
-                                                @endif
-                                                @if($profile->is_commissions)
-                                                    <button type="button" class="btn btn-primary fs-4 my-1">🧾&nbsp;Commissions</button>
-                                                @endif
-                                                @if($profile->is_misc)
-                                                    <button type="button" class="btn btn-primary fs-4 my-1">⛲️&nbsp;Miscellaneous</button>
-                                                @endif
-                                                @if(!$profile->is_print && !$profile->is_artwork && !$profile->is_fursuit && !$profile->is_commissions && !$profile->is_misc)
-                                                    <button type="button" class="btn btn-secondary fs-4 my-1">🤷&nbsp;None</button>
+                                            </div>
+                                            <div class="mb-3 fs-3">
+                                                <span>Keywords:</span>
+                                                @php($keywords = $profile->keywords()->get())
+                                                @if ($keywords->count() === 0)
+                                                    <span class="badge bg-secondary fw-normal">🤷&nbsp;None</span>
+                                                @else
+                                                    @foreach ($keywords as $keyword)
+                                                        <span
+                                                            class="badge bg-primary fw-normal">{{ $keyword->name }}</span>
+                                                    @endforeach
                                                 @endif
                                             </div>
                                             <!--

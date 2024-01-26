@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -36,12 +35,12 @@ class Profile extends Model
 
     public function categories()
     {
-        return $this->hasManyThrough(Category::class, Keyword::class)->orderBy('name', 'asc');;
+        return Category::whereIn('id', $this->keywords()->pluck('category_id')->toArray())->orderBy('name', 'asc');
     }
 
     public function keywords()
     {
-        return $this->belongsToMany(Keyword::class, 'keyword_profile')->withTimestamps()->orderBy('name', 'asc');;
+        return $this->belongsToMany(Keyword::class, 'keyword_profile')->withTimestamps()->orderBy('name', 'asc');
     }
 
     public function keywordIds()
