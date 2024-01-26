@@ -31,6 +31,21 @@
             margin-right: 0.5ex;
         }
 
+        #more-power {
+            display: none;
+        }
+
+        #more-power:target {
+            display: block;
+        }
+
+        .link-unstyled,
+        .link-unstyled:link,
+        .link-unstyled:hover {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
         @media (max-width: 767.98px) {
 
             /* Avoid scrolling once overflowable columns get wrapped into a single column. */
@@ -313,7 +328,7 @@
                                                         'btn-primary' => $profile->attends_thu,
                                                         'btn-secondary' => !$profile->attends_thu,
                                                     ])>Day 2
-                                                        (Mon)</button>
+                                                        ({{substr(config('con.day_2_name'), 0, 3)}})</button>
                                                     <button type="button" @class([
                                                         'btn',
                                                         'fs-4',
@@ -321,7 +336,7 @@
                                                         'btn-primary' => $profile->attends_fri,
                                                         'btn-secondary' => !$profile->attends_fri,
                                                     ])>Day 3
-                                                        (Tue)</button>
+                                                        ({{substr(config('con.day_3_name'), 0, 3)}})</button>
                                                     <button type="button" @class([
                                                         'btn',
                                                         'fs-4',
@@ -329,7 +344,7 @@
                                                         'btn-primary' => $profile->attends_sat,
                                                         'btn-secondary' => !$profile->attends_sat,
                                                     ])>Day 4
-                                                        (Wed)</button>
+                                                        ({{substr(config('con.day_4_name'), 0, 3)}})</button>
                                                 </div>
                                             </div>
                                             <div class="mb-3 d-flex justify-content-evenly">
@@ -353,7 +368,11 @@
                                                     'check-button',
                                                     'btn-primary' => $application->is_power,
                                                     'btn-secondary' => !$application->is_power,
-                                                ])>Power</button>
+                                                ])><a
+                                                        href="#more-power" class="link-unstyled">More Power</a><a
+                                                        href="#"><img
+                                                            src="{{ Vite::asset('resources/assets/more-power.gif') }}"
+                                                            alt="More Power" id="more-power"></a></button>
                                             </div>
                                             <div class="mb-3 fs-3">
                                                 <span>Categories:</span>
