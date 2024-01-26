@@ -33,6 +33,16 @@ class TableTypeSeeder extends Seeder
             "id" => 3,
         ], [
             "id" => 3,
+            "seats" => 3,
+            "spaces" => 1,
+            "price" => 15000,
+            "name" => "Full Plus (195cm x 65cm)",
+            "package" => "dealer-full",
+        ]);
+        TableType::firstOrCreate([
+            "id" => 4,
+        ], [
+            "id" => 4,
             "seats" => 4,
             "spaces" => 1,
             "price" => 20000,
@@ -40,9 +50,9 @@ class TableTypeSeeder extends Seeder
             "package" => "dealer-double",
         ]);
         TableType::firstOrCreate([
-            "id" => 4,
+            "id" => 5,
         ], [
-            "id" => 4,
+            "id" => 5,
             "seats" => 2,
             "spaces" => 1,
             "price" => 20000,
@@ -50,9 +60,9 @@ class TableTypeSeeder extends Seeder
             "package" => "dealer-double",
         ]);
         TableType::firstOrCreate([
-            "id" => 5,
+            "id" => 6,
         ], [
-            "id" => 5,
+            "id" => 6,
             "seats" => 4,
             "spaces" => 1,
             "price" => 40000,
