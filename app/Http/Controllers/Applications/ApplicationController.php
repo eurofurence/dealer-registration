@@ -31,10 +31,12 @@ class ApplicationController extends Controller
     public function create(Request $request)
     {
         $application = \Auth::user()->application ?? new Application();
+        $categories = Category::orderBy('name', 'asc')->get();
         $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
         return view('application.create', [
             'table_types' => TableType::all(['id', 'name', 'price']),
             'application' => $application,
+            'categories' => $categories,
             'applicationType' => $applicationType,
             'code' => $request->get('code'),
             'profile' => ProfileController::getOrCreate($application->id)
