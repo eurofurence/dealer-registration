@@ -30,7 +30,7 @@ FROM base as local
 RUN addgroup -gid 1024 app \
   && adduser -uid 1024 --disabled-password --ingroup app app \
   && adduser www-data app \
-  && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+  && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
   && apt-get update \
   && apt-get install -y nodejs \
   && apt-get clean -y
