@@ -21,7 +21,7 @@
                     @if (empty(Session::get('avatar')))
                         <x-heroicon-s-user-circle width="40" height="40" class="rounded-circle" />
                     @else
-                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}">
+                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}" width="40" height="40" class="rounded-circle">
                     @endif
                     <span class="align-middle">{{ Session::get('name') ?? 'User' }}</span>
                 </a>

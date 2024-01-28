@@ -81,7 +81,7 @@
                     @if (empty(Session::get('avatar')))
                         <x-heroicon-s-user-circle width="40" height="40" class="rounded-circle" />
                     @else
-                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}">
+                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}" width="40" height="40" class="rounded-circle">
                     @endif
                     @if ($user->isAdmin())
                         <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
