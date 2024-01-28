@@ -78,8 +78,11 @@
                     Frontdesk</a>
                 <div class="my-1 z-1">
                     <span class="fs-5 align-middle">{{ $user->name }}</span>
-                    <img src="{{ Session::get('avatar') ?? asset('default.jpg') }}" alt="{{ $user->name }}"
-                        width="40" height="40" class="rounded-circle">
+                    @if (empty(Session::get('avatar')))
+                        <x-heroicon-s-user-circle width="40" height="40" class="rounded-circle" />
+                    @else
+                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}">
+                    @endif
                     @if ($user->isAdmin())
                         <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
                     @endif
@@ -328,7 +331,7 @@
                                                         'btn-primary' => $profile->attends_thu,
                                                         'btn-secondary' => !$profile->attends_thu,
                                                     ])>Day 2
-                                                        ({{substr(config('con.day_2_name'), 0, 3)}})</button>
+                                                        ({{ substr(config('con.day_2_name'), 0, 3) }})</button>
                                                     <button type="button" @class([
                                                         'btn',
                                                         'fs-4',
@@ -336,7 +339,7 @@
                                                         'btn-primary' => $profile->attends_fri,
                                                         'btn-secondary' => !$profile->attends_fri,
                                                     ])>Day 3
-                                                        ({{substr(config('con.day_3_name'), 0, 3)}})</button>
+                                                        ({{ substr(config('con.day_3_name'), 0, 3) }})</button>
                                                     <button type="button" @class([
                                                         'btn',
                                                         'fs-4',
@@ -344,7 +347,7 @@
                                                         'btn-primary' => $profile->attends_sat,
                                                         'btn-secondary' => !$profile->attends_sat,
                                                     ])>Day 4
-                                                        ({{substr(config('con.day_4_name'), 0, 3)}})</button>
+                                                        ({{ substr(config('con.day_4_name'), 0, 3) }})</button>
                                                 </div>
                                             </div>
                                             <div class="mb-3 d-flex justify-content-evenly">

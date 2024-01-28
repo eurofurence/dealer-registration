@@ -9,7 +9,8 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ config('con.dealers_tos_url') }}" class="nav-link link-light px-2" aria-current="page">Dealers’
+                <a href="{{ config('con.dealers_tos_url') }}" class="nav-link link-light px-2"
+                    aria-current="page">Dealers’
                     Den Rules & Information</a>
             </li>
         </ul>
@@ -17,15 +18,17 @@
             <div class="dropdown nav-item">
                 <a href="#" class="d-block link-light text-decoration-none" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                    <img src="{{ Session::get('avatar') ?? asset('default.jpg') }}"
-                        alt="{{ Session::get('name') ?? 'avatar' }}" width="40" height="40" class="rounded-circle">
+                    @if (empty(Session::get('avatar')))
+                        <x-heroicon-s-user-circle width="40" height="40" class="rounded-circle" />
+                    @else
+                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}">
+                    @endif
                     <span class="align-middle">{{ Session::get('name') ?? 'User' }}</span>
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     <li><a class="dropdown-item" href="https://identity.eurofurence.org/settings/profile">Your
                             Account</a></li>
-                    <li><a class="dropdown-item"
-                            href="{{ route('auth.frontchannel-logout') }}">Logout</a>
+                    <li><a class="dropdown-item" href="{{ route('auth.frontchannel-logout') }}">Logout</a>
                     </li>
                 </ul>
             </div>
