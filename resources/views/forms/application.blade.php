@@ -2,19 +2,24 @@
     <div class="card-body">
         <div class="card-title">
             <h4>General Info</h4>
-            <p>This information will be used to contact you, display your information, or send you notifications as needed.</p>
+            <p>This information will be used to contact you, display your information, or send you notifications as
+                needed.</p>
             <div class="form-text">Fields marked with an asterisk (<span class="required"></span>) are mandatory.</div>
         </div>
         <!-- Hidden --->
         <input type="hidden" name="code" value="{{ $code }}">
         <input type="hidden" name="applicationType" value="{{ $applicationType->value }}">
-        @if (!is_null($application->type) && $application->type !== $applicationType)
+        @if (
+            !is_null($application->type) &&
+                $application->type === \App\Enums\ApplicationType::Dealer &&
+                ($applicationType === \App\Enums\ApplicationType::Assistant ||
+                    ($applicationType === $application->type) === \App\Enums\ApplicationType::Share))
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="alert alert-warning">
                         You are changing your Role away from
-                        <b>Dealer</b>. This means you will lose your previous application as a dealer and join another
-                        dealer as a {{ $applicationType->value }}.
+                        <strong>Dealer</strong>. This means you will lose your previous application as a dealer and join another
+                        dealer as a <strong>{{ $applicationType->value }}</strong>.
                     </div>
                 </div>
             </div>
@@ -58,12 +63,14 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="displayNameHelp" class="form-text">
-                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the Dealers' Den, please enter this name here. Leave the field blank to appear under your nickname.
+                        If you'd like to appear under a name different from your nickname (e.g., a company name) in the
+                        Dealers' Den, please enter this name here. Leave the field blank to appear under your nickname.
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="website" class="col-sm-2 col-form-label fw-bold">Web&shy;site<wbr>/<wbr>Port&shy;folio</label>
+                <label for="website"
+                    class="col-sm-2 col-form-label fw-bold">Web&shy;site<wbr>/<wbr>Port&shy;folio</label>
                 <div class="col-sm-10">
                     <input type="text" name="website" placeholder="https://yourprofile.example.com/itsme"
                         value="{{ old('_token') ? old('website') : $application?->website }}"
@@ -73,12 +80,15 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="websiteHelp" class="form-text">
-                        We would be delighted to explore your website, gallery, or portfolio! Please share the link so that we can appreciate your work and gain a deeper understanding of your unique style and offerings.
+                        We would be delighted to explore your website, gallery, or portfolio! Please share the link so
+                        that we can appreciate your work and gain a deeper understanding of your unique style and
+                        offerings.
                     </div>
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="merchandise" class="col-sm-2 col-form-label required fw-bold">Mer&shy;chan&shy;dise<wbr>/<wbr>Ser&shy;vice</label>
+                <label for="merchandise"
+                    class="col-sm-2 col-form-label required fw-bold">Mer&shy;chan&shy;dise<wbr>/<wbr>Ser&shy;vice</label>
                 <div class="col-sm-10">
                     <input type="text" name="merchandise"
                         value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
@@ -88,7 +98,10 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="merchandiseHelp" class="form-text">
-                        Please provide details about the merchandise or services you plan to offer at the Dealers' Den. Examples of items may include prints, badge commissions, comics, or other related goods or services. This information will assist us in better understanding your offerings and assist with placement within the Dealer’s Den.
+                        Please provide details about the merchandise or services you plan to offer at the Dealers' Den.
+                        Examples of items may include prints, badge commissions, comics, or other related goods or
+                        services. This information will assist us in better understanding your offerings and assist with
+                        placement within the Dealer’s Den.
                     </div>
                 </div>
             </div>
@@ -98,7 +111,8 @@
             <div class="card-title mt-5">
                 <h4>Your Dealership Package</h4>
                 <p>
-                    Please choose your preferred location and table size in the Dealers' Den. You can customize your Dealership Package with additional options. This information will be used to assign your table.
+                    Please choose your preferred location and table size in the Dealers' Den. You can customize your
+                    Dealership Package with additional options. This information will be used to assign your table.
                 </p>
             </div>
 
@@ -115,8 +129,7 @@
                     </div>
                     <div class="form-check">
                         <input class="form-check-input @error('denType') is-invalid @enderror" type="radio"
-                            name="denType" id="denTypeAfterDark" value="denTypeAfterDark" @checked(
-                                old('_token') ?  old('denType') === 'denTypeAfterDark' : $application?->is_afterdark === true)>
+                            name="denType" id="denTypeAfterDark" value="denTypeAfterDark" @checked(old('_token') ? old('denType') === 'denTypeAfterDark' : $application?->is_afterdark === true)>
                         <label class="form-check-label" for="denTypeAfterDark">
                             After Dark Dealers’ Den (Rated R)
                         </label>
@@ -125,7 +138,8 @@
                         @enderror
                     </div>
                     <div id="denTypeHelp" class="form-text">
-                        Please choose if you would like to be placed in the regular Dealers' Den or if you would like to display adult material openly in the After Dark Dealers' Den.
+                        Please choose if you would like to be placed in the regular Dealers' Den or if you would like to
+                        display adult material openly in the After Dark Dealers' Den.
                     </div>
                 </div>
             </fieldset>
@@ -135,7 +149,8 @@
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
                         @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
                         @foreach ($table_types as $type)
-                            <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested ?? (new \App\Models\Application())->table_type_requested) == $type['id'])>{{ $type['name'] . ' - '.  $type['price']/100 . ' EUR'}}
+                            <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested ?? (new \App\Models\Application())->table_type_requested) == $type['id'])>
+                                {{ $type['name'] . ' - ' . $type['price'] / 100 . ' EUR' }}
                             </option>
                         @endforeach
                     </select>
@@ -143,8 +158,12 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="spaceHelp" class="form-text">
-                        Please select the Dealership package that best suits your needs for selling your wares. We kindly ask that you avoid requesting more space than necessary, as packages larger than Full require additional information in the comments section.
-                        <b>If you plan to share a table with one or more partners, please request the appropriate amount of space needed for all individuals. After submitting your application, you will be able to invite your partner(s) to join you.</b>
+                        Please select the Dealership package that best suits your needs for selling your wares. We
+                        kindly ask that you avoid requesting more space than necessary, as packages larger than Full
+                        require additional information in the comments section.
+                        <b>If you plan to share a table with one or more partners, please request the appropriate amount
+                            of space needed for all individuals. After submitting your application, you will be able to
+                            invite your partner(s) to join you.</b>
                     </div>
                 </div>
             </div>
@@ -171,7 +190,9 @@
                             <b>Increased power demand</b>
                         </label>
                         <div id="powerHelp" class="form-text">
-                            If you require more electrical power than the average 100 Watts per dealer provided by the Dealers' Den for low-power devices (i.e. laptop or phone charger), please select this option to let us know about your increased energy needs.
+                            If you require more electrical power than the average 100 Watts per dealer provided by the
+                            Dealers' Den for low-power devices (i.e. laptop or phone charger), please select this option
+                            to let us know about your increased energy needs.
                         </div>
                     </div>
                 </div>
@@ -185,7 +206,10 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="wantedHelp" class="form-text">
-                        Please provide us with the <b>nicknames</b> and/or <b>dealership names</b> of any other dealers or dealerships that you would prefer to have your table placed next to. This will help us to accommodate your preferences and make your experience at the Dealers' Den as enjoyable as possible.
+                        Please provide us with the <b>nicknames</b> and/or <b>dealership names</b> of any other dealers
+                        or dealerships that you would prefer to have your table placed next to. This will help us to
+                        accommodate your preferences and make your experience at the Dealers' Den as enjoyable as
+                        possible.
                     </div>
                 </div>
             </div>
@@ -200,7 +224,9 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 <div id="commentHelp" class="form-text">
-                    If you have any further information you would like to share with Dealers' Den Management, please use the space provided below. This can include requests for special accommodations, questions about the application process, or any other relevant details.
+                    If you have any further information you would like to share with Dealers' Den Management, please use
+                    the space provided below. This can include requests for special accommodations, questions about the
+                    application process, or any other relevant details.
                 </div>
             </div>
         </div>

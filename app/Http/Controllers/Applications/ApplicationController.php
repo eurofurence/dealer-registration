@@ -11,6 +11,7 @@ use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\Category;
 use App\Models\TableType;
+use App\Models\User;
 use App\Notifications\AlternateTableOfferedNotification;
 use App\Notifications\AlternateTableOfferedShareNotification;
 use App\Notifications\CanceledByDealershipNotification;
@@ -23,16 +24,18 @@ use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use ZipArchive;
 
 class ApplicationController extends Controller
 {
     public function create(Request $request)
     {
-        $application = \Auth::user()->application ?? new Application();
+        $application = Auth::user()->application ?? new Application();
         $categories = Category::orderBy('name', 'asc')->get();
-        $applicationType = Application::determineApplicationTypeByCode($request->get('code'));
+        $applicationType = Application::determineApplicationTypeByCode($request->get('code')) ?? ApplicationType::Dealer;
+
         return view('application.create', [
             'table_types' => TableType::all(['id', 'name', 'price']),
             'application' => $application,
@@ -46,19 +49,21 @@ class ApplicationController extends Controller
     public function store(ApplicationRequest $request)
     {
         $application = $request->act();
+        /** @var User $user */
+        $user = Auth::user();
         if ($application && $application->getStatus() === ApplicationStatus::Open) {
             switch ($application->type) {
                 case ApplicationType::Dealer:
                 case ApplicationType::Share:
-                    \Auth::user()->notify(new WelcomeNotification());
+                    $user->notify(new WelcomeNotification());
                     break;
                 case ApplicationType::Assistant:
-                    \Auth::user()->notify(new WelcomeAssistantNotification());
+                    $user->notify(new WelcomeAssistantNotification());
                     break;
                 default:
                     abort(400, 'Unknown application type.');
             }
-            return \Redirect::route('dashboard')->with('save-successful');
+            return Redirect::route('dashboard')->with('save-successful');
         } else {
             abort(400, 'Invalid application state.');
         }
@@ -66,10 +71,12 @@ class ApplicationController extends Controller
 
     public function edit(Request $request)
     {
-        $application = \Auth::user()->application;
-        $categories = Category::orderBy('name', 'asc')->get();
+        $application = Auth::user()->application;
         abort_if(is_null($application), 403, 'No Registration');
-        $applicationType = ($request->get('code')) ? Application::determineApplicationTypeByCode($request->get('code')) : $application->type;
+
+        $applicationType = Application::determineApplicationTypeByCode($request->get('code')) ?? $application->type;
+
+        $categories = Category::orderBy('name', 'asc')->get();
         return view('application.edit', [
             'table_types' => TableType::all(['id', 'name', 'price']),
             'application' => $application,
@@ -83,12 +90,12 @@ class ApplicationController extends Controller
     public function update(ApplicationRequest $request)
     {
         $request->act();
-        return \Redirect::route('applications.edit')->with('save-successful');
+        return Redirect::route('applications.edit')->with('save-successful');
     }
 
     public function delete()
     {
-        $application = \Auth::user()->application;
+        $application = Auth::user()->application;
         abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
         return view('application.delete', [
             "application" => $application,
@@ -97,7 +104,9 @@ class ApplicationController extends Controller
 
     public function destroy()
     {
-        $application = \Auth::user()->application;
+        /** @var User $user */
+        $user = Auth::user();
+        $application = $user->application;
         abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
         foreach ($application->children()->get() as $child) {
             $child->update([
@@ -112,15 +121,19 @@ class ApplicationController extends Controller
             'parent' => null,
             'type' => 'dealer'
         ]);
-        \Auth::user()->notify(new CanceledBySelfNotification());
-        return \Redirect::route('dashboard');
+        $user->notify(new CanceledBySelfNotification());
+        return Redirect::route('dashboard');
     }
 
     /**
      * Export a CSV containing the complete application data.
      */
-    public function exportCsvAdmin() {
-        abort_if(!\Auth::user()->isAdmin(), 403, 'Insufficient permissions');
+    public function exportCsvAdmin()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        abort_if(!$user->isAdmin(), 403, 'Insufficient permissions');
+
         $headers = [
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Content-type' => 'text/csv',
@@ -147,15 +160,19 @@ class ApplicationController extends Controller
         return response()->stream($callback, 200, $headers)->sendContent();
     }
 
-    public function exportAppDataAdmin() {
-        abort_if(!\Auth::user()->isAdmin(), 403, 'Insufficient permissions');
+    public function exportAppDataAdmin()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        abort_if($user->isAdmin(), 403, 'Insufficient permissions');
         return $this->exportAppData();
     }
 
     /**
      * Export a ZIP containing the CSV for the EF app and the images.
      */
-    public function exportAppData() {
+    public function exportAppData()
+    {
         $zipFileName = "appdata.zip";
         $csvFileName = "applications.csv";
         $separator = ";";
@@ -183,7 +200,7 @@ class ApplicationController extends Controller
         ProfileController::addImagesToZip($zip, $zipFileName);
         fflush($zipFile);
 
-        return response()->streamDownload(function() use ($zipFile, $zipFileUri) {
+        return response()->streamDownload(function () use ($zipFile, $zipFileUri) {
             echo file_get_contents($zipFileUri);
         }, $zipFileName);
     }
@@ -269,9 +286,4 @@ class ApplicationController extends Controller
             }
         }
     }
-
-    /**
-     * @param Request $request
-     * @return ApplicationType
-     */
 }

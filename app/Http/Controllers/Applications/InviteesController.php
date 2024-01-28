@@ -8,12 +8,15 @@ use App\Http\Requests\InviteeRemovalRequest;
 use App\Models\Application;
 use App\Notifications\CanceledByDealershipNotification;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class InviteesController extends Controller
 {
     public function view()
     {
-        $user = \Auth::user();
+        $user = Auth::user();
         $application = $user->application;
 
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
@@ -22,10 +25,10 @@ class InviteesController extends Controller
          * Create invite codes if not existing yet
          */
         if (is_null($application->invite_code_shares)) {
-            $application->update(['invite_code_shares' => "dealers-" . \Str::random()]);
+            $application->updateCode('shares');
         }
         if (is_null($application->invite_code_assistants)) {
-            $application->update(['invite_code_assistants' => "assistant-" . \Str::random()]);
+            $application->updateCode('assistants');
         }
 
         return view('application.invitees', [
@@ -55,12 +58,22 @@ class InviteesController extends Controller
         return back();
     }
 
-    public function regenerateKeys()
+    public function codes(Request $request)
     {
-        $user = \Auth::user()->application->update([
-            'invite_code_assistants' => "assistant-" . \Str::random(),
-            'invite_code_shares' => "dealers-" . \Str::random()
-        ]);
-        return \Redirect::route('applications.invitees.view');
+        $clear = true;
+        switch ($request->get('action')) {
+            case 'clear':
+                $clear = true;
+                break;
+            case 'regenerate':
+                $clear = false;
+                break;
+            default:
+                abort(400, 'invalid action');
+        }
+
+        abort_if(!Auth::user()->application->updateCode($request->get('type'), $clear), 400, 'invalid code type');
+
+        return Redirect::route('applications.invitees.view');
     }
 }

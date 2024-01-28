@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use App\Http\Controllers\ProfileController;
 use App\Models\Application;
@@ -112,7 +111,7 @@ class ApplicationRequest extends FormRequest
 
     public function authorize(): bool
     {
-        $application = \Auth::user()->application;
+        $application = Auth::user()->application;
         if ($this->routeIs('applications.store')) {
             $newApplicationType = Application::determineApplicationTypeByCode($this->get('code'));
             // Only allow access to applications.store route if no active application exists or type changes
@@ -131,7 +130,7 @@ class ApplicationRequest extends FormRequest
 
     public function act()
     {
-        $application = \Auth::user()->application;
+        $application = Auth::user()->application;
 
         $newApplicationType = ($this->get('code')) ? Application::determineApplicationTypeByCode($this->get('code')) : $application->type ?? ApplicationType::Dealer;
 
@@ -150,7 +149,7 @@ class ApplicationRequest extends FormRequest
         // Only allow changes to applications while reg is still open
         if (Carbon::parse(config('con.reg_end_date'))->isFuture() || $applicationType === ApplicationType::Assistant) {
             $application = Application::updateOrCreate([
-                "user_id" => \Auth::id(),
+                "user_id" => Auth::id(),
             ], [
                 "table_type_requested" => $this->get('space'),
                 "type" => $applicationType,
@@ -170,7 +169,7 @@ class ApplicationRequest extends FormRequest
                 "parent" => $parentId,
             ]);
         } else {
-            $application = Application::findByUserId(\Auth::id());
+            $application = Application::findByUserId(Auth::id());
         }
         if ($application && $application->isActive() && $applicationType !== ApplicationType::Assistant) {
             ProfileController::createOrUpdate($this, $application->id);

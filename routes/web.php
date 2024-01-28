@@ -41,7 +41,7 @@ Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddlew
 
     Route::get('applications/invitees', [\App\Http\Controllers\Applications\InviteesController::class, 'view'])->name('applications.invitees.view');
     Route::delete('applications/invitees', [\App\Http\Controllers\Applications\InviteesController::class, 'destroy'])->name('applications.invitees.destroy');
-    Route::post('applications/invitees/regenerate-keys', [\App\Http\Controllers\Applications\InviteesController::class, 'regenerateKeys'])->name('applications.invitees.regenerate-keys');
+    Route::post('applications/invitees/codes', [\App\Http\Controllers\Applications\InviteesController::class, 'codes'])->name('applications.invitees.codes');
 
     Route::get('table/confirm', [\App\Http\Controllers\TableVerifyController::class, 'view'])->name('table.confirm');
     Route::put('table/confirm', [\App\Http\Controllers\TableVerifyController::class, 'update'])->name('table.update');

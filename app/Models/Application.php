@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class Application extends Model
 {
@@ -203,25 +205,6 @@ class Application extends Model
         return $this->getAvailableAssistants() - $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
     }
 
-    public static function determineApplicationTypeByCode(string|null $code): ApplicationType
-    {
-        $applicationType = ApplicationType::Dealer;
-        if (!is_null($code)) {
-            $application = self::findByCode($code);
-            if ($application === null) {
-                return $applicationType;
-            }
-
-            if ($application->invite_code_shares === $code) {
-                $applicationType = ApplicationType::Share;
-            }
-            if ($application->invite_code_assistants === $code) {
-                $applicationType = ApplicationType::Assistant;
-            }
-        }
-        return $applicationType;
-    }
-
     public function getStatusAttribute()
     {
         return $this->getStatus();
@@ -312,15 +295,6 @@ class Application extends Model
                 'canceled_at' => null,
             ]);
         }
-    }
-
-    public static function findByCode(string|null $code): Application|null
-    {
-        return self::where('type', ApplicationType::Dealer)
-            ->where(function ($q) use ($code) {
-                return $q->where('invite_code_assistants', $code)
-                    ->orWhere('invite_code_shares', $code);
-            })->first();
     }
 
     public static function findByUserId(int|null $user_id): Application|null
@@ -492,5 +466,51 @@ class Application extends Model
         }
 
         return true;
+    }
+
+    /**
+     * @param string $type 'assistant' or 'shares'
+     * @param bool $clear should code be cleared instead of regenerated?
+     * @return bool success of the requested operation
+     */
+    public function updateCode(string $type, bool $clear = false): bool
+    {
+        if ($type !== 'assistants' && $type !== 'shares') {
+            return false;
+        }
+
+        $code = '';
+        if (!$clear) {
+            $code = $type . '-' . Str::random();
+        }
+
+        Auth::user()->application->update([
+            "invite_code_$type" => $code
+        ]);
+        return true;
+    }
+
+    public static function findByCode(string|null $code): Application|null
+    {
+        if (empty($code)) {
+            return null;
+        }
+
+        return self::where('type', ApplicationType::Dealer)
+            ->where(function ($q) use ($code) {
+                return $q->where('invite_code_assistants', $code)
+                    ->orWhere('invite_code_shares', $code);
+            })->first();
+    }
+
+    public static function determineApplicationTypeByCode(string|null $code): ApplicationType|null
+    {
+        if (str_starts_with($code, 'shares-')) {
+            return ApplicationType::Share;
+        }
+        if (str_starts_with($code, 'assistants-')) {
+            return ApplicationType::Assistant;
+        }
+        return null;
     }
 }
