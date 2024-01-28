@@ -24,7 +24,9 @@ class ApplicationTest extends TestCase
         parent::setUp();
 
         // to avoid registration fields not being filled
+        Config::set('con.reg_start_date', Carbon::yesterday());
         Config::set('con.reg_end_date', Carbon::tomorrow());
+        Config::set('con.con_end_date', Carbon::tomorrow());
     }
 
     public function test_application_creation_and_edit_normal()
