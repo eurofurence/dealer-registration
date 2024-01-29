@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Illuminate\Support\Facades\Auth;
 
 class CommentRelationManager extends RelationManager
 {
@@ -51,7 +52,7 @@ class CommentRelationManager extends RelationManager
                             ->required(),
                         Forms\Components\TextInput::make('user_id')
                             ->label("User ID (Author)")
-                            ->default(\Auth::user()->id)
+                            ->default(Auth::user()->id)
                             ->required(),
                         Forms\Components\Toggle::make('admin_only'),
                         Forms\Components\Textarea::make('text')

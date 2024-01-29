@@ -34,26 +34,103 @@ class ApplicationController extends Controller
     {
         $application = Auth::user()->application ?? new Application();
         $categories = Category::orderBy('name', 'asc')->get();
-        $applicationType = Application::determineApplicationTypeByCode($request->get('code')) ?? ApplicationType::Dealer;
+        $applicationType = Application::determineApplicationTypeByCode($request->input('code')) ?? ApplicationType::Dealer;
 
         return view('application.create', [
             'table_types' => TableType::all(['id', 'name', 'price']),
             'application' => $application,
             'categories' => $categories,
             'applicationType' => $applicationType,
-            'code' => $request->get('code'),
+            'code' => $request->input('code'),
             'profile' => ProfileController::getOrCreate($application->id)
         ]);
     }
 
+    public function edit(Request $request)
+    {
+        $application = Auth::user()->application;
+        abort_if(is_null($application), 404, 'Application not found');
+        $applicationType = Application::determineApplicationTypeByCode($request->input('code')) ?? $application->type;
+
+        $categories = Category::orderBy('name', 'asc')->get();
+        return view('application.edit', [
+            'table_types' => TableType::all(['id', 'name', 'price']),
+            'application' => $application,
+            'categories' => $categories,
+            'applicationType' => $applicationType,
+            'code' => $request->input('code'),
+            'profile' => ProfileController::getByApplicationId($application->id)
+        ]);
+    }
+
+    /**
+     * Determine application type based on an invite code and check if application for is still possible.
+     */
+    private static function determineApplicationTypeByCode(string|null $code): ApplicationType|null
+    {
+        $applicationType = Application::determineApplicationTypeByCode($code);
+
+        abort_if(($applicationType === ApplicationType::Share || $applicationType === ApplicationType::Dealer) && config('con.reg_end_date')->isPast(), 400, "The registration period for new dealers and shares has ended, please check back next year.");
+        abort_if($applicationType === ApplicationType::Assistant && config('con.assistant_end_date')->isPast(), 400, "The registration period for new assistants has ended, please check back next year.");
+
+        return $applicationType;
+    }
+
+    /**
+     * Determine parent application based on an code invite and fail if provided code is invalid.
+     */
+    private static function determineParentByCode(string|null $code): Application|null
+    {
+        if (is_null($code)) {
+            return null;
+        }
+        $parent = Application::findByCode($code);
+        abort_if(is_null($parent), 404, 'Invalid invite code');
+
+        return $parent;
+    }
+
     public function store(ApplicationRequest $request)
     {
-        $application = $request->act();
+        $code = $request->input('code');
+        $applicationType = self::determineApplicationTypeByCode($code) ?? ApplicationType::Dealer;
+
+        $parent = self::determineParentByCode($code);
+
+        $application = Application::updateOrCreate([
+            "user_id" => Auth::id(),
+        ], [
+            "table_type_requested" => $request->input('space'),
+            "type" => $applicationType,
+            "display_name" => $request->input('displayName'),
+            "website" => $request->input('website'),
+            "merchandise" => $request->input('merchandise'),
+            "is_afterdark" => $request->input('denType') === "denTypeAfterDark",
+            "is_power" => $request->input('power') === "on",
+            "is_wallseat" => $request->input('wallseat') === "on",
+            "wanted_neighbors" => $request->input('wanted'),
+            "comment" => $request->input('comment'),
+            "parent" => $parent?->id,
+            "invite_code_shares" => null,
+            "invite_code_assistants" => null,
+            "waiting_at" => null,
+            "offer_sent_at" => null,
+            "canceled_at" => null,
+            "table_number" => null,
+        ]);
+
+        if ($applicationType !== ApplicationType::Assistant) {
+            // TODO: Refactor
+            ProfileController::createOrUpdate($request, $application->id);
+        }
+
         /** @var User $user */
         $user = Auth::user();
         if ($application && $application->getStatus() === ApplicationStatus::Open) {
             switch ($application->type) {
                 case ApplicationType::Dealer:
+                    $user->notify(new WelcomeNotification());
+                    break;
                 case ApplicationType::Share:
                     $user->notify(new WelcomeNotification());
                     break;
@@ -65,38 +142,49 @@ class ApplicationController extends Controller
             }
             return Redirect::route('dashboard')->with('save-successful');
         } else {
-            abort(400, 'Invalid application state.');
+            abort(400, 'Invalid application state');
         }
-    }
-
-    public function edit(Request $request)
-    {
-        $application = Auth::user()->application;
-        abort_if(is_null($application), 403, 'No Registration');
-
-        $applicationType = Application::determineApplicationTypeByCode($request->get('code')) ?? $application->type;
-
-        $categories = Category::orderBy('name', 'asc')->get();
-        return view('application.edit', [
-            'table_types' => TableType::all(['id', 'name', 'price']),
-            'application' => $application,
-            'categories' => $categories,
-            'applicationType' => $applicationType,
-            'code' => $request->get('code'),
-            'profile' => ProfileController::getByApplicationId($application->id)
-        ]);
     }
 
     public function update(ApplicationRequest $request)
     {
-        $request->act();
+        /** @var Application */
+        $application = Auth::user()->application;
+        abort_if(is_null($application), 404, 'Application not found');
+
+        $code = $request->input('code');
+        $newApplicationType = self::determineApplicationTypeByCode($code);
+
+        $newParent = self::determineParentByCode($code);
+
+        $application->update([
+            "table_type_requested" => $request->input('space'),
+            "type" => $newApplicationType ?? $application->type,
+            "display_name" => $request->input('displayName'),
+            "website" => $request->input('website'),
+            "merchandise" => $request->input('merchandise'),
+            "is_afterdark" => $request->input('denType') === "denTypeAfterDark",
+            "is_power" => $request->input('power') === "on",
+            "is_wallseat" => $request->input('wallseat') === "on",
+            "wanted_neighbors" => $request->input('wanted'),
+            "comment" => $request->input('comment'),
+            "parent" => $newParent?->id ?? $application->parent,
+        ]);
+
+        if ($application->isActive() && $newApplicationType !== ApplicationType::Assistant) {
+            // TODO: Refactor
+            ProfileController::createOrUpdate($request, $application->id);
+        }
+
         return Redirect::route('applications.edit')->with('save-successful');
     }
 
     public function delete()
     {
         $application = Auth::user()->application;
+        abort_if(is_null($application), 404, 'Application not found');
         abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
+
         return view('application.delete', [
             "application" => $application,
         ]);
@@ -107,7 +195,9 @@ class ApplicationController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $application = $user->application;
+        abort_if(is_null($application), 404, 'Application not found');
         abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
+
         foreach ($application->children()->get() as $child) {
             $child->update([
                 'canceled_at' => now(),
@@ -116,12 +206,14 @@ class ApplicationController extends Controller
             ]);
             $child->user()->first()->notify(new CanceledByDealershipNotification());
         }
+
         $application->update([
             'canceled_at' => now(),
             'parent' => null,
             'type' => 'dealer'
         ]);
         $user->notify(new CanceledBySelfNotification());
+
         return Redirect::route('dashboard');
     }
 
@@ -130,7 +222,7 @@ class ApplicationController extends Controller
      */
     public function exportCsvAdmin()
     {
-        /** @var User $user */
+        /** @var User $user */
         $user = Auth::user();
         abort_if(!$user->isAdmin(), 403, 'Insufficient permissions');
 
@@ -162,7 +254,7 @@ class ApplicationController extends Controller
 
     public function exportAppDataAdmin()
     {
-        /** @var User $user */
+        /** @var User $user */
         $user = Auth::user();
         abort_if($user->isAdmin(), 403, 'Insufficient permissions');
         return $this->exportAppData();

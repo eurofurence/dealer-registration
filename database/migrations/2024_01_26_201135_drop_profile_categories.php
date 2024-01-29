@@ -17,6 +17,7 @@ return new class extends Migration
             $table->dropColumn('is_fursuit');
             $table->dropColumn('is_commissions');
             $table->dropColumn('is_misc');
+            $table->dropColumn('is_mature');
         });
     }
 
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->boolean('is_fursuit')->nullable();
             $table->boolean('is_commissions')->nullable();
             $table->boolean('is_misc')->nullable();
+            $table->boolean('is_mature')->nullable();
         });
     }
 };
