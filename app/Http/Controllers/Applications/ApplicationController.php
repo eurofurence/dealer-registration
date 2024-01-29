@@ -256,7 +256,7 @@ class ApplicationController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        abort_if($user->isAdmin(), 403, 'Insufficient permissions');
+        abort_if(!$user->isAdmin(), 403, 'Insufficient permissions');
         return $this->exportAppData();
     }
 

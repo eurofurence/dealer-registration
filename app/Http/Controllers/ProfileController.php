@@ -176,8 +176,7 @@ class ProfileController extends Controller
         ];
     }
 
-    // FIXME: migrate to support non-local storage like S3
-    public static function addImagesToZip(ZipArchive $zip, string $zipFileName)
+    public static function addImagesToZip(ZipArchive $zip)
     {
         foreach (Profile::all() as $profile) {
             $imgThumbnail = $profile->image_thumbnail;
