@@ -269,7 +269,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <label for="twitter" class="col-sm-2 col-form-label fw-bold">Twit&shy;ter</label>
+            <label for="twitter" class="col-sm-2 col-form-label fw-bold">Twit&shy;ter (cur&shy;rent&shy;ly X)</label>
             <div class="col-sm-10">
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -283,7 +283,45 @@
                     @enderror
                 </div>
                 <div id="twitterHelp" class="form-text">
-                    Want to make sure people find you on Twitter? Add your handle above to guide them there!
+                    Want to make sure people find you on Twitter (cur­rent­ly X)? Add your handle above to guide them there!
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="mastodon" class="col-sm-2 col-form-label fw-bold">Mas&shy;to&shy;don</label>
+            <div class="col-sm-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span clasS="input-group-text">@</span>
+                    </div>
+                    <input type="text" name="mastodon" placeholder="YourMastodonHandle"
+                        class="form-control @error('mastodon') is-invalid @enderror" id="mastodon"
+                        value="{{ old('_token') ? old('mastodon') : $profile?->mastodon }}">
+                    @error('mastodon')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div id="mastodonHelp" class="form-text">
+                    Want to make sure people find you on Mastodon? Add your handle above to guide them there!
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="bluesky" class="col-sm-2 col-form-label fw-bold">Blue&shy;sky</label>
+            <div class="col-sm-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span clasS="input-group-text">@</span>
+                    </div>
+                    <input type="text" name="bluesky" placeholder="YourBlueskyHandle"
+                        class="form-control @error('bluesky') is-invalid @enderror" id="bluesky"
+                        value="{{ old('_token') ? old('bluesky') : $profile?->bluesky }}">
+                    @error('bluesky')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div id="blueskyHelp" class="form-text">
+                    Want to make sure people find you on Bluesky? Add your handle above to guide them there!
                 </div>
             </div>
         </div>

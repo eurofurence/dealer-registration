@@ -31,6 +31,8 @@ class ProfileController extends Controller
             "art_desc" => $request->get('art_desc'),
             "website" => $request->get('profile_website'),
             "twitter" => $request->get('twitter'),
+            "mastodon" => $request->get('mastodon'),
+            "bluesky" => $request->get('bluesky'),
             "telegram" => $request->get('telegram'),
             "discord" => $request->get('discord'),
             "tweet" => $request->get('tweet'),
@@ -143,6 +145,16 @@ class ProfileController extends Controller
                 'nullable',
                 // Twitter user name validation: https://help.twitter.com/en/managing-your-account/twitter-username-rules
                 'regex:/^[0-9a-z_]{4,15}$/i',
+            ],
+            "mastodon" => [
+                'nullable',
+                'regex:/^([0-9a-z_]{3,64})@([0-9a-z_]{3,64})\.([0-9a-z_.]{2,64})$/i',
+                // TODO: improve validation
+            ],
+            "bluesky" => [
+                'nullable',
+                'regex:/^[0-9a-z_.]{3,64}$/i',
+                // TODO: improve validation
             ],
             "telegram" => [
                 'nullable',

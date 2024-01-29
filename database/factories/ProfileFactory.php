@@ -18,6 +18,8 @@ class ProfileFactory extends Factory
             'art_desc' => $this->faker->text(),
             'website' => $this->faker->word(),
             'twitter' => $this->faker->word(),
+            'mastodon' => $this->faker->word(),
+            'bluesky' => $this->faker->word(),
             'telegram' => $this->faker->word(),
             'discord' => $this->faker->word(),
             'tweet' => $this->faker->text(),
