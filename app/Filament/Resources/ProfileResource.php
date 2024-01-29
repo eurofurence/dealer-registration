@@ -29,6 +29,10 @@ class ProfileResource extends Resource
                         ->maxLength(255),
                     Forms\Components\TextInput::make('twitter')
                         ->maxLength(1024),
+                    Forms\Components\TextInput::make('mastodon')
+                        ->maxLength(1024),
+                    Forms\Components\TextInput::make('bluesky')
+                        ->maxLength(1024),
                     Forms\Components\TextInput::make('telegram')
                         ->maxLength(1024),
                     Forms\Components\TextInput::make('discord')
@@ -83,6 +87,8 @@ class ProfileResource extends Resource
                 Tables\Columns\TextColumn::make('art_desc'),
                 Tables\Columns\TextColumn::make('website'),
                 Tables\Columns\TextColumn::make('twitter'),
+                Tables\Columns\TextColumn::make('mastodon'),
+                Tables\Columns\TextColumn::make('bluesky'),
                 Tables\Columns\TextColumn::make('telegram'),
                 Tables\Columns\TextColumn::make('discord'),
                 Tables\Columns\TextColumn::make('tweet'),
