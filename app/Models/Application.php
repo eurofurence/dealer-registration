@@ -324,6 +324,21 @@ class Application extends Model
         }
     }
 
+    /**
+     * Reset to Dealer if an application has been removed as a Share or Assistant.
+     */
+    public function deleteParentAndReset() {
+        $this->update([
+            'offer_accepted_at' => null,
+            'offer_sent_at' => null,
+            'table_number' => null,
+            'parent' => null,
+            'waiting_at' => null,
+            'type' => ApplicationType::Dealer,
+            'canceled_at' => now(),
+        ]);
+    }
+
     public static function findByUserId(int|null $user_id): Application|null
     {
         return self::where('user_id', $user_id)->first();

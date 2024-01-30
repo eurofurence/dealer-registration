@@ -58,7 +58,7 @@ class ChildrenRelationManager extends RelationManager
                     ->url(fn (Application $record): string => ApplicationResource::getUrl('edit', ['record' => $record])),
                 Tables\Actions\Action::make('Delete')
                     ->action(function (Application $record): void {
-                        $record->setStatusAttribute(ApplicationStatus::Canceled);
+                        $record->deleteParentAndReset();
                     })
                     ->requiresConfirmation()
                     ->color('danger'),
