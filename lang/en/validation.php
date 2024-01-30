@@ -30,10 +30,10 @@ return [
             'regex' => 'Please verify your Twitter handle, it must be between 4 and 15 characters and only contain letters, numbers and underscores (_).'
         ],
         'mastodon' => [
-            'regex' => 'Please verify your Mastodon handle, it must be in the format username@instance.name' // TODO: update if needed
+            'regex' => 'Please verify your Mastodon handle, it must be in the format username@instance.name'
         ],
         'bluesky' => [
-            'regex' => 'Please verify your Bluesky handle, it must be between 3 and 64 characters and only contain letters, numbers, dots (.) and underscores (_).' // TODO: update if needed
+            'regex' => 'Please verify your Bluesky handle, it may only contain letters, numbers, dots (.) and hyphens (-).'
         ],
         'telegram' => [
             'regex' => 'Please verify your Telegram handle, it must be between 5 and 32 characters and only contain letters, numbers and underscores (_).'
