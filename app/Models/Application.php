@@ -135,6 +135,33 @@ class Application extends Model
         return $this->hasMany(Comment::class, 'application_id');
     }
 
+    public function type(): Attribute
+    {
+        return Attribute::make(
+            set: function (ApplicationType|string $value) {
+                $type = ($value instanceof ApplicationType) ? $value : ApplicationType::from($value);
+                switch ($type) {
+                    case ApplicationType::Dealer:
+                        // Dealer has no parent
+                        return [
+                            'parent' => null,
+                            'type' => $type,
+                        ];
+                    case ApplicationType::Assistant:
+                    case ApplicationType::Share:
+                        // Assistant and share has no table
+                        return [
+                            'type' => $type,
+                            'table_type_requested' => null,
+                            'table_type_assigned' => null,
+                        ];
+                    default:
+                        return;
+                }
+            }
+        );
+    }
+
     public function getStatus()
     {
         return ApplicationStatus::for($this);

@@ -70,13 +70,14 @@ class ApplicationResource extends Resource
                             "table_accepted" => "Table accepted",
                             "checked_in" => "Checked in (on-site)",
                             "checked_out" => "Checked out (on-site)",
-                        ])->disablePlaceholderSelection()->required()->reactive(),
+                        ])->selectablePlaceholder(false)->required()->reactive(),
                         Forms\Components\TextInput::make('table_number')
                             ->maxLength(255),
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
                         Forms\Components\Select::make('type')->options(ApplicationType::class)
+                            ->selectablePlaceholder(false)
                             ->reactive()
                             ->required(),
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
