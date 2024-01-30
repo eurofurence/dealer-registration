@@ -385,6 +385,8 @@ class Application extends Model
                 'art_desc AS About the Art',
                 'profiles.website as Website',
                 'twitter as Twitter',
+                'mastodon as Mastodon',
+                'bluesky as Bluesky',
                 'telegram as Telegram',
                 'art_preview_caption as Art Preview Caption',
                 DB::raw("CASE WHEN image_thumbnail IS NOT NULL THEN 'X' ELSE '' END AS 'ThumbailImg'"),

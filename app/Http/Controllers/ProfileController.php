@@ -15,12 +15,10 @@ class ProfileController extends Controller
 
     public function index()
     {
-
     }
 
     public function create(Request $request)
     {
-
     }
 
     public static function createOrUpdate(Request $request, int $applicationId): Profile
@@ -31,6 +29,8 @@ class ProfileController extends Controller
             "art_desc" => $request->get('art_desc'),
             "website" => $request->get('profile_website'),
             "twitter" => $request->get('twitter'),
+            "mastodon" => $request->get('mastodon'),
+            "bluesky" => $request->get('bluesky'),
             "telegram" => $request->get('telegram'),
             "discord" => $request->get('discord'),
             "tweet" => $request->get('tweet'),
@@ -86,12 +86,10 @@ class ProfileController extends Controller
 
     public function store(Request $request)
     {
-
     }
 
     public function show(Profile $profile)
     {
-
     }
 
     public function edit(Profile $profile)
@@ -143,6 +141,32 @@ class ProfileController extends Controller
                 'nullable',
                 // Twitter user name validation: https://help.twitter.com/en/managing-your-account/twitter-username-rules
                 'regex:/^[0-9a-z_]{4,15}$/i',
+            ],
+            "mastodon" => [
+                'nullable',
+                // Mastodon user name validation loosely based on
+                // https://docs.joinmastodon.org/spec/webfinger/#intro and
+                // https://datatracker.ietf.org/doc/html/rfc7565#section-7
+                /*
+                 * acctURI     = "acct" ":" userpart "@" host
+                 * userpart    = unreserved / sub-delims 0*( unreserved / pct-encoded / sub-delims )
+                 * host        = IP-literal / IPv4address / reg-name
+                 * IP-literal  = "[" ( IPv6address / IPvFuture  ) "]"
+                 * IPvFuture   = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" )
+                 * reg-name    = *( unreserved / pct-encoded / sub-delims )
+                 * reserved    = gen-delims / sub-delims
+                 * gen-delims  = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+                 * sub-delims  = "!" / "$" / "&" / "'" / "(" / ")"/ "*" / "+" / "," / ";" / "="
+                 * pct-encoded = "%" HEXDIG HEXDIG
+                 * unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
+                 */
+                'regex:/([A-Z0-9\-._~!$&\'\(\)\*,;=][A-Z0-9\-._~%!$&\'\(\)\*,;=]*)@([A-Z0-9\-._~%!$&\'\(\)\*,;=]+\.[A-Z]{2,})/i'
+            ],
+            "bluesky" => [
+                'nullable',
+                // Bluesky user name validation:
+                // https://atproto.com/specs/handle
+                'regex:/^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/',
             ],
             "telegram" => [
                 'nullable',
