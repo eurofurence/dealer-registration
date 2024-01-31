@@ -89,7 +89,7 @@
             <div class="alert alert-info text-center">
                 <div class="w-50 mx-auto">
                     <h3>See you at Eurofurence!</h3>
-                    <h5>Your table in this year's Dealers' Den will be: <strong>{{ $application->table_number }}</strong>
+                    <h5>Your table in this year’s Dealers’ Den will be: <strong>{{ $application->table_number }}</strong>
                     </h5>
                     @switch($efRegistrationStatus)
                         @case('new')
@@ -97,7 +97,8 @@
 
                         @case('partially paid')
                             <p>Our records show that your EF registration status is <em>{{ $efRegistrationStatus }}</em>. Please
-                                check and make sure to settle all outstanding dues in a timely manner to ensure everything runs smoothly when you arrive.</p>
+                                check and make sure to settle all outstanding dues in a timely manner to ensure everything runs
+                                smoothly when you arrive.</p>
                         @break
 
                         @case('paid')
@@ -107,7 +108,8 @@
 
                         @case('cancelled')
                             <p>Going by our records, it seems your EF registration status is <em>{{ $efRegistrationStatus }}</em>.
-                                Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence this year after all!</p>
+                                Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence this
+                                year after all!</p>
                         @break
 
                         @default
@@ -118,7 +120,7 @@
             <div class="alert alert-info text-center">
                 <div class="w-50 mx-auto">
                     <h3>Welcome to Eurofurence!</h3>
-                    <h5>Your table in this year's Dealers' Den is: <strong>{{ $application->table_number }}</strong></h5>
+                    <h5>Your table in this year’s Dealers’ Den is: <strong>{{ $application->table_number }}</strong></h5>
                 </div>
             </div>
         @endif
@@ -166,7 +168,7 @@
                 <div class="card mb-2">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Apply for a Dealership</h5>
-                        <p class="card-text lead">As a Dealers' Den dealership owner, you are responsible for managing your
+                        <p class="card-text lead">As a Dealers’ Den dealership owner, you are responsible for managing your
                             space. While you may choose to share your table with other dealers if space permits, you will be
                             the primary point of contact for your business.</p>
                         <a href="{{ route('applications.create') }}" class="btn btn-lg btn-primary">Submit your
@@ -176,24 +178,28 @@
             </div>
         @endif
         <div class="col-md-6 mx-auto">
-            @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+            @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture() ||
+                    Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
                 <div class="card mb-2">
-                    <div class="card-body text-center">
-                        <h5 class="card-title display-6">Join an existing Dealership</h5>
-                        <p class="card-text lead">You have been invited by an existing dealership to share their space at
-                            the Dealers' Den.</p>
-                        <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have an invitation code</a>
-                    </div>
-                </div>
-            @endif
-            @if (Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
-                <div class="card mb-2">
-                    <div class="card-body text-center">
-                        <h5 class="card-title display-6">Become a Dealer Assistant</h5>
-                        <p class="card-text lead">You have been invited to support an existing Dealership as a Dealer Assistant.
-                        </p>
-                        <a href="{{ route('join') }}" class="btn btn-lg btn-outline-primary">I have an invitation code</a>
-                    </div>
+                    <form action="{{ route('invitation.join') }}" method="post">
+                        <div class="card-body text-center">
+                            <h5 class="card-title display-6">Join an existing Dealership</h5>
+                            <p class="card-text lead">You have been invited by an existing dealership to share their space
+                                or assist them at the Dealers’ Den?<br>
+                                Then enter the invite code they provided you with below!
+                            </p>
+                            <div class="input-group input-group-lg has-validation">
+                                <input type="text" name="code"
+                                    class="form-control @error('code') is-invalid @enderror" placeholder="Invite Code">
+                                <button class="btn btn-primary" type="submit">Submit
+                                </button>
+                                @error('code')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        @csrf
+                    </form>
                 </div>
             @endif
         </div>

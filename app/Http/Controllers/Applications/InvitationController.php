@@ -9,21 +9,17 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
 {
-    public function view()
+    public function view(Request $request)
     {
-        return view('invitation.enter-code');
-    }
-
-    public function store(Request $request)
-    {
-        $code = $request->get('code');
+        $code = $request->input('code');
         $applicationType = Application::determineApplicationTypeByCode($code);
 
-        if (empty($code) && !is_null($applicationType)) {
+        if (empty($code) || is_null($applicationType)) {
             throw ValidationException::withMessages([
                 "code" => "Please enter a valid invitation code.",
             ]);
@@ -55,6 +51,28 @@ class InvitationController extends Controller
             ]);
         }
 
+        // Prevent people from sending direct join URLs
+        $confirmation = Str::random();
+        $request->session()->put('join-confirmation', $confirmation);
+
+        $application = Auth::user()->application;
+
+        return view('invitation.confirm', [
+            'invitingApplication' => $invitingApplication,
+            'application' => $application,
+            'invitationType' => $applicationType,
+            'code' => $request->input('code'),
+            'confirmation' => $confirmation,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        // Prevent people from sending direct join URLs
+        $confirmation = $request->session()->get('join-confirmation');
+        abort_if(!$request->session()->has('join-confirmation') || $confirmation !== $request->input('confirmation'), 400, 'Invalid confirmation code');
+
+        $code = $request->get('code');
         $application = Auth::user()->application;
         $action = 'edit';
         if (
@@ -67,6 +85,7 @@ class InvitationController extends Controller
 
         return Redirect::route('applications.' . $action, [
             'code' => $code,
+            'confirmation' => $confirmation,
         ]);
     }
 }

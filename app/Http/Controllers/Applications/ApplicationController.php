@@ -32,6 +32,10 @@ class ApplicationController extends Controller
 {
     public function create(Request $request)
     {
+        // Prevent people from sending direct join URLs
+        $confirmation = $request->session()->get('join-confirmation');
+        abort_if($request->has('code') && (!$request->session()->has('join-confirmation') || $confirmation !== $request->input('confirmation')), 400, 'Invalid confirmation code');
+
         $application = Auth::user()->application ?? new Application();
         $categories = Category::orderBy('name', 'asc')->get();
         $applicationType = Application::determineApplicationTypeByCode($request->input('code')) ?? ApplicationType::Dealer;
@@ -48,6 +52,10 @@ class ApplicationController extends Controller
 
     public function edit(Request $request)
     {
+        // Prevent people from sending direct join URLs
+        $confirmation = $request->session()->get('join-confirmation');
+        abort_if($request->has('code') && (!$request->session()->has('join-confirmation') || $confirmation !== $request->input('confirmation')), 400, 'Invalid confirmation code');
+
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
         $applicationType = Application::determineApplicationTypeByCode($request->input('code')) ?? $application->type;
