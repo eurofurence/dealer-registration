@@ -50,7 +50,8 @@
                                         placeholder="— click Regenerate for new code —">
                                     <input type="hidden" name="type" value="shares">
                                     <span class="form-text">
-                                        Ask your share to go to dealers.eurofurence.org and enter the invitation code above
+                                        Ask your share to go to <a href="{{ url('') }}">{{ url('') }}</a> and
+                                        enter the invitation code above
                                         to join you.
                                     </span>
                                 </form>
@@ -99,7 +100,8 @@
                                         value="{{ $application->invite_code_assistants }}" onclick="this.select()"
                                         placeholder="— click Regenerate for new code —">
                                     <input type="hidden" name="type" value="assistants">
-                                    <span class="form-text">Ask your assistant to go to dealers.eurofurence.org and enter
+                                    <span class="form-text">Ask your assistant to go to <a
+                                            href="{{ url('') }}">{{ url('') }}</a> and enter
                                         the invitation code above to join you.</span>
                                 </form>
                             </li>

@@ -39,12 +39,12 @@
 
         @if ($invitingApplication)
             <div class="alert alert-info text-center">
-                <div class="w-50 mx-auto">
+                <div class="mx-auto">
                     <h3>Confirm Invitation</h3>
                     <p>
-                        To finalize accepting your invitation from <em>{{ $invitingApplication->getFullName() }}</em>
-                        to become part of their dealership as <em>{{ ucfirst($applicationType->value) }}</em>.<br>
-                        Please <strong>review the data below and click on "Update your application"</strong>.
+                        To accept your invitation from <em>{{ $invitingApplication->getFullName() }}</em>
+                        and become part of their dealership as <em>{{ ucfirst($applicationType->value) }}</em>, please
+                        <strong>review the data below and click on "Update your application"</strong>.
                     </p>
                 </div>
             </div>

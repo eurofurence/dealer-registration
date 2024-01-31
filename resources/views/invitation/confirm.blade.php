@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="">
-        <div class="col-md-6 mx-auto">
+        <div class="mx-auto">
             <h1 class="text-center">Join an existing Dealership</h1>
             <p class="text-center lead">
                 You were invited by
