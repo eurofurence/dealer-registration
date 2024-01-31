@@ -9,21 +9,19 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
 {
-    public function view()
-    {
-        return view('invitation.enter-code');
-    }
+    final public const SESSION_CONFIRMATION_KEY = 'join-confirmation';
 
-    public function store(Request $request)
+    public function view(Request $request)
     {
-        $code = $request->get('code');
+        $code = $request->input('code');
         $applicationType = Application::determineApplicationTypeByCode($code);
 
-        if (empty($code) && !is_null($applicationType)) {
+        if (empty($code) || is_null($applicationType)) {
             throw ValidationException::withMessages([
                 "code" => "Please enter a valid invitation code.",
             ]);
@@ -55,6 +53,26 @@ class InvitationController extends Controller
             ]);
         }
 
+        // Prevent people from sending direct join URLs
+        $confirmation = Str::random();
+        $request->session()->put(self::SESSION_CONFIRMATION_KEY, $confirmation);
+
+        $application = Auth::user()->application;
+
+        return view('invitation.confirm', [
+            'invitingApplication' => $invitingApplication,
+            'application' => $application,
+            'invitationType' => $applicationType,
+            'code' => $request->input('code'),
+            'confirmation' => $confirmation,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        InvitationController::verifyInvitationCodeConfirmation($request);
+
+        $code = $request->get('code');
         $application = Auth::user()->application;
         $action = 'edit';
         if (
@@ -67,6 +85,19 @@ class InvitationController extends Controller
 
         return Redirect::route('applications.' . $action, [
             'code' => $code,
+            'confirmation' => $request->session()->get(self::SESSION_CONFIRMATION_KEY),
         ]);
+    }
+
+    public static function verifyInvitationCodeConfirmation(Request $request)
+    {
+        // Prevent people from sending direct join URLs
+        $confirmation = $request->session()->get(self::SESSION_CONFIRMATION_KEY);
+        abort_if(!empty($request->input('code')) && (!$request->session()->has(self::SESSION_CONFIRMATION_KEY) || $confirmation !== $request->input('confirmation')), 400, 'Invalid confirmation code');
+    }
+
+    public static function clearInvitationCodeConfirmation(Request $request)
+    {
+        $request->session()->forget(self::SESSION_CONFIRMATION_KEY);
     }
 }

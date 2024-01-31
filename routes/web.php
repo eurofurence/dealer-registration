@@ -32,7 +32,10 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddleware::class, \App\Http\Middleware\ForceOverseatingRedirectMiddleware::class, \App\Http\Middleware\ConventionDateRestrictionMiddleware::class])->group(function () {
-    Route::get('join', [\App\Http\Controllers\Applications\InvitationController::class, 'view'])->name('join');
+    Route::post('invitation/join', [\App\Http\Controllers\Applications\InvitationController::class, 'view'])->name('invitation.join');
+    Route::get('invitation/join', fn () => \Illuminate\Support\Facades\Redirect::route('dashboard'));
+    Route::post('invitation/confirm', [\App\Http\Controllers\Applications\InvitationController::class, 'store'])->name('invitation.confirm');
+    Route::get('invitation/confirm', fn () => \Illuminate\Support\Facades\Redirect::route('dashboard'));
     Route::get('applications/create', [\App\Http\Controllers\Applications\ApplicationController::class, 'create'])->name('applications.create');
     Route::post('applications', [\App\Http\Controllers\Applications\ApplicationController::class, 'store'])->name('applications.store');
     Route::get('applications/edit', [\App\Http\Controllers\Applications\ApplicationController::class, 'edit'])->name('applications.edit');

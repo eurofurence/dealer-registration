@@ -81,7 +81,8 @@
                     @if (empty(Session::get('avatar')))
                         <x-heroicon-s-user-circle width="40" height="40" class="rounded-circle" />
                     @else
-                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}" width="40" height="40" class="rounded-circle">
+                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}"
+                            width="40" height="40" class="rounded-circle">
                     @endif
                     @if ($user->isAdmin())
                         <a href="{{ route('filament.admin.pages.dashboard') }}" class="btn btn-secondary">Admin</a>
@@ -256,12 +257,8 @@
                                             <label for="displayName" class="form-label">Display Name</label>
                                             <input type="text" readonly class="form-control fs-4" id="displayName"
                                                 value="{{ $application->type !== \App\Enums\ApplicationType::Assistant
-                                                    ? (empty($application->display_name)
-                                                        ? $applicant->name
-                                                        : $application->display_name)
-                                                    : (empty($parent->display_name)
-                                                        ? $parent->user->name
-                                                        : $parent->display_name) }}"
+                                                    ? $application->getFullName()
+                                                    : $parent->getFullName() }}"
                                                 tabindex="-1">
                                         </div>
                                         <div class="mb-3">

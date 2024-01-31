@@ -18,7 +18,8 @@
                 <div class="col-md-12 text-center">
                     <div class="alert alert-warning">
                         You are changing your Role away from
-                        <strong>Dealer</strong>. This means you will lose your previous application as a dealer and join another
+                        <strong>Dealer</strong>. This means you will lose your previous application as a dealer and join
+                        another
                         dealer as a <strong>{{ $applicationType->value }}</strong>.
                     </div>
                 </div>
@@ -32,9 +33,17 @@
                     Updates
                     <span
                         class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
+                    @if ($application->parent)
+                        of <span class="badge bg-secondary">{{ $application->parent()->first()->getFullName() }}</span>
+                    @endif
                     to
                 @endif
                 <span class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($applicationType->value) }}</span>
+                @if ($invitingApplication)
+                    of <span class="badge bg-secondary">{{ $invitingApplication->getFullName() }}</span>
+                @elseif ($application->parent)
+                    of <span class="badge bg-secondary">{{ $application->parent()->first()->getFullName() }}</span>
+                @endif
             </div>
         </div>
         <!-- EMAIL --->

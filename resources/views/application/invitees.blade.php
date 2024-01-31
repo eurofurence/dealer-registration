@@ -5,7 +5,7 @@
 @section('content')
     <div class="">
         <div class="col-md-6 mx-auto">
-            <h1 class="text-center">Manage shares and assistants</h1>
+            <h1 class="text-center">Manage Shares and Assistants</h1>
             <p class="text-center lead">You can give invite codes to users that you wish to either setup a share with or
                 invite as an assistant. Please note that changes to shares are only possible during the registration
                 period.<br>
@@ -50,8 +50,9 @@
                                         placeholder="— click Regenerate for new code —">
                                     <input type="hidden" name="type" value="shares">
                                     <span class="form-text">
-                                        Ask your share to go to dealers.eurofurence.org and click on
-                                        Join, after that they need to enter the above code.
+                                        Ask your share to go to <a href="{{ url('') }}">{{ url('') }}</a> and
+                                        enter the invitation code above
+                                        to join you.
                                     </span>
                                 </form>
                             </li>
@@ -67,7 +68,7 @@
                                             Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                                         <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>
                                     @endif
-                                    {{ $share->display_name ?? $share->user->name }}
+                                    {{ $share->getFullName() }}
                                 </form>
                             </li>
                         @endforeach
@@ -99,19 +100,20 @@
                                         value="{{ $application->invite_code_assistants }}" onclick="this.select()"
                                         placeholder="— click Regenerate for new code —">
                                     <input type="hidden" name="type" value="assistants">
-                                    <span class="form-text">Ask your assistant to go to dealers.eurofurence.org and click on
-                                        Join, after that they need to enter the above code.</span>
+                                    <span class="form-text">Ask your assistant to go to <a
+                                            href="{{ url('') }}">{{ url('') }}</a> and enter
+                                        the invitation code above to join you.</span>
                                 </form>
                             </li>
                         @endif
-                        @foreach ($assistants as $share)
+                        @foreach ($assistants as $assistant)
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.destroy') }}">
                                     @method('DELETE')
                                     @csrf
-                                    <input type="hidden" name="invitee_id" value="{{ $share->id }}">
+                                    <input type="hidden" name="invitee_id" value="{{ $assistant->id }}">
                                     <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>
-                                    {{ $share->display_name ?? $share->user->name }}
+                                    $assistant->user->name
                                 </form>
                             </li>
                         @endforeach
