@@ -243,11 +243,7 @@ class Application extends Model
             $status = ApplicationStatus::tryFrom($status);
         }
 
-        // Don't reset timestamps when application is saved without status change!
-        if ($this->getStatus() === $status) {
-            return;
-        }
-
+        // Saving with ApplicationStatus::Canceled should always lead to a reset regardless if the status was already Canceled.
         if ($status === ApplicationStatus::Canceled) {
             $this->update([
                 'offer_accepted_at' => null,
@@ -258,6 +254,11 @@ class Application extends Model
                 'type' => ApplicationType::Dealer,
                 'canceled_at' => now(),
             ]);
+        }
+
+        // Don't reset timestamps when application is saved without status change!
+        if ($this->getStatus() === $status) {
+            return;
         }
 
         // TableAssigned is technically identical to open just with a table number assigned.
@@ -322,21 +323,6 @@ class Application extends Model
                 'canceled_at' => null,
             ]);
         }
-    }
-
-    /**
-     * Reset to Dealer if an application has been removed as a Share or Assistant.
-     */
-    public function deleteParentAndReset() {
-        $this->update([
-            'offer_accepted_at' => null,
-            'offer_sent_at' => null,
-            'table_number' => null,
-            'parent' => null,
-            'waiting_at' => null,
-            'type' => ApplicationType::Dealer,
-            'canceled_at' => now(),
-        ]);
     }
 
     public static function findByUserId(int|null $user_id): Application|null
