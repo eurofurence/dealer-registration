@@ -8,6 +8,10 @@
             </div>
 
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a target="_blank" href="export/comments" class="text-secondary small">Export comments</a>
+            </div>
+
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a target="_blank" href="export/appdata" class="text-secondary small">Export data for EF App</a>
             </div>
 

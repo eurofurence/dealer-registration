@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Applications\ApplicationController;
+use App\Http\Controllers\CommentController;
 use App\Models\Application;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +63,7 @@ Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddlew
 
     Route::get('admin/export/appdata', [ApplicationController::class, 'exportAppDataAdmin']);
     Route::get('admin/export/csv', [ApplicationController::class, 'exportCsvAdmin']);
+    Route::get('admin/export/comments', [CommentController::class, 'exportCommentsAdmin']);
 });
 
 Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddleware::class])->group(function () {
