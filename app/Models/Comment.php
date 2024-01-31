@@ -42,12 +42,16 @@ class Comment extends Model
             ->leftJoin('users as u2', 'comments.user_id', '=', 'u2.id')
             ->leftJoin('table_types', 'table_type_assigned', '=', 'table_types.id')
             ->select(
-                'u1.name AS User',
-                'type as Type',
-                'text AS Comment Text',
-                'table_types.name AS Assigned Table',
-                'table_number as Table number',
-                'u2.name AS Author'
+                'u1.name AS user',
+                'applications.display_name AS display name',
+                'applications.type AS type',
+                'comments.text AS comment',
+                'table_types.name AS assigned table',
+                'applications.table_number AS table number',
+                'u2.name AS author',
+                'comments.admin_only AS admin only',
+                'comments.created_at AS created at',
+                'comments.updated_at AS updated at',
             )
             ->get();
         return json_decode(json_encode($applications), true);
