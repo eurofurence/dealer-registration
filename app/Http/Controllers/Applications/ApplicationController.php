@@ -16,12 +16,14 @@ use App\Notifications\AlternateTableOfferedNotification;
 use App\Notifications\AlternateTableOfferedShareNotification;
 use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
+use App\Notifications\JoinNotification;
 use App\Notifications\TableAcceptanceReminderNotification;
 use App\Notifications\TableOfferedNotification;
 use App\Notifications\TableOfferedShareNotification;
 use App\Notifications\WaitingListNotification;
 use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
+use App\Notifications\WelcomeShareNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -32,33 +34,35 @@ class ApplicationController extends Controller
 {
     public function create(Request $request)
     {
-        // Prevent people from sending direct join URLs
-        $confirmation = $request->session()->get('join-confirmation');
-        abort_if($request->has('code') && (!$request->session()->has('join-confirmation') || $confirmation !== $request->input('confirmation')), 400, 'Invalid confirmation code');
+        InvitationController::verifyInvitationCodeConfirmation($request);
 
         $application = Auth::user()->application ?? new Application();
         $categories = Category::orderBy('name', 'asc')->get();
-        $applicationType = Application::determineApplicationTypeByCode($request->input('code')) ?? ApplicationType::Dealer;
+        $code = $request->input('code');
+        $applicationType = Application::determineApplicationTypeByCode($code) ?? ApplicationType::Dealer;
+        $invitingApplication = self::determineParentByCode($code);
 
         return view('application.create', [
             'table_types' => TableType::all(['id', 'name', 'price']),
             'application' => $application,
             'categories' => $categories,
             'applicationType' => $applicationType,
-            'code' => $request->input('code'),
+            'code' => $code,
+            'invitingApplication' => $invitingApplication,
+            'confirmation' => $request->session()->get(InvitationController::SESSION_CONFIRMATION_KEY),
             'profile' => ProfileController::getOrCreate($application->id)
         ]);
     }
 
     public function edit(Request $request)
     {
-        // Prevent people from sending direct join URLs
-        $confirmation = $request->session()->get('join-confirmation');
-        abort_if($request->has('code') && (!$request->session()->has('join-confirmation') || $confirmation !== $request->input('confirmation')), 400, 'Invalid confirmation code');
+        InvitationController::verifyInvitationCodeConfirmation($request);
 
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
-        $applicationType = Application::determineApplicationTypeByCode($request->input('code')) ?? $application->type;
+        $code = $request->input('code');
+        $applicationType = Application::determineApplicationTypeByCode($code) ?? $application->type;
+        $invitingApplication = self::determineParentByCode($code);
 
         $categories = Category::orderBy('name', 'asc')->get();
         return view('application.edit', [
@@ -66,7 +70,9 @@ class ApplicationController extends Controller
             'application' => $application,
             'categories' => $categories,
             'applicationType' => $applicationType,
-            'code' => $request->input('code'),
+            'code' => $code,
+            'invitingApplication' => $invitingApplication,
+            'confirmation' => $request->session()->get(InvitationController::SESSION_CONFIRMATION_KEY),
             'profile' => ProfileController::getByApplicationId($application->id)
         ]);
     }
@@ -100,9 +106,11 @@ class ApplicationController extends Controller
 
     public function store(ApplicationRequest $request)
     {
+        InvitationController::verifyInvitationCodeConfirmation($request);
         $code = $request->input('code');
         $applicationType = self::determineApplicationTypeByCode($code) ?? ApplicationType::Dealer;
 
+        /** @var Application|null */
         $parent = self::determineParentByCode($code);
 
         $application = Application::updateOrCreate([
@@ -132,32 +140,40 @@ class ApplicationController extends Controller
             ProfileController::createOrUpdate($request, $application->id);
         }
 
-        /** @var User $user */
-        $user = Auth::user();
-        if ($application && $application->getStatus() === ApplicationStatus::Open) {
-            switch ($application->type) {
-                case ApplicationType::Dealer:
-                    $user->notify(new WelcomeNotification());
-                    break;
-                case ApplicationType::Share:
-                    $user->notify(new WelcomeNotification());
-                    break;
-                case ApplicationType::Assistant:
-                    $user->notify(new WelcomeAssistantNotification());
-                    break;
-                default:
-                    abort(400, 'Unknown application type.');
-            }
-            return Redirect::route('dashboard')->with('save-successful');
-        } else {
+        InvitationController::clearInvitationCodeConfirmation($request);
+
+        if (!$application || $application->getStatus() !== ApplicationStatus::Open) {
             abort(400, 'Invalid application state');
         }
+
+        /** @var User */
+        $user = Auth::user();
+
+        switch ($application->type) {
+            case ApplicationType::Dealer:
+                $user->notify(new WelcomeNotification());
+                break;
+            case ApplicationType::Share:
+                $user->notify(new WelcomeShareNotification($parent->getFullName()));
+                $parent->user->notify(new JoinNotification($application->type->value, $application->getFullName()));
+                break;
+            case ApplicationType::Assistant:
+                $user->notify(new WelcomeAssistantNotification($parent->getFullName()));
+                $parent->user->notify(new JoinNotification($application->type->value, $application->getFullName()));
+                break;
+            default:
+                abort(400, 'Unknown application type.');
+        }
+        return Redirect::route('dashboard')->with('save-successful');
     }
 
     public function update(ApplicationRequest $request)
     {
+        InvitationController::verifyInvitationCodeConfirmation($request);
+        /** @var User */
+        $user = Auth::user();
         /** @var Application */
-        $application = Auth::user()->application;
+        $application = $user->application;
         abort_if(is_null($application), 404, 'Application not found');
 
         $code = $request->input('code');
@@ -182,6 +198,17 @@ class ApplicationController extends Controller
         if ($application->isActive() && $newApplicationType !== ApplicationType::Assistant) {
             // TODO: Refactor
             ProfileController::createOrUpdate($request, $application->id);
+        }
+
+        InvitationController::clearInvitationCodeConfirmation($request);
+
+        if ($newParent) {
+            $newParent->user->notify(new JoinNotification($newApplicationType->value, $user->name));
+            if ($newApplicationType === ApplicationType::Assistant) {
+                $user->notify(new WelcomeAssistantNotification($newParent->getFullName()));
+            } elseif ($newApplicationType === ApplicationType::Share) {
+                $user->notify(new WelcomeShareNotification($newParent->getFullName()));
+            }
         }
 
         return Redirect::route('applications.edit')->with('save-successful');

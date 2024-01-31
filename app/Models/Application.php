@@ -162,6 +162,18 @@ class Application extends Model
         );
     }
 
+    /**
+     * Get full dealership name of either "display_name (userName)" or just "userName" if no display_name has been set.
+     */
+    public function getFullName(): string
+    {
+        if (empty($this->display_name)) {
+            return $this->user->name;
+        } else {
+            return "{$this->display_name} ({$this->user->name})";
+        }
+    }
+
     public function getStatus()
     {
         return ApplicationStatus::for($this);

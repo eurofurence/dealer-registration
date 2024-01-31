@@ -14,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
 {
+    final public const SESSION_CONFIRMATION_KEY = 'join-confirmation';
+
     public function view(Request $request)
     {
         $code = $request->input('code');
@@ -53,7 +55,7 @@ class InvitationController extends Controller
 
         // Prevent people from sending direct join URLs
         $confirmation = Str::random();
-        $request->session()->put('join-confirmation', $confirmation);
+        $request->session()->put(self::SESSION_CONFIRMATION_KEY, $confirmation);
 
         $application = Auth::user()->application;
 
@@ -68,9 +70,7 @@ class InvitationController extends Controller
 
     public function store(Request $request)
     {
-        // Prevent people from sending direct join URLs
-        $confirmation = $request->session()->get('join-confirmation');
-        abort_if(!$request->session()->has('join-confirmation') || $confirmation !== $request->input('confirmation'), 400, 'Invalid confirmation code');
+        InvitationController::verifyInvitationCodeConfirmation($request);
 
         $code = $request->get('code');
         $application = Auth::user()->application;
@@ -85,7 +85,19 @@ class InvitationController extends Controller
 
         return Redirect::route('applications.' . $action, [
             'code' => $code,
-            'confirmation' => $confirmation,
+            'confirmation' => $request->session()->get(self::SESSION_CONFIRMATION_KEY),
         ]);
+    }
+
+    public static function verifyInvitationCodeConfirmation(Request $request)
+    {
+        // Prevent people from sending direct join URLs
+        $confirmation = $request->session()->get(self::SESSION_CONFIRMATION_KEY);
+        abort_if(!empty($request->input('code')) && (!$request->session()->has(self::SESSION_CONFIRMATION_KEY) || $confirmation !== $request->input('confirmation')), 400, 'Invalid confirmation code');
+    }
+
+    public static function clearInvitationCodeConfirmation(Request $request)
+    {
+        $request->session()->forget(self::SESSION_CONFIRMATION_KEY);
     }
 }

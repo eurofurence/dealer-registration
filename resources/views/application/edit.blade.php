@@ -37,6 +37,19 @@
             </a>
         </div>
 
+        @if ($invitingApplication)
+            <div class="alert alert-info text-center">
+                <div class="w-50 mx-auto">
+                    <h3>Confirm Invitation</h3>
+                    <p>
+                        To finalize accepting your invitation from <em>{{ $invitingApplication->getFullName() }}</em>
+                        to become part of their dealership as <em>{{ ucfirst($applicationType->value) }}</em>.<br>
+                        Please <strong>review the data below and click on "Update your application"</strong>.
+                    </p>
+                </div>
+            </div>
+        @endif
+
         @if ($errors->all())
             <div class="alert alert-danger text-center fw-bold">There were some issues saving your application, please see
                 below.</div>
@@ -55,6 +68,7 @@
             @endif
             @csrf
             <button class="w-100 btn btn-primary btn-lg mt-4" type="submit">Update your application</button>
+            <input type="hidden" name="confirmation" value="{{ $confirmation }}">
         </form>
     </div>
 @endsection
