@@ -58,8 +58,12 @@ class ApplicationController extends Controller
     {
         InvitationController::verifyInvitationCodeConfirmation($request);
 
+        /** @var Application */
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
+        if (!$application->isActive()) {
+            return Redirect::route('applications.create');
+        }
         $code = $request->input('code');
         $applicationType = Application::determineApplicationTypeByCode($code) ?? $application->type;
         $invitingApplication = self::determineParentByCode($code);
