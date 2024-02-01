@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use ZipArchive;
@@ -24,20 +25,20 @@ class ProfileController extends Controller
     public static function createOrUpdate(Request $request, int $applicationId): Profile
     {
         $profileData = [
-            "short_desc" => $request->get('short_desc'),
-            "artist_desc" => $request->get('artist_desc'),
-            "art_desc" => $request->get('art_desc'),
-            "website" => $request->get('profile_website'),
-            "twitter" => $request->get('twitter'),
-            "mastodon" => $request->get('mastodon'),
-            "bluesky" => $request->get('bluesky'),
-            "telegram" => $request->get('telegram'),
-            "discord" => $request->get('discord'),
-            "tweet" => $request->get('tweet'),
-            "art_preview_caption" => $request->get('art_preview_caption'),
-            "attends_thu" => $request->get('attends_thu') === "on",
-            "attends_fri" => $request->get('attends_fri') === "on",
-            "attends_sat" => $request->get('attends_sat') === "on",
+            "short_desc" => $request->input('short_desc'),
+            "artist_desc" => $request->input('artist_desc'),
+            "art_desc" => $request->input('art_desc'),
+            "website" => $request->input('profile_website'),
+            "twitter" => trim($request->input('twitter'), '@'),
+            "mastodon" => trim($request->input('mastodon'), '@'),
+            "bluesky" => trim($request->input('bluesky'), '@'),
+            "telegram" => trim($request->input('telegram'), '@'),
+            "discord" => $request->input('discord'),
+            "tweet" => $request->input('tweet'),
+            "art_preview_caption" => $request->input('art_preview_caption'),
+            "attends_thu" => $request->input('attends_thu') === "on",
+            "attends_fri" => $request->input('attends_fri') === "on",
+            "attends_sat" => $request->input('attends_sat') === "on",
         ];
 
         // Keep old images if no new data is sent with the request
@@ -140,7 +141,7 @@ class ProfileController extends Controller
             "twitter" => [
                 'nullable',
                 // Twitter user name validation: https://help.twitter.com/en/managing-your-account/twitter-username-rules
-                'regex:/^[0-9a-z_]{4,15}$/i',
+                'regex:/^@?[0-9a-z_]{4,15}$/i',
             ],
             "mastodon" => [
                 'nullable',
@@ -160,18 +161,18 @@ class ProfileController extends Controller
                  * pct-encoded = "%" HEXDIG HEXDIG
                  * unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
                  */
-                'regex:/([A-Z0-9\-._~!$&\'\(\)\*,;=][A-Z0-9\-._~%!$&\'\(\)\*,;=]*)@([A-Z0-9\-._~%!$&\'\(\)\*,;=]+\.[A-Z]{2,})/i'
+                'regex:/^@?([A-Z0-9\-._~!$&\'\(\)\*,;=][A-Z0-9\-._~%!$&\'\(\)\*,;=]*)@([A-Z0-9\-._~%!$&\'\(\)\*,;=]+\.[A-Z]{2,})$/i'
             ],
             "bluesky" => [
                 'nullable',
                 // Bluesky user name validation:
                 // https://atproto.com/specs/handle
-                'regex:/^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/',
+                'regex:/^@?([A-Z0-9]([A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]([A-Z0-9-]{0,61}[A-Z0-9])?$/i',
             ],
             "telegram" => [
                 'nullable',
                 // Telegram user name validation: https://core.telegram.org/method/account.checkUsername
-                'regex:/^[0-9a-z_]{5,32}$/i',
+                'regex:/^@?[0-9a-z_]{5,32}$/i',
             ],
             "discord" => [
                 'nullable',

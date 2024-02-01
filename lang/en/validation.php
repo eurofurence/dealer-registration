@@ -33,7 +33,7 @@ return [
             'regex' => 'Please verify your Mastodon handle, it must be in the format username@instance.name'
         ],
         'bluesky' => [
-            'regex' => 'Please verify your Bluesky handle, it may only contain letters, numbers, dots (.) and hyphens (-).'
+            'regex' => 'Please verify your Bluesky handle, it should look like "floof.example.com" and may only contain letters, numbers, dots (.) and hyphens (-).'
         ],
         'telegram' => [
             'regex' => 'Please verify your Telegram handle, it must be between 5 and 32 characters and only contain letters, numbers and underscores (_).'
