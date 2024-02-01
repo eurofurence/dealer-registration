@@ -1,11 +1,10 @@
 @props(['categories', 'keywordIds'])
-
 <div class="accordion" id="keywords">
     @foreach ($categories as $category)
         @php(
     $hasKeywordsFromCategory = !empty(
         array_intersect(
-            $keywordIds,
+            old('_token') ? old('keywords') ?? [] : $keywordIds,
             $category->keywords()->pluck('id')->toArray(),
         )
     )
@@ -27,7 +26,7 @@
                             <input class="form-check-input" type="checkbox" name="keywords[]"
                                 value="{{ $keyword->id }}"
                                 id="keyword-{{ $loop->parent->index }}-{{ $loop->index }}"
-                                @checked(in_array($keyword->id, $keywordIds))>
+                                @checked(old('_token') ? in_array($keyword->id, old('keywords') ?? []) : in_array($keyword->id, $keywordIds))>
                             <label class="form-check-label"
                                 for="keyword-{{ $loop->parent->index }}-{{ $loop->index }}">
                                 {{ $keyword->name }}
