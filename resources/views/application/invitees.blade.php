@@ -3,6 +3,17 @@
     Shares and Assistants
 @endsection
 @section('content')
+    <style>
+        .dd-table-button {
+            width: 5ex;
+            height: 5ex;
+            font-weight: bold;
+        }
+
+        .dd-table-button.border-danger {
+            border-width: 3px
+        }
+    </style>
     <div class="">
         <div class="col-md-6 mx-auto">
             <h1 class="text-center">Manage Shares and Assistants</h1>
@@ -17,26 +28,62 @@
             <div class="alert alert-success text-center fw-bold">The user has been removed.</div>
         @endif
 
-        @if ($assistants_active_count <= $assistants_count && $shares_active_count <= $shares_count)
+        @if ($seats['free'] >= 0)
             <div class="mx-auto text-center mb-4">
                 <a href="{{ route('dashboard') }}" class="btn btn-sm btn-primary">Return to dashboard</a>
             </div>
         @endif
+        <div class="col-md-6 mx-auto">
+            <h3 class="text-center">Seats in your Dealership</h3>
+            <div class="mx-auto text-center mb-1">
+                @for ($i = 0; $i < $seats['dealers']; $i++)
+                    <button
+                        class="btn btn-sm btn-primary dd-table-button @if ($i >= $seats['table']) border-danger text-danger @endif"
+                        type="button" title="Dealer">D</button>
+                @endfor
+                @for ($i = 0; $i < $seats['free']; $i++)
+                    <button class="btn btn-sm btn-secondary dd-table-button" type="button" title="Free">F</button>
+                @endfor
+                @if (!is_null($seats['additional']))
+                    <button class="btn btn-sm btn-dark dd-table-button" type="button"
+                        title="Free ({{ ucfirst($seats['additional']) }})">F{{ ucfirst(substr($seats['additional'],0,1)) }}</button>
+                @endif
+                @for ($i = 0; $i < $seats['assistants']; $i++)
+                    <button
+                        class="btn btn-sm bg-info dd-table-button @if ($i >= max($seats['table'] - $seats['dealers'], 1)) border-danger text-danger @endif"
+                        type="button" title="Assistant">A</button>
+                @endfor
+            </div>
+            <div class="mx-auto text-center mb-4">
+                Legend:
+                <span class="badge text-bg-primary">Dealer</span>
+                <span class="badge text-bg-secondary">Free</span>
+                @if (!is_null($seats['additional']))
+                    <span class="badge text-bg-dark">Free ({{ ucfirst($seats['additional']) }})</span>
+                @endif
+                <span class="badge text-bg-info">Assistant</span>
+            </div>
+        </div>
+        @if ($seats['free'] < 0)
+            <div class="alert alert-danger text-center fw-bold">
+                You have too many people in your dealership for the number of
+                seats available for your table size.<br />
+                Please remove excess shares or assistants.
+            </div>
+        @endif
         <div class="row">
             <div class="col-md-6">
-                @if ($shares_active_count > $shares_count)
-                    <div class="alert alert-danger fw-bold">You have too many dealers for your table size. <br>Please remove
-                        dealers.</div>
-                @endif
 
-                <div class="card mb-2 @if ($shares_active_count > $shares_count) bg-danger-subtle @endif">
+                <div class="card mb-2 @if ($seats['free'] < 0) bg-danger-subtle @endif">
                     <div class="card-body">
-                        <div class="card-title h5 mb-0"><span
-                                class="badge bg-secondary">{{ $shares_active_count }}/{{ $shares_count }}</span> Share your
-                            space with other dealers</div>
+                        <div class="card-title h4 mb-0">
+                            Share your space with other dealers
+                        </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if ($shares_active_count < $shares_count && Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                        @if (
+                            ($seats['free'] > 0 || $seats['additional'] === 'dealer') &&
+                                Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.codes') }}">
                                     @csrf
@@ -76,18 +123,16 @@
                 </div>
             </div>
             <div class="col-md-6">
-                @if ($assistants_active_count > $assistants_count)
-                    <div class="alert alert-danger fw-bold">You have too many assistants for your table size. <br>Please
-                        remove assistants.</div>
-                @endif
-                <div class="card mb-2 @if ($assistants_active_count > $assistants_count) bg-danger-subtle @endif">
+                <div class="card mb-2 @if ($seats['free'] < 0 && $seats['additional'] !== 'assistant') bg-danger-subtle @endif">
                     <div class="card-body">
-                        <div class="card-title h5 mb-0"><span
-                                class="badge bg-secondary">{{ $assistants_active_count }}/{{ $assistants_count }}</span>
-                            Invite assistants to your space</div>
+                        <div class="card-title h4 mb-0">
+                            Invite assistants to your space
+                        </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if ($assistants_active_count < $assistants_count && Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
+                        @if (
+                            ($seats['free'] > 0 || $seats['additional'] === 'assistant') &&
+                                Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.codes') }}">
                                     @csrf

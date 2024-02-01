@@ -210,38 +210,59 @@ class Application extends Model
         $this->save();
     }
 
-    public function getActiveShares(): int
+    public function shares()
     {
-        return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Share)->count();
+        return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Share);
     }
 
-    public function getActiveAssistants(): int
+    public function assistants()
     {
-        return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
+        return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant);
     }
 
-    public function getAvailableShares(): int
+    public function getSeats(): array
     {
-        if (is_null($this->requestedTable)) {
-            return 0;
+        /** @var TableType */
+        $tableType = $this->assignedTable ?? $this->requestedTable;
+        if (is_null($tableType) || !$this->isActive()) {
+            return [
+                'table' => 0,
+                'dealers' => 0,
+                'assistants' => 0,
+                'free' => 0,
+                'additional' => null,
+            ];
         }
-        $countedAssistants = $this->getActiveShares() < $this->requestedTable->seats - 1 ? $this->getActiveAssistants() : max($this->getActiveAssistants() - 1, 0);
-        return !is_null($this->requestedTable) ? max($this->requestedTable->seats - 1 - $countedAssistants, 0) : 0;
-    }
 
-    public function getAvailableAssistants(): int
-    {
-        return !is_null($this->requestedTable) ? max(1, $this->requestedTable->seats - 1 - $this->getActiveShares()) : 0;
-    }
+        $totalSeats = $tableType->seats;
 
-    public function getFreeShares(): int
-    {
-        return !is_null($this->requestedTable) ?  $this->getAvailableShares() - $this->getActiveShares() : 0;
-    }
+        $dealers = $this->shares()->count() + 1;
+        $assistants = $this->assistants()->count();
+        $additional = null;
 
-    public function getFreeAssistants(): int
-    {
-        return $this->getAvailableAssistants() - $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant)->count();
+        if ($totalSeats - $dealers <= 0 && $assistants === 0) {
+            // Single assistant is available even if table is filled with dealers.
+            $additional = 'assistant';
+        }
+
+        if ($totalSeats - $dealers === 1 && $assistants === 1) {
+            // Single assistant doesn't consume dealer seat and results in free dealer-only seat.
+            $additional = 'dealer';
+        }
+
+        $free = $totalSeats - $dealers - $assistants;
+        if ($free < 0 && $assistants === 1) {
+            // Free seat count should not be negative because of minimum assistant.
+            $free += 1;
+        }
+
+        return [
+            'table' => $totalSeats,
+            'dealers' => $dealers,
+            'assistants' => $assistants,
+            'free' => $free,
+            'additional' => $additional,
+        ];
     }
 
     public function getStatusAttribute()
