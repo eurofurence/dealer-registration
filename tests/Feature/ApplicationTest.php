@@ -62,7 +62,7 @@ class ApplicationTest extends TestCase
             'table_type_requested' => $table->id,
             'table_type_assigned' => null,
             'type' => ApplicationType::Dealer->value,
-            'parent' => null,
+            'parent_id' => null,
             'display_name' => "Tin",
             'website' => "https://eurofurence.org",
             'table_number' => null,
@@ -122,7 +122,7 @@ class ApplicationTest extends TestCase
         $childApp = Application::factory()->create([
                 'user_id' => $child->id,
                 'type' => ApplicationType::Share->value,
-                'parent' => $parentApp->id,
+                'parent_id' => $parentApp->id,
                 "canceled_at" => null,
             ]
         );
@@ -171,7 +171,7 @@ class ApplicationTest extends TestCase
             'user_id' => $user->id,
             'table_type_requested' => $table->id,
             'type' => ApplicationType::Dealer->value,
-            'parent' => null,
+            'parent_id' => null,
             'display_name' => "TinUpdate",
             'website' => "https://eurofurence-update.org",
             'merchandise' => "I am selling dragons",

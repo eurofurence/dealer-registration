@@ -82,7 +82,7 @@ class ApplicationResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
                             ->required(),
-                        Forms\Components\Select::make('parent')->searchable()->options(Application::getEligibleParents()->pluck('name', 'id'))
+                        Forms\Components\Select::make('parent_id')->searchable()->options(Application::getEligibleParents()->pluck('name', 'id'))
                             ->hidden(fn (\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value)
                             ->required(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')
@@ -151,7 +151,7 @@ class ApplicationResource extends Resource
                     ->boolean(),
                 Tables\Columns\TextColumn::make('dlrshp')
                     ->getStateUsing(function (Application $record) {
-                        return $record->parent ?: $record->id;
+                        return $record->parent_id ?: $record->id;
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -160,7 +160,7 @@ class ApplicationResource extends Resource
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query
                             ->where('id', '=', $search)
-                            ->orWhere('parent', '=', $search);
+                            ->orWhere('parent_id', '=', $search);
                     }),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
@@ -193,7 +193,7 @@ class ApplicationResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('parent')
+                Tables\Filters\Filter::make('dealers')
                     ->query(fn (Builder $query): Builder => $query->where('type', 'dealer'))
                     ->label('Only Dealerships'),
                 Tables\Filters\Filter::make('assignedTable')

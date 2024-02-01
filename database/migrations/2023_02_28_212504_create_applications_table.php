@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->foreignIdFor(\App\Models\TableType::class,'table_type_assigned')->nullable()->constrained('table_types')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('type'); // Dealer, Share, Assistant
-            $table->foreignIdFor(\App\Models\Application::class,'parent')->nullable()->constrained('applications')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Application::class,'parent_id')->nullable()->constrained('applications')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('display_name')->nullable();
             $table->string('website')->nullable();

@@ -33,7 +33,7 @@
                     Updates
                     <span
                         class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
-                    @if ($application->parent)
+                    @if ($application?->parent)
                         of <span class="badge bg-secondary">{{ $application->parent()->first()->getFullName() }}</span>
                     @endif
                     to

@@ -52,7 +52,7 @@ class InviteesController extends Controller
         $invitee->update([
             "type" => ApplicationType::Dealer,
             "canceled_at" => now(),
-            "parent" => null
+            "parent_id" => null
         ]);
         $invitee->user()->first()->notify(new CanceledByDealershipNotification());
         return back();

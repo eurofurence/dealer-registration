@@ -126,7 +126,7 @@ class ApplicationController extends Controller
             "is_wallseat" => $request->input('wallseat') === "on",
             "wanted_neighbors" => $request->input('wanted'),
             "comment" => $request->input('comment'),
-            "parent" => $parent?->id,
+            "parent_id" => $parent?->id,
             "invite_code_shares" => null,
             "invite_code_assistants" => null,
             "waiting_at" => null,
@@ -192,7 +192,7 @@ class ApplicationController extends Controller
             "is_wallseat" => $request->input('wallseat') === "on",
             "wanted_neighbors" => $request->input('wanted'),
             "comment" => $request->input('comment'),
-            "parent" => $newParent?->id ?? $application->parent,
+            "parent_id" => $newParent?->id ?? $application->parent,
         ]);
 
         if ($application->isActive() && $newApplicationType !== ApplicationType::Assistant) {
@@ -236,7 +236,7 @@ class ApplicationController extends Controller
         foreach ($application->children()->get() as $child) {
             $child->update([
                 'canceled_at' => now(),
-                'parent' => null,
+                'parent_id' => null,
                 'type' => 'dealer'
             ]);
             $child->user()->first()->notify(new CanceledByDealershipNotification());
@@ -244,7 +244,7 @@ class ApplicationController extends Controller
 
         $application->update([
             'canceled_at' => now(),
-            'parent' => null,
+            'parent_id' => null,
             'type' => 'dealer'
         ]);
         $user->notify(new CanceledBySelfNotification());

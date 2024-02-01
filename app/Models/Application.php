@@ -117,12 +117,12 @@ class Application extends Model
 
     public function parent()
     {
-        return $this->belongsTo(__CLASS__, 'parent');
+        return $this->belongsTo(self::class, 'parent_id');
     }
 
     public function children()
     {
-        return $this->hasMany(__CLASS__, 'parent');
+        return $this->hasMany(self::class, 'parent_id');
     }
 
     public function profile()
@@ -144,7 +144,7 @@ class Application extends Model
                     case ApplicationType::Dealer:
                         // Dealer has no parent
                         return [
-                            'parent' => null,
+                            'parent_id' => null,
                             'type' => $type,
                         ];
                     case ApplicationType::Assistant:
@@ -261,7 +261,7 @@ class Application extends Model
                 'offer_accepted_at' => null,
                 'offer_sent_at' => null,
                 'table_number' => null,
-                'parent' => null,
+                'parent_id' => null,
                 'waiting_at' => null,
                 'type' => ApplicationType::Dealer,
                 'canceled_at' => now(),
@@ -374,7 +374,7 @@ class Application extends Model
                 'users.email AS email',
                 'users.reg_id AS reg_id',
                 'type AS app_type',
-                'parent',
+                'parent_id',
                 'display_name',
                 'applications.website AS app_website',
                 'table_number',
