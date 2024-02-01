@@ -46,7 +46,7 @@
                 @endfor
                 @if (!is_null($seats['additional']))
                     <button class="btn btn-sm btn-dark dd-table-button" type="button"
-                        title="Free* ({{ ucfirst($seats['additional']) }})">F*</button>
+                        title="Free ({{ ucfirst($seats['additional']) }})">F{{ ucfirst(substr($seats['additional'],0,1)) }}</button>
                 @endif
                 @for ($i = 0; $i < $seats['assistants']; $i++)
                     <button
@@ -59,7 +59,7 @@
                 <span class="badge text-bg-primary">Dealer</span>
                 <span class="badge text-bg-secondary">Free</span>
                 @if (!is_null($seats['additional']))
-                    <span class="badge text-bg-dark">Free* ({{ ucfirst($seats['additional']) }})</span>
+                    <span class="badge text-bg-dark">Free ({{ ucfirst($seats['additional']) }})</span>
                 @endif
                 <span class="badge text-bg-info">Assistant</span>
             </div>
