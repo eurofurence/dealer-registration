@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Application;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class InviteeRemovalRequest extends FormRequest
 {
@@ -17,6 +18,6 @@ class InviteeRemovalRequest extends FormRequest
     public function authorize(): bool
     {
         $inviteeApplication = Application::findOrFail($this->get('invitee_id'));
-        return  \Auth::user()->application->id === $inviteeApplication->parent;
+        return  Auth::user()->application->id === $inviteeApplication->parent_id;
     }
 }
