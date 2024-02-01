@@ -113,7 +113,7 @@
                                     @csrf
                                     <input type="hidden" name="invitee_id" value="{{ $assistant->id }}">
                                     <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>
-                                    $assistant->user->name
+                                    {{ $assistant->getFullName() }}
                                 </form>
                             </li>
                         @endforeach

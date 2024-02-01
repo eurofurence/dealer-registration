@@ -17,7 +17,7 @@
                 </p>
             @elseif ($invitationType === \App\Enums\ApplicationType::Assistant)
                 <p class="text-center lead">
-                    Accepting this invitation allow you to support them, while holding the same access and sales privileges
+                    Accepting this invitation allows you to support them, while holding the same access and sales privileges
                     they have. For additional information, please read the <a href="{{ config('con.dealers_tos_url') }}"
                         target="_blank">Dealers’ Den Rules & Information</a>.
                 </p>
