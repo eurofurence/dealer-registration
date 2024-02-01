@@ -17,6 +17,7 @@ class InviteesController extends Controller
     public function view()
     {
         $user = Auth::user();
+        /** @var Application */
         $application = $user->application;
 
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
@@ -33,14 +34,11 @@ class InviteesController extends Controller
 
         return view('application.invitees', [
             'application' => $application,
+            'seats' => $application->getSeats(),
             'currentSeats' => $application->children()->whereNotNull('canceled_at')->count() + 1,
             'maxSeats' => $application->requestedTable->seats,
-            "assistants" => $application->children()->where('type', ApplicationType::Assistant)->with('user')->get(),
-            "shares" =>  $application->children()->where('type', ApplicationType::Share)->with('user')->get(),
-            "shares_count" => $application->getAvailableShares(),
-            "assistants_count" => $application->getAvailableAssistants(),
-            "shares_active_count" => $application->getActiveShares(),
-            "assistants_active_count" => $application->getActiveAssistants(),
+            'assistants' => $application->assistants()->get(),
+            'shares' =>  $application->shares()->get(),
         ]);
     }
 
