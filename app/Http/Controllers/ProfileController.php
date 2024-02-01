@@ -39,6 +39,7 @@ class ProfileController extends Controller
             "attends_thu" => $request->input('attends_thu') === "on",
             "attends_fri" => $request->input('attends_fri') === "on",
             "attends_sat" => $request->input('attends_sat') === "on",
+            "is_hidden" => $request->input('profile_hidden') === "on",
         ];
 
         // Keep old images if no new data is sent with the request
@@ -197,7 +198,7 @@ class ProfileController extends Controller
             "attends_sat" => [
                 'exclude_if:applicationType,assistant',
                 'required_without_all:attends_thu,attends_fri',
-            ]
+            ],
         ];
     }
 

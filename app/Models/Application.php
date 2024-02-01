@@ -469,6 +469,10 @@ class Application extends Model
                 $query->where('type', ApplicationType::Dealer)
                     ->orWhere('type', ApplicationType::Share);
             })
+            ->where(function (Builder $query) {
+                $query->where('profiles.is_hidden', '=', '0')
+                    ->orWhere('type', ApplicationType::Dealer);
+            })
             ->get();
         return json_decode(json_encode($applications), true);
     }
