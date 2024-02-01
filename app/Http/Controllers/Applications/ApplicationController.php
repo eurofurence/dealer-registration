@@ -192,7 +192,7 @@ class ApplicationController extends Controller
             "is_wallseat" => $request->input('wallseat') === "on",
             "wanted_neighbors" => $request->input('wanted'),
             "comment" => $request->input('comment'),
-            "parent_id" => $newParent?->id ?? $application->parent,
+            "parent_id" => $newParent?->id ?? $application->parent_id,
         ]);
 
         if ($application->isActive() && $newApplicationType !== ApplicationType::Assistant) {
