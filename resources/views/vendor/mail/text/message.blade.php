@@ -1,27 +1,23 @@
 @component('mail::layout')
     {{-- Header --}}
     @slot('header')
-        @component('mail::header', ['url' => config('app.url')])
-            {{ config('app.name') }}
+        @component('mail::header')
         @endcomponent
     @endslot
 
     {{-- Body --}}
-    {{ $slot }}
-
-    {{-- Subcopy --}}
-    @isset($subcopy)
-        @slot('subcopy')
-            @component('mail::subcopy')
-                {{ $subcopy }}
-            @endcomponent
-        @endslot
-    @endisset
+{{ $slot }}
 
     {{-- Footer --}}
     @slot('footer')
         @component('mail::footer')
-            © {{ date('Y') }} {{ config('app.name') }}. @lang('All rights reserved.')
+Any help required? Shoot us an email to: dealers@eurofurence.org
+
+Eurofurence e.V. - Am Kielshof 21a - 51105 Köln
+Vereinsregister AG Köln, Nr. 19784
+1. Vorsitzender: Sven Tegethoff
+
+Legal information according to §5 TMG obtainable at http://www.eurofurence.de/index.php?impressum
         @endcomponent
     @endslot
 @endcomponent

@@ -34,7 +34,7 @@ class JoinNotification extends Notification implements ShouldQueue
             ->line('We wish to inform you that ' . $this->joinName . ' has successfully joined your dealership as ' . $this->joinType . ' via your invite code.')
             ->line('If you did not invite them, please go to "Shares & Assistants" in the Dealers\' Den Registration system to generate a new invite code or disable invitations and remove them from your dealership:')
             ->action('Manage Shares and Assistants', url('/applications/invitees'))
-            ->salutation(new HtmlString('Best regards,<br />the Eurofurence Dealers\' Den Team'));
+            ->salutation(new HtmlString("Best regards,<br />\nthe Eurofurence Dealers' Den Team"));
     }
 
     public function toArray($notifiable): array

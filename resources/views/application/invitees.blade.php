@@ -3,6 +3,13 @@
     Shares and Assistants
 @endsection
 @section('content')
+    <style>
+        .dd-table-button {
+            width: 5ex;
+            height: 5ex;
+            font-weight: bold;
+        }
+    </style>
     <div class="">
         <div class="col-md-6 mx-auto">
             <h1 class="text-center">Manage Shares and Assistants</h1>
@@ -22,6 +29,22 @@
                 <a href="{{ route('dashboard') }}" class="btn btn-sm btn-primary">Return to dashboard</a>
             </div>
         @endif
+        <div class="col-md-6 mx-auto">
+            <h3 class="text-center">Seats in your Dealership</h3>
+            <div class="mx-auto text-center mb-1">
+                <button class="btn btn-sm btn-primary dd-table-button" type="button" title="Dealer">D</button>
+                <button class="btn btn-sm bg-info dd-table-button" type="button" title="Assistant">A</button>
+                <button class="btn btn-sm btn-secondary dd-table-button" type="button" title="Free">F</button>
+                <button class="btn btn-sm btn-dark dd-table-button" type="button" title="Free (Assistant)">F*</button>
+            </div>
+            <div class="mx-auto text-center mb-4">
+                Legend:
+                <span class="badge text-bg-primary">Dealer</span>
+                <span class="badge text-bg-info">Assistant</span>
+                <span class="badge text-bg-secondary">Free</span>
+                <span class="badge text-bg-dark">Free (Assistant)</span>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-6">
                 @if ($shares_active_count > $shares_count)

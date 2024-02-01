@@ -25,13 +25,13 @@ class CanceledByDealershipNotification extends Notification implements ShouldQue
     {
         return (new MailMessage)
             ->subject(config('con.con_name') . ' Dealers\' Den - Application Canceled by Dealership')
-            ->greeting("Dear ".$notifiable->name.",")
+            ->greeting('Dear ' . $notifiable->name . ',')
             ->line('The dealership you had joined has chosen to remove you from their application, thereby canceling your own application. But don\'t worry, all data you had entered remains in our system, allowing you pick one of the following options without having to reenter everything:')
             ->line('- Ask the dealership you were part of to allow you to rejoin if you think this happened in error,')
             ->line('- Get in touch with other dealers and join a different dealership or')
             ->line('- Apply for a full dealership yourself.')
             ->line('Thank you for your understanding.')
-            ->salutation(new HtmlString('Best regards,<br />the Eurofurence Dealers\' Den Team'));
+            ->salutation(new HtmlString("Best regards,<br />\nthe Eurofurence Dealers' Den Team"));
     }
 
     public function toArray($notifiable): array
