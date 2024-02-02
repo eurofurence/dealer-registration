@@ -11,6 +11,10 @@
                     Application for a Dealership is open until
                     <b>{{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
+                <p class="lead mb-4">
+                    Please note that a <strong>valid registration for Eurofurence</strong> by that date is required to apply for the Dealers’ Den.<br />
+                    Applications for dealerships will only be taken into consideration if <strong>all members</strong> have a valid registration when the application phase ends.
+                </p>
             @else
                 <p class="lead mb-4">The registration period has ended. You can still update your profile data which will be
                     displayed in the EF app.</p>
