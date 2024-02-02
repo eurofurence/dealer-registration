@@ -68,6 +68,9 @@ class ProfileResource extends Resource
                 ]),
 
                 Forms\Components\Group::make()->schema([
+                    Forms\Components\Fieldset::make('Profile')->inlineLabel()->columns(1)->schema([
+                        Forms\Components\Toggle::make('is_hidden'),
+                    ]),
                     Forms\Components\Fieldset::make('Attendance')->inlineLabel()->columns(1)->schema([
                         Forms\Components\Toggle::make('attends_thu'),
                         Forms\Components\Toggle::make('attends_fri'),
@@ -82,6 +85,8 @@ class ProfileResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('application_id'),
+                Tables\Columns\IconColumn::make('is_hidden')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('short_desc'),
                 Tables\Columns\TextColumn::make('artist_desc'),
                 Tables\Columns\TextColumn::make('art_desc'),

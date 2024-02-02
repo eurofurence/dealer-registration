@@ -15,12 +15,14 @@ class Profile extends Model
         "attends_thu" => "boolean",
         "attends_fri" => "boolean",
         "attends_sat" => "boolean",
+        "is_hidden" => "boolean",
     ];
 
     protected $attributes = [
         "attends_thu" => true,
         "attends_fri" => true,
         "attends_sat" => true,
+        "is_hidden" => false,
     ];
 
     public function application()

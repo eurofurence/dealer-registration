@@ -30,6 +30,7 @@ class ProfileFactory extends Factory
             'attends_thu' => $this->faker->boolean(),
             'attends_fri' => $this->faker->boolean(),
             'attends_sat' => $this->faker->boolean(),
+            'is_hidden' => $this->faker->boolean(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'application_id' => Application::factory(),
