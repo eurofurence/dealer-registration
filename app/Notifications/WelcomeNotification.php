@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,6 +29,7 @@ class WelcomeNotification extends Notification implements ShouldQueue
             ->greeting('Dear ' . $notifiable->name . ',')
             ->line('Thank you for your application for a Dealership at the upcoming Eurofurence. Your interest in being a part of this year\'s Dealers\' Den is very much appreciated.')
             ->line('We have received your application and will review it once the Dealership application period has ended. We understand that waiting can be difficult, but please know that we are working hard to review all applications in a timely manner. Once we have reviewed all the applications, we will get in touch with you to provide you with all the necessary information about the next steps.')
+            ->line('Please note that having a valid registration for Eurofurence by ' . Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') . ' is required to apply for the Dealers\' Den. Applications for dealerships will only be taken into consideration if all members have a valid registration by that date.')
             ->line('Thank you in advance for your patience. The Dealers\' Den management is looking forward to reviewing your application.')
             ->salutation(new HtmlString("Best regards,<br />\nthe Eurofurence Dealers' Den Team"));
     }
