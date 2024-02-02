@@ -23,31 +23,32 @@ enum ApplicationStatus: string
             return ApplicationStatus::CheckedIn;
         } elseif (
             (
-                $application->type !== \App\Enums\ApplicationType::Dealer
-                && !is_null($application->parent->waiting_at))
-            || (
                 $application->type === \App\Enums\ApplicationType::Dealer
                 && !is_null($application->waiting_at)
+            )
+            || (
+                $application->type !== \App\Enums\ApplicationType::Dealer
+                && !is_null($application->parent()->first()->waiting_at)
             )
         ) {
             return ApplicationStatus::Waiting;
         } elseif (
             (
-                $application->type !== \App\Enums\ApplicationType::Dealer
-                && !is_null($application->parent->offer_accepted_at)
+                $application->type === \App\Enums\ApplicationType::Dealer && !is_null($application->offer_accepted_at)
             )
             || (
-                $application->type === \App\Enums\ApplicationType::Dealer && !is_null($application->offer_accepted_at)
+                $application->type !== \App\Enums\ApplicationType::Dealer
+                && !is_null($application->parent()->first()->offer_accepted_at)
             )
         ) {
             return ApplicationStatus::TableAccepted;
         } elseif (
             (
-                $application->type !== \App\Enums\ApplicationType::Dealer
-                && !is_null($application->parent->offer_sent_at)
+                $application->type === \App\Enums\ApplicationType::Dealer && !is_null($application->offer_sent_at)
             )
             || (
-                $application->type === \App\Enums\ApplicationType::Dealer && !is_null($application->offer_sent_at)
+                $application->type !== \App\Enums\ApplicationType::Dealer
+                && !is_null($application->parent()->first()->offer_sent_at)
             )
         ) {
             return ApplicationStatus::TableOffered;
@@ -59,13 +60,13 @@ enum ApplicationStatus: string
                 )
                 || (
                     $application->type !== \App\Enums\ApplicationType::Dealer
-                    && !empty($application->parent->table_type_assigned)
+                    && !empty($application->parent()->first()->table_type_assigned)
                 )
             )
             && (
                 (
                     $application->type === \App\Enums\ApplicationType::Assistant
-                    && !empty($application->parent->table_number)
+                    && !empty($application->parent()->first()->table_number)
                 )
                 || (
                     $application->type !== \App\Enums\ApplicationType::Assistant

@@ -119,7 +119,7 @@ class Application extends Model
             },
             get: function (string|null $value) use ($application): string|null {
                 if ($application->type === ApplicationType::Assistant) {
-                    return $application->parent->table_number;
+                    return $application->parent()->first()->table_number;
                 }
                 return $value;
             }
