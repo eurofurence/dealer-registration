@@ -72,7 +72,8 @@ class ApplicationResource extends Resource
                             "checked_out" => "Checked out (on-site)",
                         ])->selectablePlaceholder(false)->required()->reactive(),
                         Forms\Components\TextInput::make('table_number')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
@@ -134,7 +135,8 @@ class ApplicationResource extends Resource
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
                             ->orderBy('table_type_assigned', $direction);
-                    }),
+                    })
+                    ->disabled(fn ($record) => $record->type !== ApplicationType::Dealer),
                 Tables\Columns\TextColumn::make('type')
                     ->formatStateUsing(function (ApplicationType $state) {
                         return ucfirst($state->value);
@@ -142,7 +144,8 @@ class ApplicationResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextInputColumn::make('table_number')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->disabled(fn ($record) => $record->type === ApplicationType::Assistant),
                 Tables\Columns\IconColumn::make('is_ready')
                     ->label('Ready')
                     ->getStateUsing(function (Application $record) {

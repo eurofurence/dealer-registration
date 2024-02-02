@@ -347,6 +347,7 @@ class ApplicationController extends Controller
             return StatusNotificationResult::NotDealer;
         } else {
             switch ($status) {
+                case ApplicationStatus::Waiting:
                 case ApplicationStatus::TableAssigned:
                     // Do not send offer to dealerships where not all shares are accepted
                     if (!$application->isReady()) {

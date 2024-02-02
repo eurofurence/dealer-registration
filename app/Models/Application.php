@@ -45,61 +45,6 @@ class Application extends Model
         "table_type_requested" => 2
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        // Automatically update application status from Waiting to TableAssigned on table type/number change
-        // to allow accepting waiting dealerships via table assignment
-        static::updating(function (Application $model) {
-            if ( // table number or type was modified
-                ($model->isDirty('table_type_assigned') || $model->isDirty('table_number'))
-                // table number must not be empty
-                && !empty($model->table_number)
-                // table type must be assigned for dealer applications
-                && ($model->type !== ApplicationType::Dealer || !empty($model->table_type_assigned))
-                // status is applicable for automatic change (only Waiting)
-                && $model->status === ApplicationStatus::Waiting
-            ) {
-                Log::info("Changing status of application {$model->id} from {$model->status->name} to TableAssigned due to table type/name change.");
-                $model->status = ApplicationStatus::TableAssigned;
-            }
-        });
-
-        // Update the status of child applications on parent changing to TableOffered/Waiting/TableAccepted
-        static::updated(function (Application $model) {
-            if (
-                $model->type === ApplicationType::Dealer
-                && (
-                    ($model->wasChanged('offer_accepted_at') && !empty($model->offer_accepted_at))
-                    || ($model->wasChanged('offer_sent_at') && !empty($model->offer_sent_at))
-                    || ($model->wasChanged('waiting_at'))
-                )
-            ) {
-                foreach ($model->children()->get() as $child) {
-                    if ($child->status !== ApplicationStatus::Canceled) {
-                        Log::info("Changing status of application {$child->id} to {$model->status->name} due to parent application {$model->id} having changed to this status.");
-                        $child->status = $model->status;
-                    }
-                }
-            }
-        });
-
-        // Update table number of Assistants when their parent's table number is updated
-        // DO NOT do this for Shares as it would automatically set them to TableAssigned without review!
-        static::updated(function (Application $model) {
-            if ($model->type === ApplicationType::Dealer && $model->wasChanged('table_number')) {
-                foreach ($model->children()->get() as $child) {
-                    if ($child->status !== ApplicationStatus::Canceled && $child->type === ApplicationType::Assistant) {
-                        Log::info("Changing table number of assistant application {$child->id} to {$model->table_number} due to parent application {$model->id} change.");
-                        $child->table_number = $model->table_number;
-                        $child->update();
-                    }
-                }
-            }
-        });
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -158,6 +103,25 @@ class Application extends Model
                     default:
                         return;
                 }
+            }
+        );
+    }
+
+    public function tableNumber(): Attribute
+    {
+        $application = $this;
+        return Attribute::make(
+            set: function (string|null $value) use ($application): string|null {
+                if ($application->type === ApplicationType::Assistant) {
+                    return null;
+                }
+                return $value;
+            },
+            get: function (string|null $value) use ($application): string|null {
+                if ($application->type === ApplicationType::Assistant) {
+                    return $application->parent->table_number;
+                }
+                return $value;
             }
         );
     }
@@ -507,7 +471,7 @@ class Application extends Model
             $dealership = $this->parent()->get()->first();
         }
 
-        if (!empty($dealership->table_number) && $dealership->table_type_assigned === null) {
+        if (empty($dealership->table_number) || $dealership->table_type_assigned === null) {
             return false;
         }
 

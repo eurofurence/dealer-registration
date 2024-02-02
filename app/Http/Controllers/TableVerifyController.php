@@ -9,19 +9,23 @@ use App\Models\TableType;
 use App\Notifications\TableAcceptedNotification;
 use App\Notifications\TableAcceptedShareNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class TableVerifyController extends Controller
 {
     public function __invoke()
     {
         return view('table.confirm', [
-            "application" => \Auth::user()->application
+            "application" => Auth::user()->application
         ]);
     }
 
     public function view()
     {
-        $user = \Auth::user();
+        /** @var User */
+        $user = Auth::user();
+        /** @var Application */
         $application = $user->application;
 
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
@@ -34,30 +38,33 @@ class TableVerifyController extends Controller
                 'table_number' => $application->table_number,
             ]);
         } else {
-            return \Redirect::route('dashboard');
+            return Redirect::route('dashboard');
         }
     }
 
     public function update(Request $request)
     {
-        $application = \Auth::user()->application;
+        /** @var User */
+        $user = Auth::user();
+        /** @var Application */
+        $application = $user->application;
 
         abort_if($application->status !== ApplicationStatus::TableOffered, 403, 'No table offer available to be accepted.');
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
         $assignedTable = $application->assignedTable()->first();
 
-        if (RegSysClientController::bookPackage(\Auth::user()->reg_id, $assignedTable)) {
+        if (RegSysClientController::bookPackage(Auth::user()->reg_id, $assignedTable)) {
             $application->setStatusAttribute(ApplicationStatus::TableAccepted);
-            \Auth::user()->notify(new TableAcceptedNotification($assignedTable->name, $application->table_number, $assignedTable->price));
+            $user->notify(new TableAcceptedNotification($assignedTable->name, $application->table_number, $assignedTable->price));
             foreach ($application->children()->get() as $child) {
                 if ($child->type === ApplicationType::Share) {
                     $child->user()->first()->notify(new TableAcceptedShareNotification($assignedTable->name, $application->table_number, $assignedTable->price));
                 }
             }
-            return \Redirect::route('table.confirm')->with('table-confirmation-successful');
+            return Redirect::route('table.confirm')->with('table-confirmation-successful');
         } else {
-            return \Redirect::route('table.confirm')->with('table-confirmation-error');
+            return Redirect::route('table.confirm')->with('table-confirmation-error');
         }
     }
 

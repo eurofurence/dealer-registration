@@ -21,13 +21,58 @@ enum ApplicationStatus: string
             return ApplicationStatus::CheckedOut;
         } elseif (!is_null($application->checked_in_at)) {
             return ApplicationStatus::CheckedIn;
-        } elseif (!is_null($application->waiting_at)) {
+        } elseif (
+            (
+                $application->type !== \App\Enums\ApplicationType::Dealer
+                && !is_null($application->parent->waiting_at))
+            || (
+                $application->type === \App\Enums\ApplicationType::Dealer
+                && !is_null($application->waiting_at)
+            )
+        ) {
             return ApplicationStatus::Waiting;
-        } elseif (!is_null($application->offer_accepted_at)) {
+        } elseif (
+            (
+                $application->type !== \App\Enums\ApplicationType::Dealer
+                && !is_null($application->parent->offer_accepted_at)
+            )
+            || (
+                $application->type === \App\Enums\ApplicationType::Dealer && !is_null($application->offer_accepted_at)
+            )
+        ) {
             return ApplicationStatus::TableAccepted;
-        } elseif (!is_null($application->offer_sent_at)) {
+        } elseif (
+            (
+                $application->type !== \App\Enums\ApplicationType::Dealer
+                && !is_null($application->parent->offer_sent_at)
+            )
+            || (
+                $application->type === \App\Enums\ApplicationType::Dealer && !is_null($application->offer_sent_at)
+            )
+        ) {
             return ApplicationStatus::TableOffered;
-        } elseif (($application->type !== \App\Enums\ApplicationType::Dealer || !is_null($application->table_type_assigned)) && !empty($application->table_number)) {
+        } elseif (
+            (
+                (
+                    $application->type === \App\Enums\ApplicationType::Dealer
+                    && !empty($application->table_type_assigned)
+                )
+                || (
+                    $application->type !== \App\Enums\ApplicationType::Dealer
+                    && !empty($application->parent->table_type_assigned)
+                )
+            )
+            && (
+                (
+                    $application->type === \App\Enums\ApplicationType::Assistant
+                    && !empty($application->parent->table_number)
+                )
+                || (
+                    $application->type !== \App\Enums\ApplicationType::Assistant
+                    && !empty($application->table_number)
+                )
+            )
+        ) {
             return ApplicationStatus::TableAssigned;
         } else {
             return ApplicationStatus::Open;
