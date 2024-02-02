@@ -26,7 +26,7 @@
                                     If a table has already been assigned to you, you will lose it.<br>
                                     <b>Please only continue if you are sure that you want to cancel your application.</b>
                                 </p>
-                                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">                                    
+                                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                                     <a href="{{ route('dashboard') }}"
                                        class="btn btn-outline-secondary btn-lg px-4">Keep my Application</a>
                                     <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Cancel Application
@@ -38,11 +38,11 @@
                             <h1 class="display-5 fw-bold">You are leaving another dealer!</h1>
                             <div class="col-lg-6 mx-auto">
                                 <p class="lead mb-4">
-                                    This action will cause you to be completely removed as a {{ $application->type }} from the dealership.
+                                    This action will cause you to be completely removed as {{ $application->type }} from the dealership.
                                     The owner of the dealership will be notified that you have left their application.
                                 </p>
                                 <p>
-                                    You may choose to apply as dealership or join another dealership after you left.
+                                    You may choose to apply for a dealership of your own or join another dealership after you left.
                                 </p>
                                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                                     <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Leave Dealership
