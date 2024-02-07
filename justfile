@@ -55,7 +55,7 @@ suspend: (_homestead "vagrant suspend")
 ssh COMMAND='': (_homestead "vagrant ssh"+(if COMMAND != '' { " -c '"+COMMAND+"'" } else { "" }))
 
 # bring up vite on Homestead
-dev: (ssh 'cd app; yarn dev --host 0.0.0.0')
+dev: (ssh 'cd app; npm run dev -- --host 0.0.0.0')
 
 # open MySQL shell on Homestead
 mysql: (ssh 'mysql')
