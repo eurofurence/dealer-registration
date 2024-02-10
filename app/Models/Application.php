@@ -251,6 +251,7 @@ class Application extends Model
                 'type' => ApplicationType::Dealer,
                 'canceled_at' => now(),
             ]);
+            return;
         }
 
         // Don't reset timestamps when application is saved without status change!

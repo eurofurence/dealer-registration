@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use ZipArchive;
@@ -80,6 +79,16 @@ class ProfileController extends Controller
     {
         return Profile::findByApplicationId($applicationId) ?? new Profile();
     }
+
+    public static function createIfNotExists(int|null $applicationId)
+    {
+        if (self::getByApplicationId($applicationId) === null) {
+            Profile::create([
+                "application_id" => $applicationId,
+            ]);
+        }
+    }
+
 
     public static function getByApplicationId(int|null $applicationId): Profile|null
     {
