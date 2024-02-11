@@ -77,7 +77,7 @@ class ApplicationController extends Controller
             'code' => $code,
             'invitingApplication' => $invitingApplication,
             'confirmation' => $request->session()->get(InvitationController::SESSION_CONFIRMATION_KEY),
-            'profile' => ProfileController::getByApplicationId($application->id)
+            'profile' => ProfileController::getOrCreate($application->id),
         ]);
     }
 

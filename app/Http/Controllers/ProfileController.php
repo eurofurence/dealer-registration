@@ -80,16 +80,6 @@ class ProfileController extends Controller
         return Profile::findByApplicationId($applicationId) ?? new Profile();
     }
 
-    public static function createIfNotExists(int|null $applicationId)
-    {
-        if (self::getByApplicationId($applicationId) === null) {
-            Profile::create([
-                "application_id" => $applicationId,
-            ]);
-        }
-    }
-
-
     public static function getByApplicationId(int|null $applicationId): Profile|null
     {
         return Profile::findByApplicationId($applicationId);

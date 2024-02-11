@@ -6,7 +6,6 @@ use App\Enums\ApplicationType;
 use App\Enums\StatusNotificationResult;
 use App\Filament\Resources\ApplicationResource;
 use App\Http\Controllers\Applications\ApplicationController;
-use App\Http\Controllers\ProfileController;
 use App\Models\Application;
 use Filament\Notifications\Notification;
 use Filament\Actions;
@@ -39,12 +38,19 @@ class EditApplication extends EditRecord
     // Make sure a profile is created when manually upgrading an application from assistant to dealer or share.
     protected function beforeSave(): void
     {
-        if (isset($this->data['type'])) {
-            if ($this->record['type']->value != $this->data['type'] ) {
-                if ($this->data['type'] === ApplicationType::Dealer->value || $this->data['type'] === ApplicationType::Share->value) {
-                    ProfileController::createIfNotExists($this->data['id']);
-                }
-            }
+        /** @var Application */
+        $application = $this->record;
+        $newType = ApplicationType::from($this->data['type']);
+
+        if ($application->profile) {
+            return;
+        }
+
+        if (
+            $newType === ApplicationType::Dealer
+            || $newType === ApplicationType::Share
+        ) {
+            $application->profile()->create();
         }
     }
 
