@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ApplicationResource\Pages;
 
+use App\Enums\ApplicationType;
 use App\Enums\StatusNotificationResult;
 use App\Filament\Resources\ApplicationResource;
 use App\Http\Controllers\Applications\ApplicationController;
@@ -32,6 +33,25 @@ class EditApplication extends EditRecord
     public function getRecord(): Application
     {
         return parent::getRecord();
+    }
+
+    // Make sure a profile is created when manually upgrading an application from assistant to dealer or share.
+    protected function beforeSave(): void
+    {
+        /** @var Application */
+        $application = $this->record;
+        $newType = ApplicationType::from($this->data['type']);
+
+        if ($application->profile) {
+            return;
+        }
+
+        if (
+            $newType === ApplicationType::Dealer
+            || $newType === ApplicationType::Share
+        ) {
+            $application->profile()->create();
+        }
     }
 
     public function sendStatusNotification()

@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Application extends Model
@@ -72,7 +71,7 @@ class Application extends Model
 
     public function profile()
     {
-        return $this->belongsTo(Profile::class, 'id', 'application_id', 'profiles');
+        return $this->hasOne(Profile::class);
     }
 
     public function comments()
@@ -92,8 +91,8 @@ class Application extends Model
                             'parent_id' => null,
                             'type' => $type,
                         ];
-                    case ApplicationType::Assistant:
                     case ApplicationType::Share:
+                    case ApplicationType::Assistant:
                         // Assistant and share has no table
                         return [
                             'type' => $type,
@@ -251,6 +250,7 @@ class Application extends Model
                 'type' => ApplicationType::Dealer,
                 'canceled_at' => now(),
             ]);
+            return;
         }
 
         // Don't reset timestamps when application is saved without status change!
