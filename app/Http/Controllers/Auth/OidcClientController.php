@@ -63,17 +63,23 @@ class OidcClientController extends Controller
         }
         $userinfo = $userinfoRequest->json();
 
-        if (!isset($userinfo['sub'])) {
+        $identityId = $userinfo['sub'] ?? null;
+        if ($identityId === null) {
             throw new UnexpectedValueException("Could not request user id from freshly fetched token.");
         }
 
-        $userid = $userinfo['sub'];
+        $user = User::where('identity_id', '=', $identityId)->first();
         $user = User::updateOrCreate([
-            "identity_id" => $userinfo['sub']
+            "identity_id" => $identityId
         ], [
-            "identity_id" => $userinfo['sub'],
+            "identity_id" => $identityId,
             "name" => $userinfo['name'],
-            "email" => $userinfo['email'],
+            /*
+             * Only sync email address on initial sign-in to avoid drift between address used for
+             * con registration and DD application. EF
+             * TODO: Avoid storing email address entirely by using IDP ID to send email/sync regs
+             */
+            "email" => $user?->email ?? $userinfo['email'],
             "groups" => $userinfo['groups'],
         ]);
         $user = $user->fresh();
