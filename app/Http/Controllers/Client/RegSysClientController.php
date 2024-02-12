@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerExceptionInterface;
 
@@ -80,14 +81,32 @@ class RegSysClientController extends Controller
         }
     }
 
-    public static function getAllRegs(): mixed
+    /**
+     * Retrieve basic data on all registrations indexed by email or id.
+     *
+     * @param string $key registration attribute to be used as key for the associative array (must be 'email' or 'id')
+     * @return array associative array of all registrations using the value of the attribute
+     *               defined by `$key` as the key for the respective registration.
+     * @throws BindingResolutionException
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
+    public static function getAllRegs($key = 'email'): array
     {
+        if ($key !== 'email' && $key !== 'id') {
+            throw new InvalidArgumentException('key must be either "email" or "id"');
+        }
+
         $response = Http::get(config('services.regsys.url') . '/dealers-den-api', [
             'token' => config('services.regsys.token'),
         ]);
 
         if ($response->ok()) {
-            return $response->json('result');
+            $result = (array)$response->json('result');
+            return array_reduce($result, function ($registrations, $registration) use ($key) {
+                $registrations[$registration[$key]] = $registration;
+                return $registrations;
+            }, []);
         } else {
             self::logError("Registrations could not be retrieved, reason: " . $response->reason());
             return [];
