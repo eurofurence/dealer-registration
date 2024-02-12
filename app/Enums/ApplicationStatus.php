@@ -28,7 +28,7 @@ enum ApplicationStatus: string
             )
             || (
                 $application->type !== \App\Enums\ApplicationType::Dealer
-                && !is_null($application->parent()->first()->waiting_at)
+                && !is_null($application->parent()->first()?->waiting_at)
             )
         ) {
             return ApplicationStatus::Waiting;
@@ -38,7 +38,7 @@ enum ApplicationStatus: string
             )
             || (
                 $application->type !== \App\Enums\ApplicationType::Dealer
-                && !is_null($application->parent()->first()->offer_accepted_at)
+                && !is_null($application->parent()->first()?->offer_accepted_at)
             )
         ) {
             return ApplicationStatus::TableAccepted;
@@ -48,7 +48,7 @@ enum ApplicationStatus: string
             )
             || (
                 $application->type !== \App\Enums\ApplicationType::Dealer
-                && !is_null($application->parent()->first()->offer_sent_at)
+                && !is_null($application->parent()->first()?->offer_sent_at)
             )
         ) {
             return ApplicationStatus::TableOffered;
@@ -60,7 +60,7 @@ enum ApplicationStatus: string
                 )
                 || (
                     $application->type !== \App\Enums\ApplicationType::Dealer
-                    && !empty($application->parent()->first()->table_type_assigned)
+                    && !empty($application->parent()->first()?->table_type_assigned)
                 )
             )
             && (
