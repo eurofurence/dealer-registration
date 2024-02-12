@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Http\Controllers\Client\RegSysClientController;
+use App\Jobs\SynchronizeRegsys;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -78,21 +79,7 @@ class UserResource extends Resource
                 Tables\Actions\BulkAction::make('Update reg ids')
                     ->requiresConfirmation()
                     ->action(function (Collection $records): void {
-                        $regs = RegSysClientController::getAllRegs();
-                        foreach ($records as $record) {
-                            $found = false;
-                            foreach ($regs as $reg) {
-                                if ($record->email == $reg['email']) {
-                                    $record->reg_id = $reg['id'];
-                                    $found = true;
-                                    break;
-                                }
-                            }
-                            if (!$found) {
-                                $record->reg_id = null;
-                            }
-                            $record->save();
-                        }
+                        SynchronizeRegsys::syncRegistrationIds($records->pluck('id')->all());
                     }),
             ]);
     }
