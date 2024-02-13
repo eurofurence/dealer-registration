@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Controllers\Client\RegSysClientController;
+use App\Models\Application;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -29,10 +30,13 @@ class SynchronizeRegsys implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): void
     {
-        self::syncRegistrationIds();
+        self::sync();
+
+        User::query()->whereNotNull('reg_id')->each(function (User $user) {
+        });
     }
 
-    public static function syncRegistrationIds(array $userIds = null): void
+    public static function sync(array $userIds = null): bool
     {
         $registrations = RegSysClientController::getAllRegs();
         $userQuery = User::query();
@@ -41,18 +45,33 @@ class SynchronizeRegsys implements ShouldQueue, ShouldBeUnique
             $userQuery->whereIn('id', $userIds);
         }
 
-        $userQuery->each(function (User $user) use ($registrations) {
-            if (
-                ($registration = $registrations[$user->email] ?? null)
-                && $user->reg_id !== $registration['id']
-            ) {
-                $user->update([
-                    'reg_id' => $registration['id'],
-                ]);
+        return $userQuery->each(function (User $user) use ($registrations) {
+            $regId = $user->reg_id;
+            if ($registration = $registrations[$user->email] ?? null) {
+                $regId = $registration['id'];
             } elseif (!empty($user->reg_id)) {
-                $user->update([
-                    'reg_id' => null,
-                ]);
+                $regId = null;
+            }
+
+            if ($regId != $user->reg_id) {
+                if ($user->update(['reg_id' => $regId])) {
+                    Log::info("Successfully updated registration id for user {$user->id} from '{$user->reg_id}' to '{$regId}'.");
+                } else {
+                    Log::warning("Failed to update registration id for user {$user->id} from '{$user->reg_id}' to '{$regId}'.");
+                }
+            }
+
+            if ($regId !== null) {
+                /**
+                 * @var ?Application
+                 */
+                $application = $user->application()->first() ?? null;
+                $applicationIsActive = $application?->isActive() ?? false;
+                if (RegSysClientController::setAdditionalInfoDealerReg($regId, $applicationIsActive)) {
+                    Log::info("Successfully " . ($applicationIsActive ? 'set' : 'cleared'). " dealer registration flag on registration system for user {$user->id} with registration ID {$regId}.");
+                } else {
+                    Log::warning("Failed to " . ($applicationIsActive ? 'set' : 'cleared'). " dealer registration flag on registration system for user {$user->id} with registration ID {$regId}.");
+                }
             }
         });
     }
