@@ -31,47 +31,69 @@ class SynchronizeRegsys implements ShouldQueue, ShouldBeUnique
     public function handle(): void
     {
         self::sync();
-
-        User::query()->whereNotNull('reg_id')->each(function (User $user) {
-        });
     }
 
     public static function sync(array $userIds = null): bool
     {
+        return self::fetchMissingRegistrationIds($userIds)
+            && self::updateAdditionalInfoDealerReg($userIds);
+    }
+
+    private static function fetchMissingRegistrationIds(array $userIds = null): bool
+    {
         $registrations = RegSysClientController::getAllRegs();
-        $userQuery = User::query();
+        $userQuery = User::query()->whereNull('reg_id');
 
         if ($userIds) {
             $userQuery->whereIn('id', $userIds);
         }
 
         return $userQuery->each(function (User $user) use ($registrations) {
-            $regId = $user->reg_id;
-            if ($registration = $registrations[$user->email] ?? null) {
-                $regId = $registration['id'];
-            } elseif (!empty($user->reg_id)) {
-                $regId = null;
+            $registration = $registrations[$user->email] ?? null;
+
+            if ($registration === null) {
+                return;
             }
 
-            if ($regId != $user->reg_id) {
-                if ($user->update(['reg_id' => $regId])) {
-                    Log::info("Successfully updated registration id for user {$user->id} from '{$user->reg_id}' to '{$regId}'.");
-                } else {
-                    Log::warning("Failed to update registration id for user {$user->id} from '{$user->reg_id}' to '{$regId}'.");
-                }
+            $registrationId = $registration['id'] ?? null;
+
+            if ($registrationId === null) {
+                return;
             }
 
-            if ($regId !== null) {
-                /**
-                 * @var ?Application
-                 */
-                $application = $user->application()->first() ?? null;
-                $applicationIsActive = $application?->isActive() ?? false;
-                if (RegSysClientController::setAdditionalInfoDealerReg($regId, $applicationIsActive)) {
-                    Log::info("Successfully " . ($applicationIsActive ? 'set' : 'cleared'). " dealer registration flag on registration system for user {$user->id} with registration ID {$regId}.");
-                } else {
-                    Log::warning("Failed to " . ($applicationIsActive ? 'set' : 'cleared'). " dealer registration flag on registration system for user {$user->id} with registration ID {$regId}.");
-                }
+            if ($user->update(['reg_id' => $registrationId])) {
+                Log::info("Successfully added registration id '{$registrationId}' to user {$user->id}.");
+            } else {
+                Log::warning("Failed to add registration id '{$registrationId}' to user {$user->id}.");
+            }
+        });
+    }
+
+    private static function updateAdditionalInfoDealerReg(array $userIds = null)
+    {
+        $userQuery = User::query()->whereNotNull('reg_id');
+
+        if ($userIds) {
+            $userQuery->whereIn('id', $userIds);
+        }
+
+        $userQuery->each(function (User $user) {
+            /**
+             * @var ?Application
+             */
+            $application = $user->application()->first() ?? null;
+            $applicationIsActive = $application?->isActive() ?? false;
+            $registrationId = $user->reg_id;
+
+            if (RegSysClientController::getAdditionalInfoDealerReg($registrationId) === $applicationIsActive) {
+                // No need to update flag without change
+                return;
+            }
+
+            if (RegSysClientController::setAdditionalInfoDealerReg($registrationId, $applicationIsActive)) {
+                Log::info("Successfully " . ($applicationIsActive ? 'set' : 'cleared') . " dealer registration flag on registration system for user {$user->id} with registration ID {$registrationId}.");
+            } else {
+                Log::warning("Failed to " . ($applicationIsActive ? 'set' : 'clear') . " dealer registration flag on registration system for user {$user->id} with registration ID {$registrationId}.");
             }
         });
     }

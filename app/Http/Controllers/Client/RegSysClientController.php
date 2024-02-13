@@ -8,42 +8,44 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use InvalidArgumentException;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerExceptionInterface;
 
 class RegSysClientController extends Controller
 {
-    public static function getPackages(string|null $regId): mixed
+    public static function getPackages(?string $regId): ?array
     {
-        if (!self::validateParam($regId, 'reg id')) {
-            return [];
+        if (empty($regId)) {
+            return null;
         }
 
-        $response = Http::get(config('services.regsys.url') . '/package-api', [
+        $response = Http::get(config('services.regsys.url') . '/regsys/service/package-api', [
             'token' => config('services.regsys.token'),
             'id' => $regId,
         ]);
 
         if ($response->ok()) {
-            return $response->json('packages');
+            return (array)$response->json('packages');
         } else {
             self::logError("Registration with id " . $regId . " could not be retrieved, reason: " . $response->reason());
-            return [];
+            return null;
         }
     }
 
-    public static function bookPackage(string|null $regId, TableType $tableType): bool
+    public static function bookPackage(string $regId, TableType $tableType): bool
     {
-        if (!self::validateParam($regId, 'reg id')) {
+        if (empty($regId)) {
             return false;
         }
-        if (!self::validateParam($tableType, 'table type')) {
+        if ($tableType === null) {
+            self::logError("Unable book table package for registration ID {$regId} without valid table type.");
             return false;
         }
 
         $url = config('services.regsys.url')
-            . '/package-api?token=' . config('services.regsys.token')
+            . '/regsys/service/package-api?token=' . config('services.regsys.token')
             . "&id=" . $regId
             . "&package=" . $tableType->package;
 
@@ -57,17 +59,18 @@ class RegSysClientController extends Controller
         }
     }
 
-    public static function removePackage(string|null $regId, TableType $tableType): bool
+    public static function removePackage(string $regId, TableType $tableType): bool
     {
-        if (!self::validateParam($regId, 'reg id')) {
+        if (empty($regId)) {
             return false;
         }
-        if (!self::validateParam($tableType, 'table type')) {
+        if ($tableType === null) {
+            self::logError("Unable remove table package for registration ID {$regId} without valid table type.");
             return false;
         }
 
         $url = config('services.regsys.url')
-            . '/package-api?token=' . config('services.regsys.token')
+            . '/regsys/service/package-api?token=' . config('services.regsys.token')
             . "&id=" . $regId
             . "&package=" . $tableType->package;
 
@@ -97,7 +100,7 @@ class RegSysClientController extends Controller
             throw new InvalidArgumentException('key must be either "email" or "id"');
         }
 
-        $response = Http::get(config('services.regsys.url') . '/dealers-den-api', [
+        $response = Http::get(config('services.regsys.url') . '/regsys/service/dealers-den-api', [
             'token' => config('services.regsys.token'),
         ]);
 
@@ -113,13 +116,13 @@ class RegSysClientController extends Controller
         }
     }
 
-    public static function getSingleReg(string|null $regId): mixed
+    public static function getSingleReg(?string $regId): mixed
     {
-        if (!self::validateParam($regId, 'reg id')) {
+        if (empty($regId)) {
             return null;
         }
 
-        $response = Http::get(config('services.regsys.url') . '/dealers-den-api', [
+        $response = Http::get(config('services.regsys.url') . '/regsys/service/dealers-den-api', [
             'token' => config('services.regsys.token'),
             'id' => $regId,
         ]);
@@ -151,7 +154,7 @@ class RegSysClientController extends Controller
      */
     public static function setAdditionalInfoDealerReg(string $regId, bool $hasDealerReg): bool|null
     {
-        if (!self::validateParam($regId, 'reg id')) {
+        if (empty($regId)) {
             return null;
         }
 
@@ -163,15 +166,15 @@ class RegSysClientController extends Controller
 
         $response = null;
         if ($hasDealerReg) {
-            $response = $httpRequest->post(config('services.regsys.url') . '/addinfo-api');
+            $response = $httpRequest->post(config('services.regsys.url') . '/regsys/service/addinfo-api');
         } else {
-            $response = $httpRequest->delete(config('services.regsys.url') . '/addinfo-api');
+            $response = $httpRequest->delete(config('services.regsys.url') . '/regsys/service/addinfo-api');
         }
 
         $result = $response?->json();
 
         if (!$response?->ok() || $result['ok'] !== true) {
-            self::logError("Additional info 'dealerreg' for registration with id {$regId} could not be set to {$hasDealerReg}, reason: " . ($response?->reason() ?? 'request failed') . " " . $result['message'] ?? 'for unknown reason');
+            self::logError("Additional info 'dealerreg' for registration with id {$regId} could not be set to {$hasDealerReg}, reason: " . ($response?->reason() ?? 'request failed') . " " . ($result['message'] ?? 'for unknown reason'));
             return null;
         }
 
@@ -189,11 +192,11 @@ class RegSysClientController extends Controller
      */
     public static function getAdditionalInfoDealerReg(string $regId): bool|null
     {
-        if (!self::validateParam($regId, 'reg id')) {
+        if (empty($regId)) {
             return null;
         }
 
-        $response = Http::get(config('services.regsys.url') . '/addinfo-api', [
+        $response = Http::get(config('services.regsys.url') . '/regsys/service/addinfo-api', [
             'token' => config('services.regsys.token'),
             'area' => 'dealerreg',
             'id' => $regId,
@@ -202,22 +205,53 @@ class RegSysClientController extends Controller
         $result = $response?->json();
 
         if (!$response?->ok() || $result['ok'] !== true) {
-            self::logError("Additional info 'dealerreg' for registration with id " . $regId . " could not be retrieved, reason: " . ($response?->reason() ?? 'request failed') . " " . $result['message'] ?? 'for unknown reason');
+            self::logError("Additional info 'dealerreg' for registration with id " . $regId . " could not be retrieved, reason: " . ($response?->reason() ?? 'request failed') . " " . ($result['message'] ?? 'for unknown reason'));
             return null;
         }
 
-        return $result['enabled'];
+        return boolval($result['enabled']);
     }
 
-    private static function validateParam(object|string|null $param, string $type): bool
+    /**
+     * Retrieve registration ID for user identified either by provided access token or the one
+     * stored in the current user's session.
+     *
+     * @param null|string $accessToken optional access token to be used instead of session
+     * @return null|string registration ID provided by attendee service
+     * @throws BindingResolutionException
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws Exception
+     */
+    public static function getRegistrationIdForCurrentUser(?string $accessToken = null): ?string
     {
-        if (empty($param)) {
-            self::logError("Parameter " . $type . " missing");
-            return false;
-        } else {
-            return true;
+        if ($accessToken === null && !Session::has('access_token')) {
+            return null;
         }
+
+        $response = Http::withToken($accessToken ?? Session::get('access_token'))->get(config('services.regsys.url') . '/attsrv/api/rest/v1/attendees');
+
+        if ($response->notFound()) {
+            return null;
+        }
+
+        if ($response->ok()) {
+            $result = $response->json('ids');
+            if (empty($result)) {
+                return null;
+            }
+            if (count($result) !== 1) {
+                self::logError("Expected zero or one registration IDs, but got: " . print_r($result, true));
+                return null;
+            }
+
+            return $result[0];
+        }
+
+        self::logError("Registration id for currently signed-in user could not be retrieved, reason: " . $response->reason());
+        return null;
     }
+
 
     private static function logError(string $message)
     {
