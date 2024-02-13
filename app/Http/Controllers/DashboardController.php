@@ -10,13 +10,19 @@ class DashboardController extends Controller
     public function __invoke()
     {
         $user = Auth::user();
+        $registrationId = $user->reg_id;
 
         $application = $user->application;
-        $efRegistration = RegSysClientController::getSingleReg($user->reg_id);
+
+        if (!$registrationId && $registrationId = RegSysClientController::getRegistrationIdForCurrentUser()) {
+            $application->user()->update(['reg_id' => $registrationId]);
+        }
+
+        $registration = $registrationId ? RegSysClientController::getSingleReg($registrationId) : null;
 
         return view('dashboard', [
             "application" => $application,
-            "efRegistrationStatus" => $efRegistration ? $efRegistration['status'] : false,
+            "registration" => $registration,
         ]);
     }
 }

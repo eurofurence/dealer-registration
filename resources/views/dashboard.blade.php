@@ -12,9 +12,20 @@
                     <b>{{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
                 <p class="lead mb-4">
-                    Please note that a <strong>valid registration for Eurofurence</strong> by that date is required to apply for the Dealers’ Den.<br />
-                    Applications for dealerships will only be taken into consideration if <strong>all members</strong> have a valid registration when the application phase ends.
+                    Please note that a <strong>valid registration for Eurofurence</strong> by that date is required to apply
+                    for the Dealers’ Den.<br />
+                    Applications for dealerships will only be taken into consideration if <strong>all members</strong> have
+                    a valid registration when the application phase ends.
                 </p>
+                @if (!$application?->isActive() ?? false)
+                    <p class="lead mb-4">
+                        @if ($registration)
+                            You are <strong>registered</strong> for this year's Eurofurence with <em>badge number {{$registration['id']}}</em> and your registration status is <em>{{$registration['status']}}</em>.
+                        @else
+                            You currently do not seem to be registered for this year's Eurofurence.
+                        @endif
+                    </p>
+                @endif
             @else
                 <p class="lead mb-4">The registration period has ended. You can still update your profile data which will be
                     displayed in the EF app.</p>
@@ -27,75 +38,65 @@
     </div>
     @if (isset($application))
         @if (
-            $application->getStatus() === \App\Enums\ApplicationStatus::Open ||
-                $application->getStatus() === \App\Enums\ApplicationStatus::TableAssigned)
-            @if ($application->type === \App\Enums\ApplicationType::Dealer)
-                <div class="alert alert-info text-center">
-                    <div class="w-50 mx-auto">
-                        <h3>Application in Review</h3>
-                        <p>Your registration as a dealer is currently being reviewed.</p>
-                        <p>Please wait for our team to process your application. You will be notified via email if your
-                            application status changes.</p>
-                    </div>
-                </div>
-            @else
-                <div class="alert alert-info text-center">
-                    <div class="w-50 mx-auto">
-                        <h3>Application in Review</h3>
-                        <p>The registration of the dealership you are part of is currently being reviewed.</p>
-                        <p>Please wait for our team to process the application. The main account of your dealership will be
-                            notified via email if the application status changes.</p>
-                    </div>
-                </div>
-            @endif
-        @elseif ($application->getStatus() === \App\Enums\ApplicationStatus::Waiting)
-            @if ($application->type === \App\Enums\ApplicationType::Dealer)
-                <div class="alert alert-info text-center">
-                    <div class="w-50 mx-auto">
-                        <h3>Application on Waiting List</h3>
-                        <p>Your registration as a dealer is currently on the waiting list.</p>
-                        <p>Please be patient, you will be notified via email if your
-                            application status changes.</p>
-                    </div>
-                </div>
-            @else
-                <div class="alert alert-info text-center">
-                    <div class="w-50 mx-auto">
-                        <h3>Application on Waiting List</h3>
-                        <p>The registration of the dealership you are part of is currently on the waiting list.</p>
-                        <p>Please be patient, the main account of your dealership will be
-                            notified via email if the application status changes.</p>
-                    </div>
-                </div>
-            @endif
-        @elseif ($application->status === \App\Enums\ApplicationStatus::TableOffered)
-            @if ($application->type === \App\Enums\ApplicationType::Dealer)
-                <div class="alert alert-info text-center">
-                    <div class="w-50 mx-auto">
-                        <h3>Congratulations!</h3>
-                        <p>Your registration as a dealer was accepted! Please review and accept the table you were offered.
-                        </p>
-                        <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a>
-                    </div>
-                </div>
-            @else
-                <div class="alert alert-info text-center">
-                    <div class="w-50 mx-auto">
-                        <h3>Congratulations!</h3>
-                        <p>The application of the dealership you are part of was accepted! The main account of your
-                            dealership has been informed via email and needs to review and accept the assigned table.</p>
-                        <p>For any questions about the table your dealership was assigned, please contact the person who
-                            initated the application.</p>
-                    </div>
-                </div>
-            @endif
-        @elseif ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
+            $application->type === \App\Enums\ApplicationType::Dealer &&
+                $application->getStatus() === \App\Enums\ApplicationStatus::Canceled)
+            <div class="alert alert-danger text-center fw-bold">Your application has been canceled.</div>
+        @else
             <div class="alert alert-info text-center">
                 <div class="w-50 mx-auto">
-                    <h3>See you at Eurofurence!</h3>
-                    <h5>Your table in this year’s Dealers’ Den will be: <strong>{{ $application->table_number }}</strong>
-                    </h5>
-                    @switch($efRegistrationStatus)
+                    @if (
+                        $application->getStatus() === \App\Enums\ApplicationStatus::Open ||
+                            $application->getStatus() === \App\Enums\ApplicationStatus::TableAssigned)
+                        @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                            <h3>Application in Review</h3>
+                            <p>Your registration as a dealer is currently being reviewed.</p>
+                            <p>Please wait for our team to process your application. You will be notified via email if your
+                                application status changes.</p>
+                        @else
+                            <h3>Application in Review</h3>
+                            <p>The registration of the dealership you are part of is currently being reviewed.</p>
+                            <p>Please wait for our team to process the application. The main account of your dealership will
+                                be
+                                notified via email if the application status changes.</p>
+                        @endif
+                    @elseif ($application->getStatus() === \App\Enums\ApplicationStatus::Waiting)
+                        @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                            <h3>Application on Waiting List</h3>
+                            <p>Your registration as a dealer is currently on the waiting list.</p>
+                            <p>Please be patient, you will be notified via email if your
+                                application status changes.</p>
+                        @else
+                            <h3>Application on Waiting List</h3>
+                            <p>The registration of the dealership you are part of is currently on the waiting list.</p>
+                            <p>Please be patient, the main account of your dealership will be
+                                notified via email if the application status changes.</p>
+                        @endif
+                    @elseif ($application->status === \App\Enums\ApplicationStatus::TableOffered)
+                        @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                            <h3>Congratulations!</h3>
+                            <p>Your registration as a dealer was accepted! Please review and accept the table you were
+                                offered.
+                            </p>
+                            <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a>
+                        @else
+                            <h3>Congratulations!</h3>
+                            <p>The application of the dealership you are part of was accepted! The main account of your
+                                dealership has been informed via email and needs to review and accept the assigned table.
+                            </p>
+                            <p>For any questions about the table your dealership was assigned, please contact the person who
+                                initated the application.</p>
+                        @endif
+                    @elseif ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
+                        <h3>See you at Eurofurence!</h3>
+                        <h5>Your table in this year’s Dealers’ Den will be:
+                            <strong>{{ $application->table_number }}</strong>
+                        </h5>
+                    @elseif ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
+                        <h3>Welcome to Eurofurence!</h3>
+                        <h5>Your table in this year’s Dealers’ Den is: <strong>{{ $application->table_number }}</strong>
+                        </h5>
+                    @endif
+                    @switch($registration['status'] ?? '')
                         @case('new')
                         @case('approved')
 
@@ -106,33 +107,40 @@
                         @break
 
                         @case('paid')
-                            <p>According to our records, your EF registration status is <em>{{ $efRegistrationStatus }}</em>, and
-                                you are all set and ready to go!</p>
+                            <p>According to our records, your EF registration status is <em>{{ $efRegistrationStatus }}</em>,
+                                and you are all set and ready to go!</p>
                         @break
 
                         @case('cancelled')
-                            <p>Going by our records, it seems your EF registration status is <em>{{ $efRegistrationStatus }}</em>.
-                                Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence this
-                                year after all!</p>
+                            <p class="alert alert-danger text-center">
+                                Going by our records, it seems your EF registration status is
+                                <em>{{ $efRegistrationStatus }}</em>.
+                                Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence
+                                this year after all!
+                            </p>
                         @break
 
                         @default
+                            <p class="alert alert-danger text-center">
+                                <strong>We were unable to find an EF registration for your account!</strong><br>
+                                @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                                    @if ($application->type === \App\Enums\ApplicationType::Assistant)
+                                        Please make sure to <em>register and pay for your for this year's Eurofurence before
+                                            {{ Carbon\Carbon::parse(config('con.assistant_end_date'))->format('d.m.Y H:i') }}</em>,
+                                        if you wish to be an assistant at the Dealers' Den!
+                                    @else
+                                        Please make sure to <em>register for this year's Eurofurence before
+                                            {{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</em>, if you
+                                        wish for your application to be taken into consideration for the Dealers' Den!
+                                    @endif
+                                @else
+                                    Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence
+                                    this year after all!
+                                @endif
+                            </p>
                     @endswitch
                 </div>
             </div>
-        @elseif ($application->status === \App\Enums\ApplicationStatus::CheckedIn)
-            <div class="alert alert-info text-center">
-                <div class="w-50 mx-auto">
-                    <h3>Welcome to Eurofurence!</h3>
-                    <h5>Your table in this year’s Dealers’ Den is: <strong>{{ $application->table_number }}</strong></h5>
-                </div>
-            </div>
-        @endif
-
-        @if (
-            $application->type === \App\Enums\ApplicationType::Dealer &&
-                $application->getStatus() === \App\Enums\ApplicationStatus::Canceled)
-            <div class="alert alert-danger text-center fw-bold">Your application has been canceled.</div>
         @endif
     @endif
 
