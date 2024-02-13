@@ -273,17 +273,17 @@ class ApplicationController extends Controller
             'Pragma' => 'public'
         ];
 
-        $applications = Application::getAllApplicationsForExport();
+        $applications = Application::getAllApplicationsForExport()?->toArray();
 
         if (!empty($applications)) {
             # add table headers
-            array_unshift($applications, array_keys($applications[0]));
+            array_unshift($applications, array_keys((array)$applications[0]));
         }
 
         $callback = function () use ($applications) {
             $handle = fopen('php://output', 'w');
             foreach ($applications as $row) {
-                fputcsv($handle, $row);
+                fputcsv($handle, (array)$row);
             }
             fclose($handle);
         };
@@ -310,15 +310,15 @@ class ApplicationController extends Controller
 
         $csvFile = tmpfile();
         $csvFileUri = stream_get_meta_data($csvFile)['uri'];
-        $applications = Application::getAllApplicationsForAppExport();
+        $applications = Application::getAllApplicationsForAppExport()?->toArray();
 
         if (!empty($applications)) {
             # add table headers
-            array_unshift($applications, array_keys($applications[0]));
+            array_unshift($applications, array_keys((array)$applications[0]));
         }
 
         foreach ($applications as $row) {
-            fputcsv($csvFile, $row, $separator);
+            fputcsv($csvFile, (array)$row, $separator);
         }
         fflush($csvFile);
 

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -338,15 +338,17 @@ class Application extends Model
             )->get();
     }
 
-    public static function getAllApplicationsForExport()
+    public static function getAllApplicationsForExport(): \Illuminate\Support\Collection
     {
-        $keywords = DB::table('profiles')
+        $keywords = Profile::query()->toBase()
             ->leftJoin('keyword_profile', 'keyword_profile.profile_id', '=', 'profiles.id')
             ->leftJoin('keywords', 'keywords.id', '=', 'keyword_profile.keyword_id')
             ->leftJoin('categories', 'keywords.id', '=', 'categories.id')
             ->groupBy('profiles.id')
             ->select(DB::raw('GROUP_CONCAT(`keywords`.`name` SEPARATOR \',\') AS `keywords`, GROUP_CONCAT(`categories`.`name` SEPARATOR \',\') AS `categories`, `profiles`.`id` AS `profile_id`'));
-        $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
+
+        $applications = self::query()->toBase()
+            ->leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
             ->leftJoin('users', 'user_id', '=', 'users.id')
             ->leftJoin('table_types AS t1', 'table_type_requested', '=', 't1.id')
             ->leftJoin('table_types AS t2', 'table_type_assigned', '=', 't2.id')
@@ -387,12 +389,13 @@ class Application extends Model
             )
             ->get();
 
-        return json_decode(json_encode($applications), true);
+        return $applications;
     }
 
-    public static function getAllApplicationsForAppExport()
+    public static function getAllApplicationsForAppExport(): \Illuminate\Support\Collection
     {
-        $applications = self::leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
+        $applications = self::query()->toBase()
+            ->leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
             ->leftJoin('users', 'user_id', '=', 'users.id')
             ->select(
                 'applications.id AS Reg No.',
@@ -438,7 +441,7 @@ class Application extends Model
                     ->orWhere('type', ApplicationType::Dealer);
             })
             ->get();
-        return json_decode(json_encode($applications), true);
+        return $applications;
     }
 
     /**
