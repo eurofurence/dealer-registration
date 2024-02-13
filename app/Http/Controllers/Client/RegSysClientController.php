@@ -241,6 +241,8 @@ class RegSysClientController extends Controller
                 return null;
             }
             if (count($result) !== 1) {
+                // Endpoint may return multiple IDs, which is currently not relevant to us.
+                // https://github.com/eurofurence/reg-attendee-service/blob/2bfb94f71b649b50e0b188e1f7c2fb3dad0d21b8/api/openapi-spec/openapi.yaml#L35
                 self::logError("Expected zero or one registration IDs, but got: " . print_r($result, true));
                 return null;
             }
