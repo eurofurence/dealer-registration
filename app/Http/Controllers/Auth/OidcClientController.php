@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Client\RegSysClientController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Hydra\Client;
@@ -69,18 +70,16 @@ class OidcClientController extends Controller
         }
 
         $user = User::where('identity_id', '=', $identityId)->first();
+        $registrationId = $user->reg_id ?? RegSysClientController::getRegistrationIdForCurrentUser($accessToken);
         $user = User::updateOrCreate([
             "identity_id" => $identityId
         ], [
             "identity_id" => $identityId,
             "name" => $userinfo['name'],
-            /*
-             * Only sync email address on initial sign-in to avoid drift between address used for
-             * con registration and DD application. EF
-             * TODO: Avoid storing email address entirely by using IDP ID to send email/sync regs
-             */
-            "email" => $user?->email ?? $userinfo['email'],
+            // TODO: Avoid storing email address entirely by using IDP ID to send email/sync regs
+            "email" => $userinfo['email'],
             "groups" => $userinfo['groups'],
+            "reg_id" => $registrationId,
         ]);
         $user = $user->fresh();
         Auth::loginUsingId($user->id);
