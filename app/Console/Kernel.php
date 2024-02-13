@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(new SynchronizeRegsys)->hourlyAt(23);
+        if (config('con.cron_regsys_sync')) {
+            $schedule->job(new SynchronizeRegsys)->cron(config('con.cron_regsys_sync'));
+        }
     }
 
     /**
