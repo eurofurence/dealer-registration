@@ -20,4 +20,5 @@ return [
     'day_2_name' => env('CON_DAY_2', 'Thursday'),
     'day_3_name' => env('CON_DAY_3', 'Friday'),
     'day_4_name' => env('CON_DAY_4', 'Saturday'),
+    'cron_regsys_sync' => env('CON_CRON_REGSYS_SYNC', false),
 ];

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Http\Controllers\Client\RegSysClientController;
+use App\Jobs\SynchronizeRegsys;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -39,9 +40,9 @@ class UserResource extends Resource
 
                 Forms\Components\Fieldset::make('Reg status')->inlineLabel()->columns(1)->schema([
                     Forms\Components\Placeholder::make('packages booked')
-                        ->content(fn(?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? ''),
+                        ->content(fn (?User $record): string => implode(RegSysClientController::getPackages($record->reg_id) ?? [])),
                     Forms\Components\Placeholder::make('reg status')
-                        ->content(fn(?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? ''),
+                        ->content(fn (?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? ''),
                 ]),
             ]);
     }
@@ -58,7 +59,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->url(fn(?User $record) => "mailto:{$record->email}")
+                    ->url(fn (?User $record) => "mailto:{$record->email}")
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -68,31 +69,18 @@ class UserResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('reg_id')->query(fn(Builder $query): Builder => $query->whereNull('reg_id'))->label('Missing Reg ID'),
+                Tables\Filters\Filter::make('reg_id')->query(fn (Builder $query): Builder => $query->whereNull('reg_id'))->label('Missing Reg ID'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('Update reg ids')
+                Tables\Actions\BulkAction::make('Sync with Regsys')
+                    ->tooltip('Retrieve registration IDs from Regsys and publish to Regsys if user has an active application')
                     ->requiresConfirmation()
                     ->action(function (Collection $records): void {
-                        $regs = RegSysClientController::getAllRegs();
-                        foreach ($records as $record) {
-                            $found = false;
-                            foreach ($regs as $reg) {
-                                if ($record->email == $reg['email']) {
-                                    $record->reg_id = $reg['id'];
-                                    $found = true;
-                                    break;
-                                }
-                            }
-                            if (!$found) {
-                                $record->reg_id = null;
-                            }
-                            $record->save();
-                        }
+                        SynchronizeRegsys::sync($records->pluck('id')->all());
                     }),
             ]);
     }

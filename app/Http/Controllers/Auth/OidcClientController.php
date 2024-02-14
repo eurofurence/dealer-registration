@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Client\RegSysClientController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Hydra\Client;
@@ -63,18 +64,22 @@ class OidcClientController extends Controller
         }
         $userinfo = $userinfoRequest->json();
 
-        if (!isset($userinfo['sub'])) {
+        $identityId = $userinfo['sub'] ?? null;
+        if ($identityId === null) {
             throw new UnexpectedValueException("Could not request user id from freshly fetched token.");
         }
 
-        $userid = $userinfo['sub'];
+        $user = User::where('identity_id', '=', $identityId)->first();
+        $registrationId = $user->reg_id ?? RegSysClientController::getRegistrationIdForCurrentUser($accessToken);
         $user = User::updateOrCreate([
-            "identity_id" => $userinfo['sub']
+            "identity_id" => $identityId
         ], [
-            "identity_id" => $userinfo['sub'],
+            "identity_id" => $identityId,
             "name" => $userinfo['name'],
+            // TODO: Avoid storing email address entirely by using IDP ID to send email/sync regs
             "email" => $userinfo['email'],
             "groups" => $userinfo['groups'],
+            "reg_id" => $registrationId,
         ]);
         $user = $user->fresh();
         Auth::loginUsingId($user->id);
