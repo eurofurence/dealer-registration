@@ -30,7 +30,9 @@ class SynchronizeRegsys implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): void
     {
+        Log::info('Running ' . __CLASS__ . ' job…');
         self::sync();
+        Log::info(__CLASS__ . ' job complete.');
     }
 
     public static function sync(array $userIds = null): bool
