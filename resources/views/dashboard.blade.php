@@ -101,20 +101,20 @@
                         @case('approved')
 
                         @case('partially paid')
-                            <p>Our records show that your EF registration status is <em>{{ $efRegistrationStatus }}</em>. Please
+                            <p>Our records show that your EF registration status is <em>{{ $registration['status'] }}</em>. Please
                                 check and make sure to settle all outstanding dues in a timely manner to ensure everything runs
                                 smoothly when you arrive.</p>
                         @break
 
                         @case('paid')
-                            <p>According to our records, your EF registration status is <em>{{ $efRegistrationStatus }}</em>,
+                            <p>According to our records, your EF registration status is <em>{{ $registration['status'] }}</em>,
                                 and you are all set and ready to go!</p>
                         @break
 
                         @case('cancelled')
                             <p class="alert alert-danger text-center">
                                 Going by our records, it seems your EF registration status is
-                                <em>{{ $efRegistrationStatus }}</em>.
+                                <em>{{ $registration['status'] }}</em>.
                                 Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence
                                 this year after all!
                             </p>
