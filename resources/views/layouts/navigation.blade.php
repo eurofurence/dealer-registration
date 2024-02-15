@@ -13,6 +13,20 @@
                     aria-current="page">Dealers’
                     Den Rules & Information</a>
             </li>
+
+            @if (Auth::user()->isFrontdesk())
+                <li class="nav-item">
+                    <a href="{{ route('frontdesk') }}" class="nav-link link-light px-2"
+                        aria-current="page">Frontdesk</a>
+                </li>
+            @endif
+
+            @if (Auth::user()->isAdmin())
+                <li class="nav-item">
+                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="nav-link link-light px-2"
+                        aria-current="page">Admin</a>
+                </li>
+            @endif
         </ul>
         <ul class="nav">
             <div class="dropdown nav-item">
@@ -21,7 +35,8 @@
                     @if (empty(Session::get('avatar')))
                         <x-heroicon-s-user-circle width="40" height="40" class="rounded-circle" />
                     @else
-                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}" width="40" height="40" class="rounded-circle">
+                        <img src="{{ Session::get('avatar') }}" alt="{{ Session::get('name') ?? 'avatar' }}"
+                            width="40" height="40" class="rounded-circle">
                     @endif
                     <span class="align-middle">{{ Session::get('name') ?? 'User' }}</span>
                 </a>
