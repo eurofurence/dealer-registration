@@ -43,6 +43,8 @@ class UserResource extends Resource
                         ->content(fn (?User $record): string => implode(RegSysClientController::getPackages($record->reg_id) ?? [])),
                     Forms\Components\Placeholder::make('reg status')
                         ->content(fn (?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? ''),
+                    Forms\Components\Placeholder::make('active app synced to regsys')
+                        ->content(fn (?User $record): string => (RegSysClientController::getAdditionalInfoDealerReg($record->reg_id) ? "yes" : "no") ?? ''),
                 ]),
             ]);
     }
