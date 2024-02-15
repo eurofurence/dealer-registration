@@ -184,13 +184,13 @@ class RegSysClientController extends Controller
     /**
      * Check whether the `dealerreg` additional info flag is set for the given registration.
      *
-     * @param string $regId Registration number to retrieve the flag for
-     * @return bool|null true or false depending on whether the flag is set on the registration, null if an error was encountered.
+     * @param null|string $regId Registration number to retrieve the flag for
+     * @return null|bool true or false depending on whether the flag is set on the registration, null if an error was encountered.
      * @throws BindingResolutionException
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    public static function getAdditionalInfoDealerReg(string $regId): bool|null
+    public static function getAdditionalInfoDealerReg(?string $regId): ?bool
     {
         if (empty($regId)) {
             return null;

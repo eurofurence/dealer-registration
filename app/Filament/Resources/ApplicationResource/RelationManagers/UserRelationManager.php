@@ -39,14 +39,14 @@ class UserRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('packages booked')
                     ->badge()
-                    ->formatStateUsing(fn (?User $record): string => implode(RegSysClientController::getPackages($record->reg_id)) ?? ''),
+                    ->getStateUsing(fn (?User $record): string => implode(array_replace(['none'], RegSysClientController::getPackages($record?->reg_id) ?? ['n/a']))),
                 Tables\Columns\TextColumn::make('reg status')
                     ->badge()
-                    ->formatStateUsing(fn (?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? '')
+                    ->getStateUsing(fn (?User $record): string => RegSysClientController::getSingleReg($record?->reg_id)['status'] ?? 'n/a')
                     ->color(fn (string $state): string => match ($state) {
                         'paid' => 'success',
                         'cancelled' => 'danger',
-                        default => 'secondary',
+                        default => 'primary',
                     })
 
             ])

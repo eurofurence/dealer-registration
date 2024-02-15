@@ -39,12 +39,12 @@ class UserResource extends Resource
                     ->maxLength(255),
 
                 Forms\Components\Fieldset::make('Reg status')->inlineLabel()->columns(1)->schema([
-                    Forms\Components\Placeholder::make('packages booked')
-                        ->content(fn (?User $record): string => implode(RegSysClientController::getPackages($record->reg_id) ?? [])),
-                    Forms\Components\Placeholder::make('reg status')
-                        ->content(fn (?User $record): string => RegSysClientController::getSingleReg($record->reg_id)['status'] ?? ''),
-                    Forms\Components\Placeholder::make('active app synced to regsys')
-                        ->content(fn (?User $record): string => (RegSysClientController::getAdditionalInfoDealerReg($record->reg_id) ? "yes" : "no") ?? ''),
+                    Forms\Components\Placeholder::make('Packages booked')
+                        ->content(fn (?User $record): string => implode(array_replace(['none'], RegSysClientController::getPackages($record?->reg_id) ?? ['n/a']))),
+                    Forms\Components\Placeholder::make('Registration status')
+                        ->content(fn (?User $record): string => RegSysClientController::getSingleReg($record?->reg_id)['status'] ?? 'n/a'),
+                    Forms\Components\Placeholder::make('Flagged as active application?')
+                        ->content(fn (?User $record): string => (($hasFlag = RegSysClientController::getAdditionalInfoDealerReg($record?->reg_id)) === null ? 'n/a' : ($hasFlag ? 'yes' : 'no'))),
                 ]),
             ]);
     }
