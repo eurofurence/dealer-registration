@@ -41,18 +41,19 @@ class ApplicationResource extends Resource
                     Forms\Components\Grid::make()->columns()->schema([
                         Forms\Components\TextInput::make('merchandise')
                             ->maxLength(65535),
-                        Forms\Components\Fieldset::make('Checks')->columnSpan(1)->columns(4)->schema([
+                        Forms\Components\Fieldset::make('Checks')->columnSpan(1)->schema([
                             Forms\Components\Toggle::make('is_afterdark')->label('Afterdark'),
                             Forms\Components\Toggle::make('is_power')->label('Power'),
                             Forms\Components\Toggle::make('is_wallseat')->label('Wallseat'),
                         ]),
                     ]),
 
-                    Forms\Components\Grid::make()->columns()->schema([
-                        Forms\Components\Textarea::make('wanted_neighbors')
-                            ->label('Wanted Neighbors')
-                            ->maxLength(65535),
-                    ]),
+                    Forms\Components\Textarea::make('wanted_neighbors')
+                        ->columnSpanFull()
+                        ->maxLength(65535),
+                    Forms\Components\Textarea::make('additional_space_request')
+                        ->columnSpanFull()
+                        ->maxLength(65535),
                     Forms\Components\Textarea::make('comment')
                         ->columnSpanFull()
                         ->maxLength(65535),
@@ -177,6 +178,10 @@ class ApplicationResource extends Resource
                     ->label('N Wanted')
                     ->default(false)
                     ->boolean(),
+                Tables\Columns\IconColumn::make('additional_space_request')
+                    ->label('Add. Space')
+                    ->default(false)
+                    ->boolean(),
                 Tables\Columns\IconColumn::make('comment')
                     ->default(false)
                     ->boolean(),
@@ -208,6 +213,9 @@ class ApplicationResource extends Resource
                 Tables\Filters\Filter::make('is_afterdark')
                     ->query(fn (Builder $query): Builder => $query->where('is_afterdark', '=', '1'))
                     ->label('Is Afterdark'),
+                Tables\Filters\Filter::make('additional_space_request')
+                    ->query(fn (Builder $query): Builder => $query->whereNotNull('additional_space_request'))
+                    ->label('Has additional space request'),
                 Tables\Filters\Filter::make('table_assigned')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('offer_sent_at'))
                     ->label('Table assigned'),
