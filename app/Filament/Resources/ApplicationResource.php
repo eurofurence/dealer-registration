@@ -53,9 +53,11 @@ class ApplicationResource extends Resource
                         ->maxLength(65535),
                     Forms\Components\Textarea::make('additional_space_request')
                         ->columnSpanFull()
+                        ->rows(5)
                         ->maxLength(65535),
                     Forms\Components\Textarea::make('comment')
                         ->columnSpanFull()
+                        ->rows(10)
                         ->maxLength(65535),
                 ]),
 
