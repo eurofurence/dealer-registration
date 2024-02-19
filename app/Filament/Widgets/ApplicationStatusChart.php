@@ -5,7 +5,8 @@ namespace App\Filament\Widgets;
 use App\Enums\ApplicationStatus;
 use App\Models\Application;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class ApplicationStatusChart extends ChartWidget
 {
@@ -19,19 +20,30 @@ class ApplicationStatusChart extends ChartWidget
 
     protected function getData(): array
     {
+        $status = Cache::remember('dd-admin-application-status', 60, fn () => [
+            'canceled' => ApplicationStatus::Canceled->orWhere(Application::query())->count(),
+            'open' => ApplicationStatus::Open->orWhere(Application::query())->count(),
+            'waiting' => ApplicationStatus::Waiting->orWhere(Application::query())->count(),
+            'tableAssigned' => ApplicationStatus::TableAssigned->orWhere(Application::query())->count(),
+            'tableOffered' => ApplicationStatus::TableOffered->orWhere(Application::query())->count(),
+            'tableAccepted' => ApplicationStatus::TableAccepted->orWhere(Application::query())->count(),
+            'checkedIn' => ApplicationStatus::CheckedIn->orWhere(Application::query())->count(),
+            'checkedOut' => ApplicationStatus::CheckedOut->orWhere(Application::query())->count(),
+        ]);
+
         return [
             'datasets' => [
                 [
                     'label' => 'Total Applications',
                     'data' => [
-                        ApplicationStatus::Canceled->orWhere(Application::query())->count(),
-                        ApplicationStatus::Open->orWhere(Application::query())->count(),
-                        ApplicationStatus::Waiting->orWhere(Application::query())->count(),
-                        ApplicationStatus::TableAssigned->orWhere(Application::query())->count(),
-                        ApplicationStatus::TableOffered->orWhere(Application::query())->count(),
-                        ApplicationStatus::TableAccepted->orWhere(Application::query())->count(),
-                        ApplicationStatus::CheckedIn->orWhere(Application::query())->count(),
-                        ApplicationStatus::CheckedOut->orWhere(Application::query())->count(),
+                        $status['canceled'],
+                        $status['open'],
+                        $status['waiting'],
+                        $status['tableAssigned'],
+                        $status['tableOffered'],
+                        $status['tableAccepted'],
+                        $status['checkedIn'],
+                        $status['checkedOut'],
                     ],
                     'backgroundColor' => [
                         'rgb(250, 80, 80)',
@@ -46,14 +58,14 @@ class ApplicationStatusChart extends ChartWidget
                 ],
             ],
             'labels' => [
-                ApplicationStatus::Canceled,
-                ApplicationStatus::Open,
-                ApplicationStatus::Waiting,
-                ApplicationStatus::TableAssigned,
-                ApplicationStatus::TableOffered,
-                ApplicationStatus::TableAccepted,
-                ApplicationStatus::CheckedIn,
-                ApplicationStatus::CheckedOut,
+                Str::of(ApplicationStatus::Canceled->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::Open->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::Waiting->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::TableAssigned->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::TableOffered->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::TableAccepted->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::CheckedIn->value)->replace('_', ' ')->title(),
+                Str::of(ApplicationStatus::CheckedOut->value)->replace('_', ' ')->title(),
             ],
         ];
     }

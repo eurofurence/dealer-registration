@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Application;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ApplicationTotalsChart extends ChartWidget
@@ -18,7 +19,7 @@ class ApplicationTotalsChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Application::query()->toBase()->select(DB::raw('COUNT(*) as count, type'))->whereNull('canceled_at')->groupBy('type')->get();
+        $data = Cache::remember('dd-admin-application-totals', 60, fn() => Application::query()->toBase()->select(DB::raw('COUNT(*) as count, type'))->whereNull('canceled_at')->groupBy('type')->get());
         return [
             'datasets' => [
                 [
