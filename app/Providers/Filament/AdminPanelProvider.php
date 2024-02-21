@@ -40,6 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             //->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+                \App\Filament\Widgets\DashboardInfo::class,
                 \App\Filament\Widgets\ApplicationStats::class,
                 \App\Filament\Widgets\ApplicationStatusChart::class,
                 \App\Filament\Widgets\ApplicationTotalsChart::class,
