@@ -28,9 +28,13 @@ abstract class AbstractApplicationTablesChart extends ChartWidget
                     'label' => 'Total Tables',
                     'data' => $data->pluck('count')->all(),
                     'backgroundColor' => [
-                        'rgb(50, 180, 80)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
+                        'rgb(200, 180, 90)',
+                        'rgb(0, 200, 255)',
+                        'rgb(255, 200, 80)',
+                        'rgb(250, 100, 200)',
+                        'rgb(150, 100, 255)',
+                        'rgb(0, 180, 0)',
+                        'rgb(250, 80, 50)',
                     ],
                 ],
             ],

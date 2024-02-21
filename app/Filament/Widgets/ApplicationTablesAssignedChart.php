@@ -12,6 +12,6 @@ class ApplicationTablesAssignedChart extends AbstractApplicationTablesChart
 
     protected function retrieveData(): \Illuminate\Support\Collection
     {
-        return Cache::remember('dd-admin-application-tables-assigned', 60, fn() => Application::query()->toBase()->join('table_types', 'table_type_assigned', '=', 'table_types.id')->select(DB::raw('COUNT(*) as count, name as type'))->where('type', '=', 'dealer')->whereNull('canceled_at')->groupBy('name')->get());
+        return Cache::remember('dd-admin-application-tables-assigned', 60, fn() => Application::query()->toBase()->join('table_types', 'table_type_assigned', '=', 'table_types.id')->select(DB::raw('COUNT(*) as count, name as type'))->where('type', '=', 'dealer')->whereNull('canceled_at')->whereNull('waiting_at')->groupBy('name')->get());
     }
 }
