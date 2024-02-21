@@ -368,6 +368,7 @@ class Application extends Model
                 'merchandise',
                 'invite_code_shares',
                 'invite_code_assistants',
+                'additional_space_request',
                 'wanted_neighbors',
                 'comment',
                 'is_afterdark',

@@ -23,6 +23,9 @@ return [
         'space' => [
             'required_if' => 'Please select a table size when applying as :value.'
         ],
+        'additionalSpaceRequestText' => [
+            'required_if_accepted' => 'Please specify the amount of space you require (in square meters or tables) and provide a brief explanation of why you need it.'
+        ],
         'tos' => [
             'required' => 'Please agree to our Terms of Service.'
         ],

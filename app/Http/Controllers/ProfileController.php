@@ -35,10 +35,10 @@ class ProfileController extends Controller
             "discord" => $request->input('discord'),
             "tweet" => $request->input('tweet'),
             "art_preview_caption" => $request->input('art_preview_caption'),
-            "attends_thu" => $request->input('attends_thu') === "on",
-            "attends_fri" => $request->input('attends_fri') === "on",
-            "attends_sat" => $request->input('attends_sat') === "on",
-            "is_hidden" => $request->input('profile_hidden') === "on",
+            "attends_thu" => $request->has('attends_thu'),
+            "attends_fri" => $request->has('attends_fri'),
+            "attends_sat" => $request->has('attends_sat'),
+            "is_hidden" => $request->has('profile_hidden'),
         ];
 
         // Keep old images if no new data is sent with the request

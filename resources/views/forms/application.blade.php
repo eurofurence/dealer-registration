@@ -1,3 +1,8 @@
+<style>
+    input#additionalSpaceRequest:not(:checked)~#additionalSpaceRequestText {
+        display: none;
+    }
+</style>
 <div class="card card-body mt-2">
     <div class="card-body">
         <div class="card-title">
@@ -173,6 +178,28 @@
                         <b>If you plan to share a table with one or more partners, please request the appropriate amount
                             of space needed for all individuals. After submitting your application, you will be able to
                             invite your partner(s) to join you.</b>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-10 offset-sm-2">
+                    <div class="form-check">
+                        <input class="form-check-input" name="additionalSpaceRequest" role="switch"
+                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) type="checkbox" id="additionalSpaceRequest">
+                        <label class="form-check-label" for="additionalSpaceRequest">
+                            <b>Additional space request</b>
+                        </label>
+                        <textarea rows="2" type="text" name="additionalSpaceRequestText" id="additionalSpaceRequestText"
+                            class="form-control @error('additionalSpaceRequestText') is-invalid @enderror" @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>{{ old('_token') ? old('additionalSpaceRequestText') : $application?->additional_space_request }}</textarea>
+                        @error('additionalSpaceRequestText')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div id="additionalSpaceRequestDescription" class="form-text">
+                            If you require more space than the standard options provided by the Dealers' Den, please
+                            select this option to let us know about your increased space needs. Please specify the
+                            amount of space you require (in square meters or tables) and provide a brief explanation of
+                            why you need it. You will receive an individual quote for your space request.
+                        </div>
                     </div>
                 </div>
             </div>

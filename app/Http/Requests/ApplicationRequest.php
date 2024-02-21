@@ -56,6 +56,11 @@ class ApplicationRequest extends FormRequest
                 "int",
                 "exists:table_types,id",
             ],
+            "wanted" => [
+                "exclude_unless:applicationType,dealer",
+                "nullable",
+                "max:4096",
+            ],
             "wallseat" => [
                 "exclude_unless:applicationType,dealer",
                 "nullable",
@@ -64,9 +69,9 @@ class ApplicationRequest extends FormRequest
                 "exclude_unless:applicationType,dealer",
                 "nullable",
             ],
-            "wanted" => [
+            "additionalSpaceRequestText" => [
                 "exclude_unless:applicationType,dealer",
-                "nullable",
+                "required_if_accepted:additionalSpaceRequest",
                 "max:4096",
             ],
             "comment" => [

@@ -17,7 +17,7 @@
 # The up command will patch your Homestead.yaml to mount the correct directory
 # to your Homestead VM.
 #
-# Create a .just.env file to configure just how you need it:
+# Add the following variables to a .env file to configure just how you need it:
 # - HOMESTEAD_PATH: path to the directory of your local Homestead repo
 # - HOMESTEAD_APP_PATH: path at which you expect your app directory (this one)
 #                       to be mounted within the Homestead VM (must be one of
@@ -25,7 +25,6 @@
 ###
 
 set dotenv-load := true
-set dotenv-path := '.just.env'
 
 homestead_path := env_var_or_default('HOMESTEAD_PATH', '~/homestead')
 homestead_app_path := env_var_or_default('HOMESTEAD_APP_PATH', '/home/vagrant/code')
@@ -38,9 +37,8 @@ default:
 _homestead_activate APP_DIR: (_homestead "yq -i e '(.folders[] | select(.to == \""+homestead_app_path+"\").map) |= \""+APP_DIR+"\"' Homestead.yaml; vagrant reload --provision")
 
 _homestead COMMAND:
-  pushd {{homestead_path}};\
-  {{COMMAND}};\
-  popd
+  cd {{homestead_path}};\
+  {{COMMAND}};
 
 # patch Homestead.yaml with app directory and reload VM with provisioning to apply
 up: (_homestead_activate invocation_directory())
@@ -58,7 +56,7 @@ ssh COMMAND='': (_homestead "vagrant ssh"+(if COMMAND != '' { " -c '"+COMMAND+"'
 dev: (ssh 'cd app; npm run dev -- --host 0.0.0.0')
 
 # open MySQL shell on Homestead
-mysql: (ssh 'mysql')
+mysql: (ssh "mysql -D "+env_var('DB_DATABASE'))
 
 # tail laravel logs (using tailspin if available)
 log:
