@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Enums;
+use Illuminate\Support\Str;
 
 enum ApplicationStatus: string
 {
@@ -156,5 +157,9 @@ enum ApplicationStatus: string
                     )
             ),
         };
+    }
+
+    function displayName(): string {
+        return Str::of($this->value)->replace('_', ' ')->title()->value();
     }
 }

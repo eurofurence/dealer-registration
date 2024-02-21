@@ -2,10 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -27,7 +27,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->userMenuItems([
+                'logout' => MenuItem::make()->label('Log out')->url(fn () => route('auth.frontchannel-logout')),
+            ])
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -36,10 +38,14 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            //->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\DashboardInfo::class,
+                \App\Filament\Widgets\ApplicationStats::class,
+                \App\Filament\Widgets\ApplicationStatusChart::class,
+                \App\Filament\Widgets\RegistrationStatusChart::class,
+                \App\Filament\Widgets\ApplicationTablesRequestedChart::class,
+                \App\Filament\Widgets\ApplicationTablesAssignedChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
