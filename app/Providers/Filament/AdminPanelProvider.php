@@ -43,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\DashboardInfo::class,
                 \App\Filament\Widgets\ApplicationStats::class,
                 \App\Filament\Widgets\ApplicationStatusChart::class,
-                \App\Filament\Widgets\ApplicationTotalsChart::class,
+                \App\Filament\Widgets\RegistrationStatusChart::class,
                 \App\Filament\Widgets\ApplicationTablesRequestedChart::class,
                 \App\Filament\Widgets\ApplicationTablesAssignedChart::class,
             ])
