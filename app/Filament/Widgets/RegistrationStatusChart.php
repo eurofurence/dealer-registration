@@ -21,8 +21,8 @@ class RegistrationStatusChart extends ChartWidget
 
     protected function getData(): array
     {
-        $registrations = RegSysClientController::getAllRegs('id');
-        $data = Cache::remember('dd-admin-application-totals', 10 * 60, function () use ($registrations): array {
+        $data = Cache::remember('dd-admin-application-totals', 10 * 60, function (): array {
+            $registrations = RegSysClientController::getAllRegs('id');
             return Application::with('user')->whereNull('canceled_at')->whereNull('waiting_at')->get()
                 ->map(fn (Application $application): string => $registrations[$application->user_id]['status'] ?? 'unknown')
                 ->reduce(function (array $statusCount, string $status) {
