@@ -479,7 +479,14 @@ class Application extends Model
             $dealership = $this->parent()->get()->first();
         }
 
-        if (empty($dealership->table_number) || $dealership->table_type_assigned === null) {
+        if (empty($dealership->table_number) xor $dealership->table_type_assigned === null) {
+            return false;
+        }
+
+        if (
+            $this->status === ApplicationStatus::Waiting
+            && (empty($dealership->table_number) || $dealership->table_type_assigned === null)
+        ) {
             return false;
         }
 

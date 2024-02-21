@@ -368,7 +368,7 @@ class ApplicationController extends Controller
                         $application->status = ApplicationStatus::TableOffered;
                         return StatusNotificationResult::Accepted;
                     } else {
-                        Log::info("Sending on-hold notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
+                        Log::info("Sending accepted (alternate table) notification for table {$application->table_number} (requested: {$application->table_type_requested} | assigned: {$application->table_type_assigned}) to user {$user->id} for application {$application->id}.");
                         $assignedTable = $application->assignedTable()->first();
                         $user->notify(new AlternateTableOfferedNotification($assignedTable->name, $assignedTable->price));
                         foreach ($application->children()->get() as $child) {
