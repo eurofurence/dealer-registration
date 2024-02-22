@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->userMenuItems([
-                'logout' => MenuItem::make()->label('Log out')->url(fn () => route('auth.frontchannel-logout')),
+                'logout' => MenuItem::make()->label('Log out')->url(fn () => route('auth.frontchannel-logout-post')),
             ])
             ->colors([
                 'primary' => Color::Amber,

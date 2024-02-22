@@ -17,7 +17,7 @@ abstract class AbstractApplicationTablesChart extends ChartWidget
         return 'pie';
     }
 
-    abstract protected function retrieveData(): \Illuminate\Support\Collection;
+    abstract protected function retrieveData(): array;
 
     protected function getData(): array
     {
@@ -26,19 +26,18 @@ abstract class AbstractApplicationTablesChart extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Total Tables',
-                    'data' => $data->pluck('count')->all(),
+                    'data' => array_values($data),
                     'backgroundColor' => [
-                        'rgb(200, 180, 90)',
+                        'rgb(250, 80, 50)',
                         'rgb(0, 200, 255)',
                         'rgb(255, 200, 80)',
                         'rgb(250, 100, 200)',
                         'rgb(150, 100, 255)',
                         'rgb(0, 180, 0)',
-                        'rgb(250, 80, 50)',
                     ],
                 ],
             ],
-            'labels' => $data->pluck('type')->all(),
+            'labels' => array_keys($data),
         ];
     }
 

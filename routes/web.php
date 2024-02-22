@@ -26,7 +26,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout');
-Route::post('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout');
+Route::post('/auth/frontchannel-logout', \App\Http\Controllers\Auth\FrontChannelLogoutController::class)->name('auth.frontchannel-logout-post');
 
 Route::get('/', function () {
     return \Illuminate\Support\Facades\Redirect::route('dashboard');
