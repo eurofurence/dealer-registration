@@ -1,5 +1,8 @@
 @php
-    $user = filament()->auth()->user();
+    $user = null;
+    try {
+        $user = filament()->auth()->user();
+    } catch (\Throwable $th) {}
 @endphp
 
 <x-filament-widgets::widget class="fi-account-widget">
