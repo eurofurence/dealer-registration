@@ -14,12 +14,6 @@ use Illuminate\Support\Facades\Redirect;
 
 class TableVerifyController extends Controller
 {
-    public function __invoke()
-    {
-        return view('table.confirm', [
-            "application" => Auth::user()->application
-        ]);
-    }
 
     public function view()
     {
@@ -28,6 +22,7 @@ class TableVerifyController extends Controller
         /** @var Application */
         $application = $user->application;
 
+        abort_if(empty($application), 404, 'Application not found.');
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
         if ($application->status === ApplicationStatus::TableOffered) {
@@ -49,6 +44,7 @@ class TableVerifyController extends Controller
         /** @var Application */
         $application = $user->application;
 
+        abort_if(empty($application), 404, 'Application not found.');
         abort_if($application->status !== ApplicationStatus::TableOffered, 403, 'No table offer available to be accepted.');
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
