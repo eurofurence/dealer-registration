@@ -270,7 +270,7 @@ class ApplicationController extends Controller
     {
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
-        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut, 403, 'Applications which have accepted their table may no longer be canceled.');
 
         return view('application.delete', [
             "application" => $application,
@@ -283,7 +283,7 @@ class ApplicationController extends Controller
         $user = Auth::user();
         $application = $user->application;
         abort_if(is_null($application), 404, 'Application not found');
-        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut, 403, 'Applications which have accepted their table may no longer be canceled.');
 
         foreach ($application->children()->get() as $child) {
             $child->update([
