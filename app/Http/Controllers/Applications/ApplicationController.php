@@ -172,6 +172,7 @@ class ApplicationController extends Controller
             ]);
         } else {
             // No user-driven updates to applications after reg phases have ended.
+            abort(400, 'Registration phase has ended');
         }
 
         if ($applicationType !== ApplicationType::Assistant) {
@@ -180,10 +181,6 @@ class ApplicationController extends Controller
         }
 
         InvitationController::clearInvitationCodeConfirmation($request);
-
-        if (!$application || $application->getStatus() !== ApplicationStatus::Open) {
-            abort(400, 'Invalid application state');
-        }
 
         /** @var User */
         $user = Auth::user();
