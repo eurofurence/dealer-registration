@@ -6,10 +6,9 @@ use App\Services\OpenIDService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use Redirect;
 use UnexpectedValueException;
 
 class AccessTokenValidationMiddleware
@@ -46,7 +45,7 @@ class AccessTokenValidationMiddleware
             } catch (IdentityProviderException|UnexpectedValueException $exception) {
                 // If refresh fails, try to reauth user.
                 Auth::logout();
-                return Redirect::route('auth.oidc.login');
+                return Redirect::route('auth.login');
             }
 
             Session::put('access_token', $token);

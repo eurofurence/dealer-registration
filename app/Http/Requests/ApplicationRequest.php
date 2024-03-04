@@ -87,7 +87,14 @@ class ApplicationRequest extends FormRequest
 
         if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
             return array_merge($appValidations, $profileValidations);
-        } else {
+        } elseif (Carbon::parse(config('con.assistant_end_date'))->isFuture()) {
+            return array_merge([
+                "tos" => [
+                    "exclude_unless:applicationType,assistant",
+                    new RequiredIf($this->routeIs('applications.store')),
+                ],
+            ], $profileValidations);
+        }else {
             return $profileValidations;
         }
     }

@@ -53,11 +53,18 @@ class InvitationController extends Controller
             ]);
         }
 
+        /** @var Application */
+        $application = Auth::user()->application;
+
+        if ($application->isActive()) {
+            throw ValidationException::withMessages([
+                "code" => "You cannot join another dealership while you still have an active, uncanceled application.",
+            ]);
+        }
+
         // Prevent people from sending direct join URLs
         $confirmation = Str::random();
         $request->session()->put(self::SESSION_CONFIRMATION_KEY, $confirmation);
-
-        $application = Auth::user()->application;
 
         return view('invitation.confirm', [
             'invitingApplication' => $invitingApplication,

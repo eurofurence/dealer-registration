@@ -24,6 +24,7 @@ use App\Notifications\WaitingListNotification;
 use App\Notifications\WelcomeAssistantNotification;
 use App\Notifications\WelcomeNotification;
 use App\Notifications\WelcomeShareNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -117,28 +118,62 @@ class ApplicationController extends Controller
         /** @var Application|null */
         $parent = self::determineParentByCode($code);
 
-        $application = Application::updateOrCreate([
-            "user_id" => Auth::id(),
-        ], [
-            "table_type_requested" => $request->input('space'),
-            "type" => $applicationType,
-            "display_name" => $request->input('displayName'),
-            "website" => $request->input('website'),
-            "merchandise" => $request->input('merchandise'),
-            "is_afterdark" => $request->input('denType') === "denTypeAfterDark",
-            "additional_space_request" => $request->has('additionalSpaceRequest') && !empty($request->input('additionalSpaceRequestText')) ? $request->input('additionalSpaceRequestText') : null,
-            "is_power" => $request->has('power'),
-            "is_wallseat" => $request->has('wallseat'),
-            "wanted_neighbors" => $request->input('wanted'),
-            "comment" => $request->input('comment'),
-            "parent_id" => $parent?->id,
-            "invite_code_shares" => null,
-            "invite_code_assistants" => null,
-            "waiting_at" => null,
-            "offer_sent_at" => null,
-            "canceled_at" => null,
-            "table_number" => null,
-        ]);
+        $application = null;
+        if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
+            $application = Application::updateOrCreate([
+                "user_id" => Auth::id(),
+            ], [
+                "table_type_requested" => $request->input('space'),
+                "type" => $applicationType,
+                "display_name" => $request->input('displayName'),
+                "website" => $request->input('website'),
+                "merchandise" => $request->input('merchandise'),
+                "is_afterdark" => $request->input('denType') === "denTypeAfterDark",
+                "additional_space_request" => $request->has('additionalSpaceRequest') && !empty($request->input('additionalSpaceRequestText')) ? $request->input('additionalSpaceRequestText') : null,
+                "is_power" => $request->has('power'),
+                "is_wallseat" => $request->has('wallseat'),
+                "wanted_neighbors" => $request->input('wanted'),
+                "comment" => $request->input('comment'),
+                "parent_id" => $parent?->id,
+                "invite_code_shares" => null,
+                "invite_code_assistants" => null,
+                "waiting_at" => null,
+                "offer_sent_at" => null,
+                "canceled_at" => null,
+                "table_number" => null,
+            ]);
+        } else if (
+            Carbon::parse(config('con.assistant_end_date'))->isFuture()
+            && $applicationType === ApplicationType::Assistant
+        ) {
+            abort_if(is_null($parent), 404, 'Invalid invite code');
+
+            // Only create new assistant applications while assistant registration is still open.
+            $application = Application::updateOrCreate([
+                "user_id" => Auth::id(),
+            ], [
+                "table_type_requested" => null,
+                "type" => ApplicationType::Assistant,
+                "display_name" => null,
+                "website" => null,
+                "merchandise" => null,
+                "is_afterdark" => false,
+                "additional_space_request" => null,
+                "is_power" => false,
+                "is_wallseat" => false,
+                "wanted_neighbors" => null,
+                "parent_id" => $parent->id,
+                "invite_code_shares" => null,
+                "invite_code_assistants" => null,
+                "waiting_at" => null,
+                "offer_sent_at" => null,
+                "canceled_at" => null,
+                "table_number" => null,
+            ]);
+        } else {
+            // No user-driven updates to applications after reg phases have ended.
+            abort(400, 'Registration phase has ended');
+        }
 
         if ($applicationType !== ApplicationType::Assistant) {
             // TODO: Refactor
@@ -146,10 +181,6 @@ class ApplicationController extends Controller
         }
 
         InvitationController::clearInvitationCodeConfirmation($request);
-
-        if (!$application || $application->getStatus() !== ApplicationStatus::Open) {
-            abort(400, 'Invalid application state');
-        }
 
         /** @var User */
         $user = Auth::user();
@@ -186,20 +217,35 @@ class ApplicationController extends Controller
 
         $newParent = self::determineParentByCode($code);
 
-        $application->update([
-            "table_type_requested" => $request->input('space'),
-            "type" => $newApplicationType ?? $application->type,
-            "display_name" => $request->input('displayName'),
-            "website" => $request->input('website'),
-            "merchandise" => $request->input('merchandise'),
-            "is_afterdark" => $request->input('denType') === "denTypeAfterDark",
-            "additional_space_request" => $request->has('additionalSpaceRequest') && !empty($request->input('additionalSpaceRequestText')) ? $request->input('additionalSpaceRequestText') : null,
-            "is_power" => $request->has('power'),
-            "is_wallseat" => $request->has('wallseat'),
-            "wanted_neighbors" => $request->input('wanted'),
-            "comment" => $request->input('comment'),
-            "parent_id" => $newParent?->id ?? $application->parent_id,
-        ]);
+        if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
+            $application->update([
+                "table_type_requested" => $request->input('space'),
+                "type" => $newApplicationType ?? $application->type,
+                "display_name" => $request->input('displayName'),
+                "website" => $request->input('website'),
+                "merchandise" => $request->input('merchandise'),
+                "is_afterdark" => $request->input('denType') === "denTypeAfterDark",
+                "additional_space_request" => $request->has('additionalSpaceRequest') && !empty($request->input('additionalSpaceRequestText')) ? $request->input('additionalSpaceRequestText') : null,
+                "is_power" => $request->has('power'),
+                "is_wallseat" => $request->has('wallseat'),
+                "wanted_neighbors" => $request->input('wanted'),
+                "comment" => $request->input('comment'),
+                "parent_id" => $newParent?->id ?? $application->parent_id,
+            ]);
+        } else if (
+            Carbon::parse(config('con.assistant_end_date'))->isFuture()
+            && $application->type !== ApplicationType::Dealer
+            && $application->type !== ApplicationType::Share
+            && $newApplicationType === ApplicationType::Assistant
+        ) {
+            // Only update assistant applications while assistant registration is still open.
+            $application->update([
+                "type" => $newApplicationType ?? $application->type,
+                "parent_id" => $newParent?->id ?? $application->parent_id,
+            ]);
+        } else {
+            // No user-driven updates to applications after reg phases have ended.
+        }
 
         if ($application->isActive() && $newApplicationType !== ApplicationType::Assistant) {
             // TODO: Refactor
@@ -224,7 +270,8 @@ class ApplicationController extends Controller
     {
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
-        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('con.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
         return view('application.delete', [
             "application" => $application,
@@ -237,7 +284,8 @@ class ApplicationController extends Controller
         $user = Auth::user();
         $application = $user->application;
         abort_if(is_null($application), 404, 'Application not found');
-        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn, 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('con.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
         foreach ($application->children()->get() as $child) {
             $child->update([
