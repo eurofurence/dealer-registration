@@ -8,7 +8,7 @@
         <div class="col-lg-6 mx-auto">
             @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
                 <p class="lead mb-4">
-                    Application for a Dealership is open until
+                    Application for dealerships is open until
                     <b>{{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
                 <p class="lead mb-4">
@@ -29,8 +29,15 @@
                     </p>
                 @endif
             @else
-                <p class="lead mb-4">The registration period has ended. You can still update your profile data which will be
+                <p class="lead mb-4">The registration period for dealerships has ended. You can still update your profile data which will be
                     displayed in the EF app.</p>
+            @endif
+
+            @if (Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
+                <p class="lead mb-4">
+                    Registration for assistants remains open until
+                    <b>{{ Carbon\Carbon::parse(config('con.assistant_end_date'))->format('d.m.Y H:i') }}</b>.
+                </p>
             @endif
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a target="_blank" href="{{ config('con.dealers_tos_url') }}" class="text-secondary small">Rules and
@@ -153,10 +160,28 @@
                 <div class="card mb-2">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Manage your Registration</h5>
-                        <p class="card-text lead">You may update your registration, update it or cancel your registration
-                            as long as the registration has not closed yet. You can also invite other dealers and assistants
-                            to
-                            your slot.</p>
+                        <p class="card-text lead">
+                            @switch($application->type)
+                                @case(\App\Enums\ApplicationType::Dealer)
+                                    You may update your registration as dealer and invite other dealers while registration is still
+                                    open and invite assistants until assistant registration closes. Your profile can be updated any
+                                    time and cancelling your registration is possible until you have accepted your table offer.
+                                @break
+
+                                @case(\App\Enums\ApplicationType::Share)
+                                    You may update your registration as share while registration is still open. Your profile can be
+                                    updated any time and cancelling your registration is possible until your dealership has accepted
+                                    its table offer.
+                                @break
+
+                                @case(\App\Enums\ApplicationType::Assistant)
+                                    You may cancel your registration as assistant until the assitant registration period is over.
+                                @break
+
+                                @default
+                                    <span class="badge text-bg-danger mx-2">Please report this as an error.</span>
+                            @endswitch
+                        </p>
                         <a href="{{ route('applications.edit') }}" class="btn btn-lg btn-primary">Manage your
                             Registration</a>
                         <div class="mb-3"></div>
@@ -199,8 +224,11 @@
                     <form action="{{ route('invitation.join') }}" method="post">
                         <div class="card-body text-center">
                             <h5 class="card-title display-6">Join an existing Dealership</h5>
-                            <p class="card-text lead">You have been invited by an existing dealership to
-                                @if(Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())share their space or @endif
+                            <p class="card-text lead">
+                                You have been invited by an existing dealership to
+                                @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                                    share their space or
+                                @endif
                                 assist them at the Dealers’ Den?<br>
                                 Then enter the invite code they provided you with below!
                             </p>
