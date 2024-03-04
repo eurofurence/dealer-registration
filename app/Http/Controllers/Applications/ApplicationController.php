@@ -270,7 +270,8 @@ class ApplicationController extends Controller
     {
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
-        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut, 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('con.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
         return view('application.delete', [
             "application" => $application,
@@ -283,7 +284,8 @@ class ApplicationController extends Controller
         $user = Auth::user();
         $application = $user->application;
         abort_if(is_null($application), 404, 'Application not found');
-        abort_if($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut, 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
+        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('con.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
         foreach ($application->children()->get() as $child) {
             $child->update([
