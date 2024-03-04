@@ -15,10 +15,10 @@
         <input type="hidden" name="code" value="{{ $code }}">
         <input type="hidden" name="applicationType" value="{{ $applicationType->value }}">
         @if (
-            !is_null($application->type) &&
-                $application->type === \App\Enums\ApplicationType::Dealer &&
+            ($application?->isActive() ?? false) &&
+                $application?->type === \App\Enums\ApplicationType::Dealer &&
                 ($applicationType === \App\Enums\ApplicationType::Assistant ||
-                    ($applicationType === $application->type) === \App\Enums\ApplicationType::Share))
+                    $applicationType === \App\Enums\ApplicationType::Share))
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="alert alert-warning">
@@ -34,7 +34,7 @@
         <div class="row mb-3">
             <label for="email" class="col-sm-2 col-form-label fw-bold">Role</label>
             <div class="col-sm-10 col-form-label">
-                @if (!is_null($application->type) && $application->type !== $applicationType)
+                @if (($application?->isActive() ?? false) && !is_null($application->type) && $application->type !== $applicationType)
                     Updates
                     <span
                         class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
@@ -185,7 +185,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="additionalSpaceRequest" role="switch"
-                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) type="checkbox" id="additionalSpaceRequest">
+                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) type="checkbox" id="additionalSpaceRequest">
                         <label class="form-check-label" for="additionalSpaceRequest">
                             <b>Additional space request</b>
                         </label>
