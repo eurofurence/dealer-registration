@@ -46,7 +46,7 @@
                 @endfor
                 @if (!is_null($seats['additional']))
                     <button class="btn btn-sm btn-dark dd-table-button" type="button"
-                        title="Free ({{ ucfirst($seats['additional']) }})">F{{ ucfirst(substr($seats['additional'],0,1)) }}</button>
+                        title="Free ({{ ucfirst($seats['additional']) }})">F{{ ucfirst(substr($seats['additional'], 0, 1)) }}</button>
                 @endif
                 @for ($i = 0; $i < $seats['assistants']; $i++)
                     <button
@@ -81,9 +81,9 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if (
-                            ($seats['free'] > 0 || $seats['additional'] === 'dealer') &&
-                                Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                        @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())
+                            <li class="list-group-item disabled">The registration period for shares has ended.</li>
+                        @elseif ($seats['free'] > 0 || $seats['additional'] === 'dealer')
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.codes') }}">
                                     @csrf
@@ -130,9 +130,9 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if (
-                            ($seats['free'] > 0 || $seats['additional'] === 'assistant') &&
-                                Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
+                        @if (Carbon\Carbon::parse(config('con.assistant_end_date'))->isPast())
+                            <li class="list-group-item disabled">The registration period for assistants has ended.</li>
+                        @elseif ($seats['free'] > 0 || $seats['additional'] === 'assistant')
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.codes') }}">
                                     @csrf
@@ -154,10 +154,12 @@
                         @foreach ($assistants as $assistant)
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.destroy') }}">
+                                    @if (config('con.assistant_end_date')->isFuture())
                                     @method('DELETE')
                                     @csrf
                                     <input type="hidden" name="invitee_id" value="{{ $assistant->id }}">
                                     <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>
+                                    @endif
                                     {{ $assistant->getFullName() }}
                                 </form>
                             </li>
