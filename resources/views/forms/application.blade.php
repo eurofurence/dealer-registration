@@ -185,7 +185,8 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="additionalSpaceRequest" role="switch"
-                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) type="checkbox" id="additionalSpaceRequest">
+                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) type="checkbox"
+                            id="additionalSpaceRequest">
                         <label class="form-check-label" for="additionalSpaceRequest">
                             <b>Additional space request</b>
                         </label>
@@ -251,21 +252,24 @@
             </div>
         @endif
 
-        <div class="row mb-3">
-            <label for="comment" class="col-sm-2 col-form-label fw-bold">Com&shy;ments</label>
-            <div class="col-sm-10">
-                <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
-                    @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) id="comment">{{ old('_token') ? old('comment') : $application?->comment }}</textarea>
-                @error('comment')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-                <div id="commentHelp" class="form-text">
-                    If you have any further information you would like to share with Dealers' Den Management, please use
-                    the space provided below. This can include requests for special accommodations, questions about the
-                    application process, or any other relevant details.
+        @if ($applicationType !== \App\Enums\ApplicationType::Assistant)
+            <div class="row mb-3">
+                <label for="comment" class="col-sm-2 col-form-label fw-bold">Com&shy;ments</label>
+                <div class="col-sm-10">
+                    <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
+                        @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) id="comment">{{ old('_token') ? old('comment') : $application?->comment }}</textarea>
+                    @error('comment')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div id="commentHelp" class="form-text">
+                        If you have any further information you would like to share with Dealers' Den Management, please
+                        use the space provided below. This can include requests for special accommodations, questions
+                        about the application process, or any other relevant details.
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
+
         <div class="row mb-3">
             <div class="col-sm-10 offset-sm-2">
                 <div class="form-check">
