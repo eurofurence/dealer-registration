@@ -56,7 +56,7 @@ class InvitationController extends Controller
         /** @var Application */
         $application = Auth::user()->application;
 
-        if ($application->isActive()) {
+        if ($application?->isActive()) {
             throw ValidationException::withMessages([
                 "code" => "You cannot join another dealership while you still have an active, uncanceled application.",
             ]);
