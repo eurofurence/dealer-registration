@@ -352,7 +352,7 @@ class Application extends Model
             ->leftJoin('users', 'user_id', '=', 'users.id')
             ->leftJoin('table_types AS t1', 'table_type_requested', '=', 't1.id')
             ->leftJoin('table_types AS t2', 'table_type_assigned', '=', 't2.id')
-            ->joinSub($keywords, 'profile_keywords', function (JoinClause $join) {
+            ->leftJoinSub($keywords, 'profile_keywords', function (JoinClause $join) {
                 $join->on('profiles.id', '=', 'profile_keywords.profile_id');
             })
             ->select(
