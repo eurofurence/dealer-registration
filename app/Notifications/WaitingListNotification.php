@@ -1,4 +1,4 @@
-sday<?php
+<?php
 
 namespace App\Notifications;
 
