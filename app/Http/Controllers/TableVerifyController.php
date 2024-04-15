@@ -43,14 +43,28 @@ class TableVerifyController extends Controller
         $user = Auth::user();
         /** @var Application */
         $application = $user->application;
+        /** @var null|string */
+        $registrationId = $user->reg_id;
 
         abort_if(empty($application), 404, 'Application not found.');
         abort_if($application->status !== ApplicationStatus::TableOffered, 403, 'No table offer available to be accepted.');
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
 
+        if (!$registrationId && $registrationId = RegSysClientController::getRegistrationIdForCurrentUser()) {
+            $user->update(['reg_id' => $registrationId]);
+        }
+
+        $registration = $registrationId ? RegSysClientController::getSingleReg($registrationId) : null;
+
+        if ($registration === null) {
+            return Redirect::route('table.confirm')->with('table-confirmation-registration-not-found');
+        } elseif ($registration['status'] === 'cancelled' || $registration['status'] === 'new') {
+            return Redirect::route('table.confirm')->with('table-confirmation-registration-inactive');
+        }
+
         $assignedTable = $application->assignedTable()->first();
 
-        if (RegSysClientController::bookPackage(Auth::user()->reg_id, $assignedTable)) {
+        if (RegSysClientController::bookPackage($registrationId, $assignedTable)) {
             $application->setStatusAttribute(ApplicationStatus::TableAccepted);
             $user->notify(new TableAcceptedNotification($assignedTable->name, $application->table_number, $assignedTable->price));
             foreach ($application->children()->get() as $child) {
