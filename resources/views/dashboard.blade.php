@@ -86,7 +86,7 @@
                             <p>Your registration as a dealer was accepted! Please review and accept the table you were
                                 offered.
                             </p>
-                            <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a>
+                            <p><a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a></p>
                         @else
                             <h3>Congratulations!</h3>
                             <p>The application of the dealership you are part of was accepted! The main account of your
