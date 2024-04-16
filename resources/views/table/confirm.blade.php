@@ -15,6 +15,17 @@
             <div class="alert alert-danger text-center fw-bold">An error has occurred, please try again. If the error
                 persists, please get in touch with the Dealer's Den team at <a
                     href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
+        @elseif (Session::exists('table-confirmation-registration-not-found'))
+            <div class="alert alert-danger text-center fw-bold">We were unable to find your Eurofurence registration, which
+                is a mandatory prerequisite for accepting a table at the Dealers' Den. If you have already
+                registered for the convention, but the error persists, please get in touch with the Dealer's Den team at <a
+                    href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
+        @elseif (Session::exists('table-confirmation-registration-inactive'))
+            <div class="alert alert-danger text-center fw-bold">Your registration for Eurofurence seems to be inactive, but
+                accepting a table at the Dealers' Den requires an active registration for the event itself. Please check
+                that your registration for the convention has been confirmed and has not been canceled, otherwise please get
+                in touch with the Dealer's Den team at <a
+                    href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
         @endif
 
         @if ($application->status === \App\Enums\ApplicationStatus::TableOffered)
