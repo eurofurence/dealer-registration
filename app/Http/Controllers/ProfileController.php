@@ -210,7 +210,7 @@ class ProfileController extends Controller
             }
             $imgArt = $profile->image_art;
             if (!empty($imgArt) && Storage::disk('public')->exists($imgArt)) {
-                $zip->addFromString('images/art_' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION), Storage::disk('public')->exists($imgArt));
+                $zip->addFromString('images/art_' . $profile->application()->first()->id  . '.' . pathinfo($profile->image_art, PATHINFO_EXTENSION), Storage::disk('public')->get($imgArt));
             }
             $imgArtist = $profile->image_artist;
             if (!empty($imgArtist) && Storage::disk('public')->exists($imgArtist)) {
