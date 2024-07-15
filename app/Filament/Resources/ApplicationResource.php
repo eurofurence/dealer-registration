@@ -161,7 +161,7 @@ class ApplicationResource extends Resource
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
-                            ->orderBy(DB::raw('IF(`type` = \'dealer\', `id`,`parent`)'), $direction);
+                            ->orderBy(DB::raw('IF(`type` = \'dealer\', `id`,`parent_id`)'), $direction);
                     })
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query
