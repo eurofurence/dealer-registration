@@ -368,6 +368,18 @@ class ApplicationController extends Controller
         }
 
         foreach ($applications as $row) {
+            if (!is_array($row) && !empty($row->Keywords)) {
+                $categorizedKeywords = array_reduce(explode('$$', $row->Keywords), function ($categorizedKeywords, $categoryKeyword) {
+                    list($category, $keyword) = explode('::', $categoryKeyword, 2);
+                    if (array_key_exists($category, $categorizedKeywords)) {
+                        array_push($categorizedKeywords[$category], $keyword);
+                    } else {
+                        $categorizedKeywords[$category] = [$keyword];
+                    }
+                    return $categorizedKeywords;
+                }, array());
+                $row->Keywords = json_encode($categorizedKeywords);
+            }
             fputcsv($csvFile, (array)$row, $separator);
         }
         fflush($csvFile);
