@@ -433,7 +433,6 @@ class Application extends Model
                 DB::raw("CASE WHEN image_artist IS NOT NULL THEN 'X' ELSE '' END AS 'ArtistImg'"),
                 DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
                 'profile_keywords.categorized_keywords as Keywords',
-                'discord as Discord',
                 'tweet as Tweet',
                 'table_number as Table Number',
                 'type as Type',
