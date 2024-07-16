@@ -343,7 +343,7 @@ class Application extends Model
         $keywords = Profile::query()->toBase()
             ->leftJoin('keyword_profile', 'keyword_profile.profile_id', '=', 'profiles.id')
             ->leftJoin('keywords', 'keywords.id', '=', 'keyword_profile.keyword_id')
-            ->leftJoin('categories', 'keywords.id', '=', 'categories.id')
+            ->leftJoin('categories', 'keywords.category_id', '=', 'categories.id')
             ->groupBy('profiles.id')
             ->select(DB::raw('GROUP_CONCAT(`keywords`.`name` SEPARATOR \',\') AS `keywords`, GROUP_CONCAT(`categories`.`name` SEPARATOR \',\') AS `categories`, `profiles`.`id` AS `profile_id`'));
 
@@ -395,9 +395,19 @@ class Application extends Model
 
     public static function getAllApplicationsForAppExport(): \Illuminate\Support\Collection
     {
+        $keywords = Profile::query()->toBase()
+            ->leftJoin('keyword_profile', 'keyword_profile.profile_id', '=', 'profiles.id')
+            ->leftJoin('keywords', 'keywords.id', '=', 'keyword_profile.keyword_id')
+            ->leftJoin('categories', 'keywords.category_id', '=', 'categories.id')
+            ->groupBy('profiles.id')
+            ->select(DB::raw('GROUP_CONCAT(CONCAT_WS(\'::\', `categories`.`name`, `keywords`.`name`) SEPARATOR \'$$\') AS `categorized_keywords`, `profiles`.`id` AS `profile_id`'));
+
         $applications = self::query()->toBase()
             ->leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
             ->leftJoin('users', 'user_id', '=', 'users.id')
+            ->leftJoinSub($keywords, 'profile_keywords', function (JoinClause $join) {
+                $join->on('profiles.id', '=', 'profile_keywords.profile_id');
+            })
             ->select(
                 'applications.id AS Reg No.',
                 'users.name AS Nick',
@@ -414,6 +424,7 @@ class Application extends Model
                 'art_desc AS About the Art',
                 'profiles.website as Website',
                 'twitter as Twitter',
+                'discord as Discord',
                 'mastodon as Mastodon',
                 'bluesky as Bluesky',
                 'telegram as Telegram',
@@ -421,13 +432,7 @@ class Application extends Model
                 DB::raw("CASE WHEN image_thumbnail IS NOT NULL THEN 'X' ELSE '' END AS 'ThumbailImg'"),
                 DB::raw("CASE WHEN image_artist IS NOT NULL THEN 'X' ELSE '' END AS 'ArtistImg'"),
                 DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
-                // TODO: Export keywords and categories once supported in app backend
-                DB::raw("'X' AS 'Cat. Prints'"),
-                DB::raw("'X' AS 'Cat. Artwork'"),
-                DB::raw("'X' AS 'Cat. Fursuit'"),
-                DB::raw("'X' AS 'Cat. Commissions'"),
-                DB::raw("'X' AS 'Cat. Misc'"),
-                'discord as Discord',
+                'profile_keywords.categorized_keywords as Keywords',
                 'tweet as Tweet',
                 'table_number as Table Number',
                 'type as Type',
