@@ -359,7 +359,9 @@ class ApplicationResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-envelope'),
-            ]);
+            ])
+            ->paginated([10, 20, 30, 40, 50])
+            ->defaultPaginationPageOption(10);
     }
 
     public static function getRelations(): array
