@@ -13,13 +13,9 @@ class ProfileController extends Controller
 {
     private static ImageManager $manager;
 
-    public function index()
-    {
-    }
+    public function index() {}
 
-    public function create(Request $request)
-    {
-    }
+    public function create(Request $request) {}
 
     public static function createOrUpdate(Request $request, int $applicationId): Profile
     {
@@ -85,25 +81,15 @@ class ProfileController extends Controller
         return Profile::findByApplicationId($applicationId);
     }
 
-    public function store(Request $request)
-    {
-    }
+    public function store(Request $request) {}
 
-    public function show(Profile $profile)
-    {
-    }
+    public function show(Profile $profile) {}
 
-    public function edit(Profile $profile)
-    {
-    }
+    public function edit(Profile $profile) {}
 
-    public function update(Request $request, Profile $profile)
-    {
-    }
+    public function update(Request $request, Profile $profile) {}
 
-    public function destroy(Profile $profile)
-    {
-    }
+    public function destroy(Profile $profile) {}
 
     public static function getValidations()
     {
@@ -137,6 +123,7 @@ class ProfileController extends Controller
             ],
             "profile_website" => [
                 'max:255',
+                'url:http,https',
             ],
             "twitter" => [
                 'nullable',
