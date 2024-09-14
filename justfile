@@ -1,63 +1,49 @@
 ###
-# Simplify development of the Laravel application using Homestead!
-# (your milage on Windows may vary…)
+# Simplify development of the Laravel application using Sail!
 #
 # Prerequisites:
-# - vagrant
+# - docker & compose
 # - yq
-# - Homestead (https://laravel.com/docs/10.x/homestead)
-#   - features mariadb & minio must be installed and enabled
-#   - additional port forwards:
-#     - 5173:5173 (vite)
-#     - 9600:9600 (MinIO)
-#     - 9601:9601 (MinIO console)
-#   - ensure that both a database and a writeable bucket are available
 # - tailspin (optional; but you'll love it!)
 #
-# The up command will patch your Homestead.yaml to mount the correct directory
-# to your Homestead VM.
-#
-# Add the following variables to a .env file to configure just how you need it:
-# - HOMESTEAD_PATH: path to the directory of your local Homestead repo
-# - HOMESTEAD_APP_PATH: path at which you expect your app directory (this one)
-#                       to be mounted within the Homestead VM (must be one of
-#                       the folders mapped in Homestead.yaml at folders[].to)
 ###
 
 set dotenv-load := true
-
-homestead_path := env_var_or_default('HOMESTEAD_PATH', '~/homestead')
-homestead_app_path := env_var_or_default('HOMESTEAD_APP_PATH', '/home/vagrant/code')
+sail_path := env_var_or_default('SAIL_PATH', './vendor/bin/sail')
 tspin := `command -v tspin || true`
 
 # list commands
 default:
   just --list
 
-_homestead_activate APP_DIR: (_homestead "yq -i e '(.folders[] | select(.to == \""+homestead_app_path+"\").map) |= \""+APP_DIR+"\"' Homestead.yaml; vagrant reload --provision")
+# bring Sail up (make sure to run `dev` in a separate shell for Vite)
+up:
+  {{sail_path}} up
 
-_homestead COMMAND:
-  cd {{homestead_path}};\
-  {{COMMAND}};
+# rebuild Sail images without caching
+build:
+  {{sail_path}} build --no-cache
 
-# patch Homestead.yaml with app directory and reload VM with provisioning to apply
-up: (_homestead_activate invocation_directory())
+# run PHP commmands on Sail
+php *ARGS:
+  {{sail_path}} php {{ARGS}}
 
-# resume Homestead instance
-resume: (_homestead "vagrant resume")
+# run composer commmands on Sail
+composer *ARGS:
+  {{sail_path}} composer {{ARGS}}
 
-# suspend Homestead instance (gnite!)
-suspend: (_homestead "vagrant suspend")
+# run artisan commmands on Sail
+artisan *ARGS:
+  {{sail_path}} artisan {{ARGS}}
 
-# run COMMAND on Homestead instance via ssh
-ssh COMMAND='': (_homestead "vagrant ssh"+(if COMMAND != '' { " -c '"+COMMAND+"'" } else { "" }))
+# run NPM commmands on Sail
+npm *ARGS:
+  {{sail_path}} npm {{ARGS}}
 
-# bring up vite on Homestead
-dev: (ssh 'cd app; npm run dev -- --host 0.0.0.0')
+# run node commmands on Sail
+node *ARGS:
+  {{sail_path}} node {{ARGS}}
 
-# open MySQL shell on Homestead
-mysql: (ssh "mysql -D "+env_var('DB_DATABASE'))
+# bring up Vite on Sail
+dev: (npm "i") (npm "run dev")
 
-# tail laravel logs (using tailspin if available)
-log:
-  just ssh 'tail -n100 -f {{homestead_app_path}}/storage/logs/laravel.log'{{if tspin != '' { ' | '+tspin } else { '' } }}
