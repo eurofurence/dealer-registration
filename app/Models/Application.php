@@ -404,22 +404,23 @@ class Application extends Model
 
         $applications = self::query()->toBase()
             ->leftJoin('profiles', 'applications.id', '=', 'profiles.application_id')
-            ->leftJoin('users', 'user_id', '=', 'users.id')
+            ->leftJoin('users', 'applications.user_id', '=', 'users.id')
+            ->leftJoin('applications as parents', 'applications.parent_id', '=', 'parents.id')
             ->leftJoinSub($keywords, 'profile_keywords', function (JoinClause $join) {
                 $join->on('profiles.id', '=', 'profile_keywords.profile_id');
             })
             ->select(
                 'applications.id AS Reg No.',
                 'users.name AS Nick',
-                'display_name AS Display Name',
+                'applications.display_name AS Display Name',
                 DB::raw("'' as 'Merchandise'"),
                 DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
                 DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
                 DB::raw("CASE WHEN attends_sat = 1 THEN 'X' ELSE '' END AS 'Attends Sat'"),
                 DB::raw("'X' as 'Allows Use of Data'"),
-                DB::raw("CASE WHEN is_afterdark = 1 THEN 'X' ELSE '' END AS 'After Dark'"),
+                DB::raw("CASE WHEN applications.is_afterdark = 1 THEN 'X' ELSE '' END AS 'After Dark'"),
                 // TODO: Temporary fix for EF27 since "Table Number" is not supported by the app backend & apps
-                DB::raw("TRIM('\n' FROM CONCAT(IFNULL(CONCAT('Table ', table_number), ''), '\\n\\n', IFNULL(short_desc, ''))) AS 'Short Description'"),
+                DB::raw("TRIM('\n' FROM CONCAT(IFNULL(CONCAT('Table ', IFNULL(parents.table_number, applications.table_number)), ''), '\\n\\n', IFNULL(short_desc, ''))) AS 'Short Description'"),
                 'artist_desc AS About the Artist',
                 'art_desc AS About the Art',
                 'profiles.website as Website',
@@ -434,17 +435,20 @@ class Application extends Model
                 DB::raw("CASE WHEN image_art IS NOT NULL THEN 'X' ELSE '' END AS 'ArtImg'"),
                 'profile_keywords.categorized_keywords as Keywords',
                 'tweet as Tweet',
-                'table_number as Table Number',
-                'type as Type',
+                DB::raw("IFNULL(parents.table_number, applications.table_number) AS 'Table Number'"),
+                'applications.type as Type',
             )
-            ->whereNotNull('offer_accepted_at')
             ->where(function (Builder $query) {
-                $query->where('type', ApplicationType::Dealer)
-                    ->orWhere('type', ApplicationType::Share);
+                $query->whereNotNull('applications.offer_accepted_at')
+                    ->orWhereNotNull('parents.offer_accepted_at');
+            })
+            ->where(function (Builder $query) {
+                $query->where('applications.type', ApplicationType::Dealer)
+                    ->orWhere('applications.type', ApplicationType::Share);
             })
             ->where(function (Builder $query) {
                 $query->where('profiles.is_hidden', '=', '0')
-                    ->orWhere('type', ApplicationType::Dealer);
+                    ->orWhere('applications.type', ApplicationType::Dealer);
             })
             ->get();
         return $applications;
@@ -460,8 +464,8 @@ class Application extends Model
     public function tableTypeAssignedAutoNull(): Attribute
     {
         return Attribute::make(
-            get: fn (int|null $value, array $attributes) => $attributes['table_type_assigned'],
-            set: fn (mixed $value) => [
+            get: fn(int|null $value, array $attributes) => $attributes['table_type_assigned'],
+            set: fn(mixed $value) => [
                 'table_type_assigned' => empty($value) ? null : intval($value),
             ]
         );
