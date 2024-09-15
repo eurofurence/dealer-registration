@@ -124,6 +124,7 @@ class ProfileController extends Controller
             "profile_website" => [
                 'max:255',
                 'url:http,https',
+                'nullable',
             ],
             "twitter" => [
                 'nullable',
