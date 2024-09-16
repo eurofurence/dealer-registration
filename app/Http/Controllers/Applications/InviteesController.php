@@ -20,6 +20,7 @@ class InviteesController extends Controller
         /** @var Application */
         $application = $user->application;
 
+        abort_if(!$application, 403, 'Valid registration required.');
         abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
         abort_if(!$application->isActive(), 403, 'Canceled registrations cannot manage this.');
         /**
