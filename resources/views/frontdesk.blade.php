@@ -101,8 +101,25 @@
                 <!-- Numpad & Search Column -->
                 <div class="col-md-3 mh-100">
                     <form method="get" action="{{ route('frontdesk') }}" name="search" autocomplete="off">
+                        <div class="container" style="height: 8% !important">
+                            <div class="row row-cols-3 h-100">
+                                <button type="button"
+                                    onclick="document.forms.search.elements.type.value = 'default'; document.forms.search.submit();"
+                                    class="btn h-100 border align-self-center @if ($type === 'default') btn-primary @else btn-secondary @endif"
+                                    tabindex="-1">Def</button>
+                                <button type="button"
+                                    onclick="document.forms.search.elements.type.value = 'name'; document.forms.search.submit();"
+                                    class="btn h-100 border align-self-center @if ($type === 'name') btn-primary @else btn-secondary @endif"
+                                    tabindex="-1">Name</button>
+                                <button type="button"
+                                    onclick="document.forms.search.elements.type.value = 'keyword'; document.forms.search.submit();"
+                                    class="btn h-100 border align-self-center @if ($type === 'keyword') btn-primary @else btn-secondary @endif"
+                                    tabindex="-1">Key</button>
+                            </div>
+                        </div>
                         <input type="text" class="form-control my-2 text-center fs-1" id="search" name="search"
                             tabindex="1" autofocus>
+                        <input type="hidden" name="type" value="{{ app('request')->input('type') ?? 'default' }}">
                     </form>
                     <div class="container text-center h-75">
                         <div class="row row-cols-3 h-25">
@@ -140,7 +157,7 @@
                         </div>
                         <div class="row row-cols-3 h-25">
                             <button type="button" class="btn btn-danger align-self-center h-100 border fs-1"
-                                onclick="document.forms.search.reset();document.forms.search.submit()"
+                                onclick="document.forms.search.reset();document.forms.search.elements.type.value='default';document.forms.search.submit()"
                                 tabindex="-1">✗</button>
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
@@ -153,34 +170,45 @@
 
                 <!-- Application Column -->
                 <div class="col-md-6 fs-3 mh-100 overflow-auto">
-                    @if (empty($search))
+                    @if (empty($search) && $type !== 'keyword')
                         <div class="card my-2">
                             <div class="card-header text-center fs-3">
                                 Welcome to the Dealers' Den Frontdesk!
                             </div>
                             <div class="card-body fs-4">
-                                You can search Dealers, Shares or Assistants by:
+                                <div class="fs-3"><strong>Def</strong>ault Mode</div>
+                                Search Dealers, Shares or Assistants by:
                                 <ul>
                                     <li><strong>registration ID</strong> (exact match; no checksum!),</li>
                                     <li><strong>attendee nickname</strong> (supports <code>%</code> as wildcard; not
                                         case-sensitive),</li>
-                                    <li><strong>table number</strong> (exact match) or</li>
+                                    <li><strong>table number</strong> (exact match; slash (/) can be omitted) or</li>
                                     <li><strong>display name</strong> (supports <code>%</code> as wildcard; not
                                         case-sensitive).</li>
                                 </ul>
+                                <div class="fs-3"><strong>Name</strong> Mode</div>
+                                Search for any part of a name or display name.
+                                <div class="fs-3"><strong>Key</strong>word & Category Mode</div>
+                                Search for part of a keyword/category name or select one from the list if
+                                you provide no search text.
                             </div>
                             <div class="card-footer fs-5">
-                                The first matching result will be loaded automatically. If it's not who you were looking
-                                for, please try making your search more specific.
+                                <strong>Def</strong>ault mode will always load the first matching result. If it's not
+                                who you
+                                were looking for, please try making your search more specific or use one of the other
+                                search modes.
                             </div>
                         </div>
-                    @elseif ($applicant === null)
+                    @elseif(empty($search) && $type === 'keyword')
+                        <x-frontdesk.keywords :categories="$categories"></x-frontdesk.keywords>
+                    @elseif ($applicant === null && ($applications === null || count($applications) === 0))
                         <div class="card text-bg-danger text-center my-2">
                             <div class="card-body">
-                                No dealer, share or assistant found for search query <em>"{{ $search }}"</em>.
+                                No dealers, shares or assistants found for search query <em>"{{ $search }}"</em>
+                                in mode <em>{{ $type }}</em>.
                             </div>
                         </div>
-                    @else
+                    @elseif ($applicant !== null)
                         @if ($application->status === \App\Enums\ApplicationStatus::TableAccepted)
                             <div class="card text-bg-success text-center my-2">
                                 <div class="card-body">
@@ -354,7 +382,8 @@
                                                     'check-button',
                                                     'btn-primary' => $application->is_afterdark,
                                                     'btn-secondary' => !$application->is_afterdark,
-                                                ])>After Dark</button>
+                                                ])>After
+                                                    Dark</button>
                                                 <button type="button" @class([
                                                     'btn',
                                                     'fs-4',
@@ -546,6 +575,48 @@
                                     </div>
                                 </div>
                             @endif
+                        </div>
+                    @else
+                        <div class="card my-2">
+                            <div class="card-header text-center fs-3">
+                                Search results for "{{ $search }}"
+                            </div>
+                            <div class="card-body fs-4">
+                                <div class="list-group">
+                                    @foreach ($applications as $applicationResult)
+                                        <a class="list-group-item list-group-item-action"
+                                            href="?type=default&search={{ $applicationResult->user->reg_id }}">
+                                            {{ $applicationResult->user->name }}
+                                            ({{ $applicationResult->user->reg_id }})
+                                            [{{ $applicationResult->table_number ?? $applicationResult->parent->table_number }}]
+                                            @switch($applicationResult->type)
+                                                @case(\App\Enums\ApplicationType::Dealer)
+                                                    <span
+                                                        class="badge text-bg-success mx-2">{{ $applicationResult->type->name }}</span>
+                                                @break
+
+                                                @case(\App\Enums\ApplicationType::Share)
+                                                    <span
+                                                        class="badge text-bg-warning mx-2">{{ $applicationResult->type->name }}</span>
+                                                @break
+
+                                                @case(\App\Enums\ApplicationType::Assistant)
+                                                    <span
+                                                        class="badge text-bg-info mx-2">{{ $applicationResult->type->name }}</span>
+                                                @break
+
+                                                @default
+                                                    <span class="badge text-bg-danger mx-2">Unknown Type!</span>
+                                            @endswitch
+                                            @if ($applicationResult->is_afterdark)
+                                                <span class="badge text-bg-dark">ADD</span>
+                                            @endif
+                                            <span
+                                                class="badge text-bg-secondary">{{ $applicationResult->status->name }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
                     @endif
                 </div>
