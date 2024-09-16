@@ -7,7 +7,9 @@ use App\Enums\ApplicationType;
 use App\Http\Requests\CheckInRequest;
 use App\Http\Requests\CheckOutRequest;
 use App\Http\Requests\CommentRequest;
+use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Keyword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -23,16 +25,79 @@ class FrontdeskController extends Controller
         $this->authorize('view-any', Application::class);
 
         $search = $request->get('search');
+        $type = $request->get('type') ?? 'default';
 
         if (empty($search)) {
+            $categories = null;
+            if ($type === 'keyword') {
+                $categories = Category::orderBy('name', 'asc')->get();
+            }
             return view('frontdesk', [
                 'user' => \Auth::user(),
                 'search' => null,
+                'type' => $type,
+                'applications' => null,
                 'application' => null,
-                'applicant' => null
+                'applicant' => null,
+                'categories' => $categories,
             ]);
         }
 
+        $searchResult = [];
+        switch ($type) {
+            case 'name':
+                $searchResult = $this->nameSearch($search);
+                break;
+            case 'keyword':
+                $searchResult = $this->keywordSearch($search);
+                break;
+            case 'default':
+            default:
+                $searchResult = $this->defaultSearch($search);
+        }
+
+        return view('frontdesk', array_merge([
+            'user' => \Auth::user(),
+            'search' => $search,
+            'type' => $type,
+            'showAdditional' => $request->has('show_additional'),
+            'applications' => null,
+            'application' => null,
+            'applicant' => null,
+        ], $searchResult));
+    }
+
+    private function keywordSearch($search)
+    {
+        $keywordId = '-1';
+        $searchString = $search;
+        if (str_starts_with($search, 'k::')) {
+            $keywordId = intval(substr($search, 3));
+            $searchString = Keyword::where('id', $keywordId)?->first()?->name ?? $search;
+        }
+        $categoryId = '-1';
+        if (str_starts_with($search, 'c::')) {
+            $categoryId = intval(substr($search, 3));
+            $searchString = Category::where('id', $categoryId)?->first()?->name ?? $search;
+        }
+        $applications = Application::whereHas('profile.keywords', function ($query) use ($search, $keywordId) {
+            $query->where('name', 'like', "%$search%")->orWhere('id', '=', $keywordId);
+        })->orWhereHas('profile.keywords.category', function ($query) use ($search, $categoryId) {
+            $query->where('name', 'like', "%$search%")->orWhere('id', '=', $categoryId);
+        })->get();
+        return ['applications' => $applications, 'search' => $searchString];
+    }
+
+    private function nameSearch($search)
+    {
+        $applications = Application::where('display_name', 'like', "%$search%")->orWhereHas('user', function ($query) use ($search) {
+            $query->where('name', 'like', "%$search%");
+        })->get();
+        return ['applications' => $applications];
+    }
+
+    private function defaultSearch($search)
+    {
         // 1. search by user user_id
         // 2. search by user name
         $user = User::where('reg_id', $search)->orWhere('name', 'like', $search)->first();
@@ -41,7 +106,12 @@ class FrontdeskController extends Controller
         // 2. search by application table_number
         // 4. search by dealership display_name
         if ($application === null) {
-            $application = Application::where('table_number', strtoupper($search))->orWhere('display_name', 'like', $search)->first();
+            $tableNumberVariation1 = preg_replace('/^([a-zA-Z]{1,2}[0-9])([0-9]+)$/', '\1/\2', $search);
+            $tableNumberVariation2 = preg_replace('/^([a-zA-Z]{1,2})([0-9]+)$/', '\1/\2', $search);
+            $application = Application::where('table_number', strtoupper($search))
+                ->orWhere('table_number', strtoupper($tableNumberVariation1))
+                ->orWhere('table_number', strtoupper($tableNumberVariation2))
+                ->orWhere('display_name', 'like', $search)->first();
             $user = $application ? $application->user : null;
         }
 
@@ -65,9 +135,7 @@ class FrontdeskController extends Controller
 
         $profile = $application ? $application->profile : null;
 
-        return view('frontdesk', [
-            'user' => \Auth::user(),
-            'search' => $search,
+        return [
             'application' => $application,
             'applicant' => $user,
             'table' => $table,
@@ -76,8 +144,7 @@ class FrontdeskController extends Controller
             'shares' => $shares,
             'assistants' => $assistants,
             'profile' => $profile,
-            'showAdditional' => $request->has('show_additional'),
-        ]);
+        ];
     }
 
     public function comment(CommentRequest $request)
