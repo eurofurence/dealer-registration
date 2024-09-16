@@ -121,7 +121,7 @@
                             tabindex="1" autofocus>
                         <input type="hidden" name="type" value="{{ app('request')->input('type') ?? 'default' }}">
                     </form>
-                    <div class="container text-center h-75">
+                    <div class="container text-center" style="height: 68% !important">
                         <div class="row row-cols-3 h-25">
                             <button type="button"
                                 onclick="document.forms.search.elements.search.value = document.forms.search.elements.search.value + this.innerHTML;"
