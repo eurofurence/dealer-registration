@@ -292,7 +292,7 @@
                                         <div class="mb-3">
                                             <label for="table" class="form-label">Table</label>
                                             <input type="text" readonly class="form-control fs-4" id="table"
-                                                value="{{ $application->table_number }}{{ $table ? ' – ' . $table->name : '' }}"
+                                                value="{{ $application->parent?->table_number ?? $application->table_number }}{{ $table ? ' – ' . $table->name : '' }}"
                                                 tabindex="-1">
                                         </div>
 
@@ -588,7 +588,7 @@
                                             href="?type=default&search={{ $applicationResult->user->reg_id }}">
                                             {{ $applicationResult->user->name }}
                                             ({{ $applicationResult->user->reg_id }})
-                                            [{{ $applicationResult->table_number ?? $applicationResult->parent->table_number }}]
+                                            [{{ $applicationResult->parent?->table_number ?? $applicationResult->table_number }}]
                                             @switch($applicationResult->type)
                                                 @case(\App\Enums\ApplicationType::Dealer)
                                                     <span
