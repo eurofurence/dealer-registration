@@ -1,4 +1,6 @@
 {
+    "name": "dealer-registration",
+    "displayName": "Eurofurence Dealers' Den Registration System",
     "private": true,
     "type": "module",
     "scripts": {
@@ -6,14 +8,14 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@tailwindcss/forms": "^0.5.7",
-        "autoprefixer": "^10.4.19",
-        "axios": "^1.6.8",
-        "laravel-vite-plugin": "^1.0.2",
-        "postcss": "^8.4.38",
-        "sass": "^1.75.0",
-        "tailwindcss": "^3.4.3",
-        "vite": "^5.2.8"
+        "@tailwindcss/forms": "^0.5.10",
+        "autoprefixer": "^10.4.20",
+        "axios": "^1.7.9",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.5.1",
+        "sass": "^1.83.4",
+        "tailwindcss": "^4.0.3",
+        "vite": "^6.0.11"
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
