@@ -44,7 +44,7 @@ class ApplicationController extends Controller
         $invitingApplication = self::determineParentByCode($code);
 
         return view('application.create', [
-            'table_types' => TableType::all(['id', 'name', 'price']),
+            'table_types' => TableType::all(['id', 'name', 'seats', 'price']),
             'application' => $application,
             'categories' => $categories,
             'applicationType' => $applicationType,
@@ -71,7 +71,7 @@ class ApplicationController extends Controller
 
         $categories = Category::orderBy('name', 'asc')->get();
         return view('application.edit', [
-            'table_types' => TableType::all(['id', 'name', 'price']),
+            'table_types' => TableType::all(['id', 'name', 'seats', 'price']),
             'application' => $application,
             'categories' => $categories,
             'applicationType' => $applicationType,
