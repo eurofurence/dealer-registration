@@ -23,11 +23,16 @@ services:
         networks:
             - sail
         depends_on:
-            - redis
-            - mariadb
-            - minio
-            - minio-init
-            - mailpit
+            redis:
+                condition: service_healthy
+            mariadb:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+            minio-init:
+                condition: service_completed_successfully
+            mailpit:
+                condition: service_started
     redis:
         image: 'redis:alpine'
         ports:
@@ -41,8 +46,10 @@ services:
                 - CMD
                 - redis-cli
                 - ping
-            retries: 3
+            start_period: 5s
+            interval: 5s
             timeout: 5s
+            retries: 30
     mariadb:
         image: 'mariadb:11'
         ports:
@@ -65,8 +72,10 @@ services:
                 - healthcheck.sh
                 - '--connect'
                 - '--innodb_initialized'
-            retries: 3
+            start_period: 5s
+            interval: 5s
             timeout: 5s
+            retries: 30
     minio:
         image: 'minio/minio:latest'
         ports:
