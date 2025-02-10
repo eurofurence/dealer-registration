@@ -19,7 +19,7 @@ jobs:
           user: "dealers"
           password: "dealers"
           auto-start: "true"
-      - run: mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE dealers; GRANT ALL ON dealers.* TO \'dealers\';'
+      - run: mysql -uroot -h127.0.0.1 -e 'CREATE DATABASE dealers; GRANT ALL ON dealers.* TO \\'dealers\\';'
       - uses: actions/checkout@v4
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.dist', '.env');"
