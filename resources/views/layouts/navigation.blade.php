@@ -9,7 +9,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ config('con.dealers_tos_url') }}" class="nav-link link-light px-2"
+                <a href="{{ config('convention.dealers_tos_url') }}" class="nav-link link-light px-2"
                     aria-current="page">Dealers’
                     Den Rules & Information</a>
             </li>

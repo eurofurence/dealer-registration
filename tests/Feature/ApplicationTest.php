@@ -19,14 +19,14 @@ class ApplicationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         // to avoid registration fields not being filled
-        Config::set('con.reg_start_date', Carbon::yesterday());
-        Config::set('con.reg_end_date', Carbon::tomorrow());
-        Config::set('con.con_end_date', Carbon::tomorrow());
+        Config::set('convention.reg_start_date', Carbon::yesterday());
+        Config::set('convention.reg_end_date', Carbon::tomorrow());
+        Config::set('convention.con_end_date', Carbon::tomorrow());
     }
 
     public function test_application_creation_and_edit_normal()
@@ -119,7 +119,8 @@ class ApplicationTest extends TestCase
         $parentApp = Application::factory()->create(['user_id' => $parent->id]);
 
         $child = \App\Models\User::factory()->create();
-        $childApp = Application::factory()->create([
+        $childApp = Application::factory()->create(
+            [
                 'user_id' => $child->id,
                 'type' => ApplicationType::Share->value,
                 'parent_id' => $parentApp->id,

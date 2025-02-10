@@ -29,7 +29,7 @@ class AlternateTableOfferedNotification extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(config('con.con_name') . ' Dealers\' Den - Alternate Table Size')
+            ->subject(config('convention.con_name') . ' Dealers\' Den - Alternate Table Size')
             ->greeting('Dear ' . $notifiable->name . ',')
             ->line('Thank you for your interest in a Dealership at Eurofurence. We appreciate your application and are excited to have you as a potential dealer at the convention.')
             ->line('Unfortunately, we regret to inform you that the table size you have applied for is no longer available. However, we have some alternative table sizes we would like to offer that may be suitable for your needs.')

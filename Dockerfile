@@ -1,4 +1,4 @@
-FROM php:8.3-alpine as base
+FROM php:8.3-alpine AS base
 WORKDIR /app
 
 ENV COMPOSER_MEMORY_LIMIT=-1
@@ -27,11 +27,11 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 ######################################################
 # Local Stage
 ######################################################
-FROM base as local
+FROM base AS local
 ######################################################
 # NodeJS Stage
 ######################################################
-FROM node:18-buster as vite
+FROM node:22 AS vite
 WORKDIR /app
 COPY package.json package-lock.json vite.config.js ./
 RUN npm install
@@ -40,7 +40,7 @@ RUN npm run build
 ######################################################
 # Production Stage
 ######################################################
-FROM base as production
+FROM base AS production
 COPY --from=vite /app/public/build ./public/build
 COPY . /app/
 RUN composer install --no-dev --optimize-autoloader \
@@ -48,4 +48,4 @@ RUN composer install --no-dev --optimize-autoloader \
     && rm -rf .env bootstrap/cache/*.php auth.json \
     && chown -R www-data:www-data /app \
     && rm -rf ~/.composer
-CMD sh -c "php artisan octane:start --host=0.0.0.0 --port=80"
+CMD [ "sh", "-c", "php artisan octane:start --host=0.0.0.0 --port=80" ]

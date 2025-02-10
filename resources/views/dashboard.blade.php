@@ -6,10 +6,10 @@
     <div class="px-4 py-5 my-5 text-center">
         <h1 class="display-5 fw-bold">Register</h1>
         <div class="col-lg-6 mx-auto">
-            @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+            @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
                 <p class="lead mb-4">
                     Application for dealerships is open until
-                    <b>{{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</b>.
+                    <b>{{ Carbon\Carbon::parse(config('convention.reg_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
                 <p class="lead mb-4">
                     Please note that a <strong>valid registration for Eurofurence</strong> by that date is required to apply
@@ -33,14 +33,14 @@
                     displayed in the EF app.</p>
             @endif
 
-            @if (Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
+            @if (Carbon\Carbon::parse(config('convention.assistant_end_date'))->isFuture())
                 <p class="lead mb-4">
                     Registration for assistants remains open until
-                    <b>{{ Carbon\Carbon::parse(config('con.assistant_end_date'))->format('d.m.Y H:i') }}</b>.
+                    <b>{{ Carbon\Carbon::parse(config('convention.assistant_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
             @endif
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <a target="_blank" href="{{ config('con.dealers_tos_url') }}" class="text-secondary small">Rules and
+                <a target="_blank" href="{{ config('convention.dealers_tos_url') }}" class="text-secondary small">Rules and
                     Information</a>
             </div>
         </div>
@@ -132,14 +132,14 @@
                         @default
                             <p class="alert alert-danger text-center">
                                 <strong>We were unable to find an EF registration for your account!</strong><br>
-                                @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                                @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
                                     @if ($application->type === \App\Enums\ApplicationType::Assistant)
                                         Please make sure to <em>register and pay for your for this year's Eurofurence before
-                                            {{ Carbon\Carbon::parse(config('con.assistant_end_date'))->format('d.m.Y H:i') }}</em>,
+                                            {{ Carbon\Carbon::parse(config('convention.assistant_end_date'))->format('d.m.Y H:i') }}</em>,
                                         if you wish to be an assistant at the Dealers' Den!
                                     @else
                                         Please make sure to <em>register for this year's Eurofurence before
-                                            {{ Carbon\Carbon::parse(config('con.reg_end_date'))->format('d.m.Y H:i') }}</em>, if
+                                            {{ Carbon\Carbon::parse(config('convention.reg_end_date'))->format('d.m.Y H:i') }}</em>, if
                                         you
                                         wish for your application to be taken into consideration for the Dealers' Den!
                                     @endif
@@ -203,7 +203,7 @@
                     </div>
                 </div>
             </div>
-        @elseif (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+        @elseif (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
             <div class="col-md-6">
                 <div class="card mb-2">
                     <div class="card-body text-center">
@@ -217,8 +217,8 @@
                 </div>
             </div>
         @endif
-        @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture() ||
-                Carbon\Carbon::parse(config('con.assistant_end_date'))->isFuture())
+        @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture() ||
+                Carbon\Carbon::parse(config('convention.assistant_end_date'))->isFuture())
             <div class="col-md-6 mx-auto">
                 <div class="card mb-2">
                     <form action="{{ route('invitation.join') }}" method="post">
@@ -226,7 +226,7 @@
                             <h5 class="card-title display-6">Join an existing Dealership</h5>
                             <p class="card-text lead">
                                 You have been invited by an existing dealership to
-                                @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                                @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
                                     share their space or
                                 @endif
                                 assist them at the Dealers’ Den?<br>

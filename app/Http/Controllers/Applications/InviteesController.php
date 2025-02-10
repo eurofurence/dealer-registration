@@ -45,8 +45,8 @@ class InviteesController extends Controller
     public function destroy(InviteeRemovalRequest $request)
     {
         $invitee = Application::findOrFail($request->get('invitee_id'));
-        abort_if(!Carbon::parse(config('con.reg_end_date'))->isFuture() && $invitee->type !== ApplicationType::Assistant, 403, 'Only assistants may be modified once the registration period is over.');
-        abort_if(!Carbon::parse(config('con.assistant_end_date'))->isFuture() && $invitee->type === ApplicationType::Assistant, 403, 'Assistants may no longer be modified once the assistant registration period is over.');
+        abort_if(!Carbon::parse(config('convention.reg_end_date'))->isFuture() && $invitee->type !== ApplicationType::Assistant, 403, 'Only assistants may be modified once the registration period is over.');
+        abort_if(!Carbon::parse(config('convention.assistant_end_date'))->isFuture() && $invitee->type === ApplicationType::Assistant, 403, 'Assistants may no longer be modified once the assistant registration period is over.');
 
         $invitee->update([
             "type" => ApplicationType::Dealer,

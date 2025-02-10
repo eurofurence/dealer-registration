@@ -27,13 +27,13 @@ class InvitationController extends Controller
             ]);
         }
 
-        if ($applicationType === ApplicationType::Share && !Carbon::parse(config('con.reg_end_date'))->isFuture()) {
+        if ($applicationType === ApplicationType::Share && !Carbon::parse(config('convention.reg_end_date'))->isFuture()) {
             throw ValidationException::withMessages([
                 "code" => "The registration period for new dealers and shares has ended, please check back next year.",
             ]);
         }
 
-        if ($applicationType === ApplicationType::Assistant && !Carbon::parse(config('con.assistant_end_date'))->isFuture()) {
+        if ($applicationType === ApplicationType::Assistant && !Carbon::parse(config('convention.assistant_end_date'))->isFuture()) {
             throw ValidationException::withMessages([
                 "code" => "The registration period for new assistants has ended.",
             ]);

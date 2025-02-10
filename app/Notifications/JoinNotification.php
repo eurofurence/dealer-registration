@@ -29,7 +29,7 @@ class JoinNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(config('con.con_name') . ' Dealers\' Den - ' . $this->joinType . ' Joined')
+            ->subject(config('convention.con_name') . ' Dealers\' Den - ' . $this->joinType . ' Joined')
             ->greeting("Dear $notifiable->name,")
             ->line('We wish to inform you that ' . $this->joinName . ' has successfully joined your dealership as ' . $this->joinType . ' via your invite code.')
             ->line('If you did not invite them, please go to "Shares & Assistants" in the Dealers\' Den Registration system to generate a new invite code or disable invitations and remove them from your dealership:')

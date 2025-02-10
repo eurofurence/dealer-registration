@@ -89,8 +89,8 @@ class ApplicationController extends Controller
     {
         $applicationType = Application::determineApplicationTypeByCode($code);
 
-        abort_if(($applicationType === ApplicationType::Share || $applicationType === ApplicationType::Dealer) && config('con.reg_end_date')->isPast(), 400, "The registration period for new dealers and shares has ended, please check back next year.");
-        abort_if($applicationType === ApplicationType::Assistant && config('con.assistant_end_date')->isPast(), 400, "The registration period for new assistants has ended, please check back next year.");
+        abort_if(($applicationType === ApplicationType::Share || $applicationType === ApplicationType::Dealer) && config('convention.reg_end_date')->isPast(), 400, "The registration period for new dealers and shares has ended, please check back next year.");
+        abort_if($applicationType === ApplicationType::Assistant && config('convention.assistant_end_date')->isPast(), 400, "The registration period for new assistants has ended, please check back next year.");
 
         return $applicationType;
     }
@@ -119,7 +119,7 @@ class ApplicationController extends Controller
         $parent = self::determineParentByCode($code);
 
         $application = null;
-        if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
+        if (Carbon::parse(config('convention.reg_end_date'))->isFuture()) {
             $application = Application::updateOrCreate([
                 "user_id" => Auth::id(),
             ], [
@@ -143,7 +143,7 @@ class ApplicationController extends Controller
                 "table_number" => null,
             ]);
         } else if (
-            Carbon::parse(config('con.assistant_end_date'))->isFuture()
+            Carbon::parse(config('convention.assistant_end_date'))->isFuture()
             && $applicationType === ApplicationType::Assistant
         ) {
             abort_if(is_null($parent), 404, 'Invalid invite code');
@@ -217,7 +217,7 @@ class ApplicationController extends Controller
 
         $newParent = self::determineParentByCode($code);
 
-        if (Carbon::parse(config('con.reg_end_date'))->isFuture()) {
+        if (Carbon::parse(config('convention.reg_end_date'))->isFuture()) {
             $application->update([
                 "table_type_requested" => $request->input('space'),
                 "type" => $newApplicationType ?? $application->type,
@@ -233,7 +233,7 @@ class ApplicationController extends Controller
                 "parent_id" => $newParent?->id ?? $application->parent_id,
             ]);
         } else if (
-            Carbon::parse(config('con.assistant_end_date'))->isFuture()
+            Carbon::parse(config('convention.assistant_end_date'))->isFuture()
             && $application->type !== ApplicationType::Dealer
             && $application->type !== ApplicationType::Share
             && $newApplicationType === ApplicationType::Assistant
@@ -271,7 +271,7 @@ class ApplicationController extends Controller
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
         abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
-        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('con.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
+        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('convention.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
         return view('application.delete', [
             "application" => $application,
@@ -285,7 +285,7 @@ class ApplicationController extends Controller
         $application = $user->application;
         abort_if(is_null($application), 404, 'Application not found');
         abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
-        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('con.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
+        abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('convention.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
         foreach ($application->children()->get() as $child) {
             $child->update([

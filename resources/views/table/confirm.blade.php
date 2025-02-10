@@ -14,18 +14,18 @@
         @elseif (Session::exists('table-confirmation-error'))
             <div class="alert alert-danger text-center fw-bold">An error has occurred, please try again. If the error
                 persists, please get in touch with the Dealer's Den team at <a
-                    href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
+                    href="mailto:{{ config('convention.dealers_email') }}">{{ config('convention.dealers_email') }}</a></div>
         @elseif (Session::exists('table-confirmation-registration-not-found'))
             <div class="alert alert-danger text-center fw-bold">We were unable to find your Eurofurence registration, which
                 is a mandatory prerequisite for accepting a table at the Dealers' Den. If you have already
                 registered for the convention, but the error persists, please get in touch with the Dealer's Den team at <a
-                    href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
+                    href="mailto:{{ config('convention.dealers_email') }}">{{ config('convention.dealers_email') }}</a></div>
         @elseif (Session::exists('table-confirmation-registration-inactive'))
             <div class="alert alert-danger text-center fw-bold">Your registration for Eurofurence seems to be inactive, but
                 accepting a table at the Dealers' Den requires an active registration for the event itself. Please check
                 that your registration for the convention has been confirmed and has not been canceled, otherwise please get
                 in touch with the Dealer's Den team at <a
-                    href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a></div>
+                    href="mailto:{{ config('convention.dealers_email') }}">{{ config('convention.dealers_email') }}</a></div>
         @endif
 
         @if ($application->status === \App\Enums\ApplicationStatus::TableOffered)
@@ -41,7 +41,7 @@
                                 </p>
                                 <p>
                                     It's our pleasure to inform you that your table assignment for the
-                                    {{ config('con.con_name') }} Dealers' Den has been confirmed! We are excited to have
+                                    {{ config('convention.con_name') }} Dealers' Den has been confirmed! We are excited to have
                                     you
                                     join us as a dealer at the convention!<br />
                                     Your table assignment details are as follows:
@@ -72,12 +72,12 @@
                                     about your table assignment or the payment process, please do not hesitate to
                                     contact us
                                     at <a
-                                        href="mailto:{{ config('con.dealers_email') }}">{{ config('con.dealers_email') }}</a>.
+                                        href="mailto:{{ config('convention.dealers_email') }}">{{ config('convention.dealers_email') }}</a>.
                                     We are here to help ensure a smooth and enjoyable experience for all our dealers.
                                 </p>
                                 <p>
                                     Thank you once again for your interest in participating in
-                                    {{ config('con.con_name') }}
+                                    {{ config('convention.con_name') }}
                                     Dealers' Den. We hope to see you at the event, and we look forward to your continued
                                     support.
                                 </p>

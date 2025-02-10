@@ -6,6 +6,7 @@ services:
             args:
                 WWWGROUP: '${WWWGROUP}'
                 MYSQL_CLIENT: mariadb-client
+                NODE_VERSION: '22'
         image: sail-8.3/app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -22,9 +23,16 @@ services:
         networks:
             - sail
         depends_on:
-            - redis
-            - mariadb
-            - minio
+            redis:
+                condition: service_healthy
+            mariadb:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+            minio-init:
+                condition: service_completed_successfully
+            mailpit:
+                condition: service_started
     redis:
         image: 'redis:alpine'
         ports:
@@ -38,8 +46,10 @@ services:
                 - CMD
                 - redis-cli
                 - ping
-            retries: 3
+            start_period: 5s
+            interval: 5s
             timeout: 5s
+            retries: 30
     mariadb:
         image: 'mariadb:11'
         ports:
@@ -62,16 +72,18 @@ services:
                 - healthcheck.sh
                 - '--connect'
                 - '--innodb_initialized'
-            retries: 3
+            start_period: 5s
+            interval: 5s
             timeout: 5s
+            retries: 30
     minio:
         image: 'minio/minio:latest'
         ports:
             - '${FORWARD_MINIO_PORT:-9000}:9000'
             - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
         environment:
-            MINIO_ROOT_USER: sail
-            MINIO_ROOT_PASSWORD: password
+            MINIO_ROOT_USER: '${AWS_ACCESS_KEY_ID}'
+            MINIO_ROOT_PASSWORD: '${AWS_SECRET_ACCESS_KEY}'
         volumes:
             - 'sail-minio:/data/minio'
         networks:
@@ -83,8 +95,37 @@ services:
                 - curl
                 - '-f'
                 - 'http://localhost:9000/minio/health/live'
-            retries: 3
+            start_period: 5s
+            interval: 5s
             timeout: 5s
+            retries: 30
+    minio-init:
+        image: minio/mc
+        depends_on:
+            minio:
+                condition: service_healthy
+        environment:
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_BUCKET: ${AWS_BUCKET}
+            AWS_ENDPOINT: ${AWS_ENDPOINT}
+        networks:
+            - sail
+        entrypoint: >
+            /bin/sh -c "
+            /usr/bin/mc config host add ef-minio ${AWS_ENDPOINT} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
+            /usr/bin/mc ready ef-minio;
+            /usr/bin/mc mb -p ef-minio/${AWS_BUCKET};
+            /usr/bin/mc anonymous set download ef-minio/${AWS_BUCKET};
+            exit 0;
+            "
+    mailpit:
+        image: 'axllent/mailpit:latest'
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge

@@ -356,7 +356,7 @@
                                                         'btn-primary' => $profile->attends_thu,
                                                         'btn-secondary' => !$profile->attends_thu,
                                                     ])>Day 2
-                                                        ({{ substr(config('con.day_2_name'), 0, 3) }})</button>
+                                                        ({{ substr(config('convention.day_2_name'), 0, 3) }})</button>
                                                     <button type="button" @class([
                                                         'btn',
                                                         'fs-4',
@@ -364,7 +364,7 @@
                                                         'btn-primary' => $profile->attends_fri,
                                                         'btn-secondary' => !$profile->attends_fri,
                                                     ])>Day 3
-                                                        ({{ substr(config('con.day_3_name'), 0, 3) }})</button>
+                                                        ({{ substr(config('convention.day_3_name'), 0, 3) }})</button>
                                                     <button type="button" @class([
                                                         'btn',
                                                         'fs-4',
@@ -372,7 +372,7 @@
                                                         'btn-primary' => $profile->attends_sat,
                                                         'btn-secondary' => !$profile->attends_sat,
                                                     ])>Day 4
-                                                        ({{ substr(config('con.day_4_name'), 0, 3) }})</button>
+                                                        ({{ substr(config('convention.day_4_name'), 0, 3) }})</button>
                                                 </div>
                                             </div>
                                             <div class="mb-3 d-flex justify-content-evenly">

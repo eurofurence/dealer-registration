@@ -28,7 +28,7 @@
                         <input class="form-check-input @error('attends_thu') is-invalid @enderror" name="attends_thu"
                             @checked(old('_token') ? old('attends_thu') : $profile?->attends_thu === true) type="checkbox" id="attends_thu">
                         <label class="form-check-label" for="attends_thu">
-                            {{ config('con.day_2_name') }}
+                            {{ config('convention.day_2_name') }}
                         </label>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                         <input class="form-check-input @error('attends_fri') is-invalid @enderror" name="attends_fri"
                             @checked(old('_token') ? old('attends_fri') : $profile?->attends_fri === true) type="checkbox" id="attends_fri">
                         <label class="form-check-label" for="attends_fri">
-                            {{ config('con.day_3_name') }}
+                            {{ config('convention.day_3_name') }}
                         </label>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                         <input class="form-check-input @error('attends_sat') is-invalid @enderror" name="attends_sat"
                             @checked(old('_token') ? old('attends_sat') : $profile?->attends_sat === true) type="checkbox" id="attends_sat">
                         <label class="form-check-label" for="attends_sat">
-                            {{ config('con.day_4_name') }}
+                            {{ config('convention.day_4_name') }}
                         </label>
                         @error('attends_sat')
                             <div class="invalid-feedback" role="alert">
