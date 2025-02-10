@@ -164,7 +164,9 @@
                         @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
                         @foreach ($table_types as $type)
                             <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested ?? (new \App\Models\Application())->table_type_requested) == $type['id'])>
-                                {{ $type['name'] . ' - ' . $type['price'] / 100 . ' EUR' }}
+                                {{ $type['name'] }} - max. {{ $type['seats'] }}
+                                seat{{ $type['seats'] === 1 ? '' : 's' }} -
+                                {{ $type['price'] / 100.0 }} EUR
                             </option>
                         @endforeach
                     </select>
