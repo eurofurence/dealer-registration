@@ -25,6 +25,7 @@ services:
             - redis
             - mariadb
             - minio
+            - minio-init
             - mailpit
     redis:
         image: 'redis:alpine'
@@ -84,8 +85,31 @@ services:
                 - curl
                 - '-f'
                 - 'http://localhost:9000/minio/health/live'
-            retries: 3
+            start_period: 5s
+            interval: 5s
             timeout: 5s
+            retries: 30
+    minio-init:
+        image: minio/mc
+        depends_on:
+            minio:
+                condition: service_healthy
+        environment:
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_BUCKET: ${AWS_BUCKET}
+            AWS_BUCKET_PRIVATE: ${AWS_BUCKET_PRIVATE}
+            AWS_ENDPOINT: ${AWS_ENDPOINT}
+        networks:
+            - sail
+        entrypoint: >
+            /bin/sh -c "
+            /usr/bin/mc config host add ef-minio ${AWS_ENDPOINT} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
+            /usr/bin/mc ready ef-minio;
+            /usr/bin/mc mb -p ef-minio/${AWS_BUCKET};
+            /usr/bin/mc anonymous set download ef-minio/${AWS_BUCKET};
+            exit 0;
+            "
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
