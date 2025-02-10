@@ -72,7 +72,7 @@
                     <input type="text" name="displayName"
                         value="{{ old('_token') ? old('displayName') : $application?->display_name }}"
                         class="form-control @error('displayName') is-invalid @enderror" id="displayName"
-                        @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+                        @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                     @error('displayName')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -89,7 +89,7 @@
                     <input type="text" name="website" placeholder="https://yourprofile.example.com/itsme"
                         value="{{ old('_token') ? old('website') : $application?->website }}"
                         class="form-control @error('website') is-invalid @enderror" id="website"
-                        @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+                        @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                     @error('website')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -107,7 +107,7 @@
                     <input type="text" name="merchandise"
                         value="{{ old('_token') ? old('merchandise') : $application?->merchandise }}"
                         class="form-control @error('merchandise') is-invalid @enderror" aria-required="true"
-                        id="merchandise" @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+                        id="merchandise" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                     @error('merchandise')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -130,7 +130,7 @@
                 </p>
             </div>
 
-            <fieldset class="row mb-4" @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+            <fieldset class="row mb-4" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                 <legend class="col-form-label fw-bold col-sm-2 pt-0 required">Loca&shy;tion</legend>
                 <div class="col-sm-10">
                     <div class="form-check">
@@ -161,7 +161,7 @@
                 <label for="space" class="col-sm-2 col-form-label fw-bold">Table size</label>
                 <div class="col-sm-10">
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
-                        @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+                        @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                         @foreach ($table_types as $type)
                             <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested ?? (new \App\Models\Application())->table_type_requested) == $type['id'])>
                                 {{ $type['name'] . ' - ' . $type['price'] / 100 . ' EUR' }}
@@ -185,13 +185,13 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="additionalSpaceRequest" role="switch"
-                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) type="checkbox"
+                            @checked(old('_token') ? old('additionalSpaceRequest') : !empty($application?->additional_space_request)) @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast()) type="checkbox"
                             id="additionalSpaceRequest">
                         <label class="form-check-label" for="additionalSpaceRequest">
                             <b>Additional space request</b>
                         </label>
                         <textarea rows="2" type="text" name="additionalSpaceRequestText" id="additionalSpaceRequestText"
-                            class="form-control @error('additionalSpaceRequestText') is-invalid @enderror" @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>{{ old('_token') ? old('additionalSpaceRequestText') : $application?->additional_space_request }}</textarea>
+                            class="form-control @error('additionalSpaceRequestText') is-invalid @enderror" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>{{ old('_token') ? old('additionalSpaceRequestText') : $application?->additional_space_request }}</textarea>
                         @error('additionalSpaceRequestText')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -208,7 +208,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="wallseat" @checked(old('_token') ? old('wallseat') : $application?->is_wallseat === true) type="checkbox"
-                            id="wallseat" @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+                            id="wallseat" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                         <label class="form-check-label" for="wallseat">
                             <b>Wall preferred</b>
                         </label>
@@ -222,7 +222,7 @@
                 <div class="col-sm-10 offset-sm-2">
                     <div class="form-check">
                         <input class="form-check-input" name="power" @checked(old('_token') ? old('power') : $application?->is_power === true) type="checkbox"
-                            id="power" @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())>
+                            id="power" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
                         <label class="form-check-label" for="power">
                             <b>Increased power demand</b>
                         </label>
@@ -238,7 +238,7 @@
                 <label for="wanted" class="col-sm-2 col-form-label fw-bold">Pre&shy;ferred Neigh&shy;bors</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="wanted" class="form-control @error('wanted') is-invalid @enderror"
-                        @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) id="wanted">{{ old('_token') ? old('wanted') : $application?->wanted_neighbors }}</textarea>
+                        @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast()) id="wanted">{{ old('_token') ? old('wanted') : $application?->wanted_neighbors }}</textarea>
                     @error('wanted')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -257,7 +257,7 @@
                 <label for="comment" class="col-sm-2 col-form-label fw-bold">Com&shy;ments</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="comment" class="form-control @error('comment') is-invalid @enderror"
-                        @disabled(Carbon\Carbon::parse(config('con.reg_end_date'))->isPast()) id="comment">{{ old('_token') ? old('comment') : $application?->comment }}</textarea>
+                        @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast()) id="comment">{{ old('_token') ? old('comment') : $application?->comment }}</textarea>
                     @error('comment')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -282,7 +282,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="tosHelp" class="form-text">
-                        Click <a href="{{ config('con.dealers_tos_url') }}" target="_blank"
+                        Click <a href="{{ config('convention.dealers_tos_url') }}" target="_blank"
                             onclick="window.open(this.href, 'toswin', 'width=600,toolbar=0,resizable=1,scrollbars=1'); return false;">this
                             link</a> to open the Dealers' Den Terms of Service in a new window or a new tab.
                     </div>

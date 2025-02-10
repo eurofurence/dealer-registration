@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if (Carbon\Carbon::parse(config('con.reg_end_date'))->isPast())
+                        @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())
                             <li class="list-group-item disabled">The registration period for shares has ended.</li>
                         @elseif ($seats['free'] > 0 || $seats['additional'] === 'dealer')
                             <li class="list-group-item">
@@ -112,7 +112,7 @@
                                     <input type="hidden" name="invitee_id" value="{{ $share->id }}">
                                     @if (
                                         $application->status === \App\Enums\ApplicationStatus::Open &&
-                                            Carbon\Carbon::parse(config('con.reg_end_date'))->isFuture())
+                                            Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
                                         <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>
                                     @endif
                                     {{ $share->getFullName() }}
@@ -130,7 +130,7 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        @if (Carbon\Carbon::parse(config('con.assistant_end_date'))->isPast())
+                        @if (Carbon\Carbon::parse(config('convention.assistant_end_date'))->isPast())
                             <li class="list-group-item disabled">The registration period for assistants has ended.</li>
                         @elseif ($seats['free'] > 0 || $seats['additional'] === 'assistant')
                             <li class="list-group-item">
@@ -154,7 +154,7 @@
                         @foreach ($assistants as $assistant)
                             <li class="list-group-item">
                                 <form method="POST" action="{{ route('applications.invitees.destroy') }}">
-                                    @if (config('con.assistant_end_date')->isFuture())
+                                    @if (config('convention.assistant_end_date')->isFuture())
                                     @method('DELETE')
                                     @csrf
                                     <input type="hidden" name="invitee_id" value="{{ $assistant->id }}">

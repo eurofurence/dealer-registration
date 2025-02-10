@@ -23,7 +23,7 @@ class ConventionDateRestrictionMiddleware
 
         if (
             // No redirect during reg/event time …
-            Carbon::now(config('con.timezone'))->isBetween(config('con.reg_start_date'), config('con.con_end_date'))
+            Carbon::now(config('convention.timezone'))->isBetween(config('convention.reg_start_date'), config('convention.con_end_date'))
             // … or if user is DD staff.
             || ($user->isAdmin() || $user->isFrontdesk())
         ) {

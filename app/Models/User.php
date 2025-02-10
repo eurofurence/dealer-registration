@@ -67,7 +67,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
      */
     public function isAdmin(): bool
     {
-        return !empty($this->groups) && in_array(config('con.admin_group'), $this->groups);
+        return !empty($this->groups) && in_array(config('convention.admin_group'), $this->groups);
     }
 
     /**
@@ -75,7 +75,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
      */
     public function isFrontdesk(): bool
     {
-        return !empty($this->groups) && $this->isAdmin() || in_array(config('con.frontdesk_group'), $this->groups);
+        return !empty($this->groups) && $this->isAdmin() || in_array(config('convention.frontdesk_group'), $this->groups);
     }
 
     public function canAccessPanel(Panel $panel): bool

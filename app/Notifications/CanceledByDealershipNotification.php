@@ -12,9 +12,7 @@ class CanceledByDealershipNotification extends Notification implements ShouldQue
 {
     use Queueable;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function via($notifiable): array
     {
@@ -24,7 +22,7 @@ class CanceledByDealershipNotification extends Notification implements ShouldQue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(config('con.con_name') . ' Dealers\' Den - Application Canceled by Dealership')
+            ->subject(config('convention.con_name') . ' Dealers\' Den - Application Canceled by Dealership')
             ->greeting('Dear ' . $notifiable->name . ',')
             ->line('The dealership you had joined has chosen to remove you from their application, thereby canceling your own application. But don\'t worry, all data you had entered remains in our system, allowing you pick one of the following options without having to reenter everything:')
             ->line('- Ask the dealership you were part of to allow you to rejoin if you think this happened in error,')
