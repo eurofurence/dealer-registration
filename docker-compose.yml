@@ -99,7 +99,6 @@ services:
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             AWS_BUCKET: ${AWS_BUCKET}
-            AWS_BUCKET_PRIVATE: ${AWS_BUCKET_PRIVATE}
             AWS_ENDPOINT: ${AWS_ENDPOINT}
         networks:
             - sail
