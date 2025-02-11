@@ -26,6 +26,9 @@
                                     If a table has already been assigned to you, you will lose it.<br>
                                     <b>Please only continue if you are sure that you want to cancel your application.</b>
                                 </p>
+                                <p class="text-muted">
+                                    Should you change your mind afterwards, you can resubmit your application or join another dealership until the end of the application phase.
+                                </p>
                                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                                     <a href="{{ route('dashboard') }}"
                                        class="btn btn-outline-secondary btn-lg px-4">Keep my Application</a>
