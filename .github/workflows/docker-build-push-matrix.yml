@@ -1,4 +1,4 @@
-name: Create and publish Docker images for backend and backoffice
+name: Create and publish Docker images for dealer-registration
 
 # Note: DOLLAR in the field descriptions should of course be replaced with a dollar sign.
 #       GitHub parses the description, so we can't write it correctly :)
@@ -24,7 +24,7 @@ jobs:
         include:
           - dockerfile: Dockerfile
             image-name: ${{ github.repository }}
-    uses: eurofurence/reg-workflows/.github/workflows/docker-build-push.yml@feature/custom-dockerfile-context
+    uses: eurofurence/reg-workflows/.github/workflows/docker-build-push.yml@main
     with:
       dockerfile: ${{ matrix.dockerfile }}
       image-name: ${{ matrix.image-name }}
