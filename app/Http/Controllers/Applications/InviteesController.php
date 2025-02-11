@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\InviteeRemovalRequest;
 use App\Models\Application;
 use App\Notifications\CanceledByDealershipNotification;
+use App\Notifications\LeaveNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,12 +49,23 @@ class InviteesController extends Controller
         abort_if(!Carbon::parse(config('convention.reg_end_date'))->isFuture() && $invitee->type !== ApplicationType::Assistant, 403, 'Only assistants may be modified once the registration period is over.');
         abort_if(!Carbon::parse(config('convention.assistant_end_date'))->isFuture() && $invitee->type === ApplicationType::Assistant, 403, 'Assistants may no longer be modified once the assistant registration period is over.');
 
+        /** @var ApplicationType $oldApplicationType */
+        $oldApplicationType = $invitee->type;
+        /** @var ?Application $oldParent */
+        $oldParent = $invitee->parent;
+
         $invitee->update([
             "type" => ApplicationType::Dealer,
             "canceled_at" => now(),
             "parent_id" => null
         ]);
         $invitee->user()->first()->notify(new CanceledByDealershipNotification());
+
+        // Send notification about the leaving share/assistant to the main dealership user.
+        // Usually this is the one executing this call, but they should get an email about it nevertheless.
+        if ($oldParent) {
+            $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $invitee->user()->first()->name));
+        }
         return back();
     }
 
