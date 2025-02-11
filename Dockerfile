@@ -6,36 +6,34 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 # Step 1 | Install Dependencies
 ######################################################
 # Using https://github.com/mlocati/docker-php-extension-installer#usage
-COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN apk update \
-    && chmod +x /usr/local/bin/install-php-extensions \
-    && apk add --no-cache curl git unzip openssl tar ca-certificates \
-    && install-php-extensions gd bcmath pdo_mysql zip intl opcache pcntl redis swoole @composer \
-    && rm -rf /var/cache/apk/*
+RUN install-php-extensions @composer bcmath gd intl opcache pcntl pdo_mysql redis swoole zip
 
 ######################################################
-# Copy Configuration
+# Step 2 | Copy PHP Configuration
 ######################################################
 COPY .github/docker/php/opcache.ini $PHP_INI_DIR/conf.d/opcache.ini
 COPY .github/docker/php/php.ini $PHP_INI_DIR/conf.d/php.ini
 
 ######################################################
-# Step 6 | Configure Credentials & Hosts for external Git (optional)
+# Step 3 | Install Composer packages
 ######################################################
 COPY composer.json composer.lock /app/
 RUN composer install --no-dev --no-scripts --no-autoloader
-######################################################
-# Local Stage
-######################################################
-FROM base AS local
 ######################################################
 # NodeJS Stage
 ######################################################
 FROM node:22 AS vite
 WORKDIR /app
+######################################################
+# Step 4 | Install Node.js packages
+######################################################
 COPY package.json package-lock.json vite.config.js ./
 RUN npm install
+######################################################
+# Step 5 | Perform npm build
+######################################################
 COPY ./resources /app/resources
 RUN npm run build
 ######################################################
