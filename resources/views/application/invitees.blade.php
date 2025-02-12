@@ -61,8 +61,7 @@
                         @endif
                         @foreach ($shares as $share)
                             <li class="list-group-item">
-                                <form method="POST" action="{{ route('applications.invitees.destroy') }}">
-                                    @method('DELETE')
+                                <form method="POST" action="{{ route('applications.invitees.delete') }}">
                                     @csrf
                                     <input type="hidden" name="invitee_id" value="{{ $share->id }}">
                                     @if (
@@ -108,9 +107,8 @@
                         @endif
                         @foreach ($assistants as $assistant)
                             <li class="list-group-item">
-                                <form method="POST" action="{{ route('applications.invitees.destroy') }}">
+                                <form method="POST" action="{{ route('applications.invitees.delete') }}">
                                     @if (config('convention.assistant_end_date')->isFuture())
-                                    @method('DELETE')
                                     @csrf
                                     <input type="hidden" name="invitee_id" value="{{ $assistant->id }}">
                                     <button type="submit" class="btn btn-sm btn-danger d-inline">X</button>

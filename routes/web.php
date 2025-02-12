@@ -45,6 +45,7 @@ Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddlew
     Route::delete('applications', [\App\Http\Controllers\Applications\ApplicationController::class, 'destroy'])->name('applications.destroy');
 
     Route::get('applications/invitees', [\App\Http\Controllers\Applications\InviteesController::class, 'view'])->name('applications.invitees.view');
+    Route::post('applications/invitees/delete', [\App\Http\Controllers\Applications\InviteesController::class, 'delete'])->name('applications.invitees.delete');
     Route::delete('applications/invitees', [\App\Http\Controllers\Applications\InviteesController::class, 'destroy'])->name('applications.invitees.destroy');
     Route::post('applications/invitees/codes', [\App\Http\Controllers\Applications\InviteesController::class, 'codes'])->name('applications.invitees.codes');
 

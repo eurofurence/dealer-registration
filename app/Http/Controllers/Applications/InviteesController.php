@@ -43,6 +43,26 @@ class InviteesController extends Controller
         ]);
     }
 
+    /**
+     * This is the confirmation page for removing a share/assistant from a dealership.
+     * It has been added in place of the confirmationless @see InviteesController::destroy().
+     */
+    public function delete(InviteeRemovalRequest $request)
+    {
+        $invitee = Application::findOrFail($request->get('invitee_id'));
+        // Note: We do not check the end dates here but in the actual destroy handler below.
+        // Users should not be routed to this view anyway if they are not allowed to do this.
+
+        return view('application.invitee-delete', [
+            "invitee" => $invitee,
+        ]);
+    }
+
+    /**
+     * This is the actual destroy function, which was previously executed without a confirmation page.
+     * @param InviteeRemovalRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(InviteeRemovalRequest $request)
     {
         $invitee = Application::findOrFail($request->get('invitee_id'));
@@ -66,7 +86,7 @@ class InviteesController extends Controller
         if ($oldParent) {
             $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $invitee->user()->first()->name));
         }
-        return back();
+        return Redirect::route('applications.invitees.view');
     }
 
     public function codes(Request $request)
