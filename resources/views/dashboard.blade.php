@@ -29,8 +29,8 @@
                     </p>
                 @endif
             @else
-                <p class="lead mb-4">The registration period for dealerships has ended. You can still update your profile data which will be
-                    displayed in the EF app.</p>
+                <p class="lead mb-4">The registration period for dealerships has ended. You can still update your profile
+                    data which will be displayed in the EF app.</p>
             @endif
 
             @if (Carbon\Carbon::parse(config('convention.assistant_end_date'))->isFuture())
@@ -86,7 +86,11 @@
                             <p>Your registration as a dealer was accepted! Please review and accept the table you were
                                 offered.
                             </p>
-                            <p><a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a></p>
+                            <p>
+                                <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">
+                                    Review Offered Table
+                                </a>
+                            </p>
                         @else
                             <h3>Congratulations!</h3>
                             <p>The application of the dealership you are part of was accepted! The main account of your
@@ -139,9 +143,8 @@
                                         if you wish to be an assistant at the Dealers' Den!
                                     @else
                                         Please make sure to <em>register for this year's Eurofurence before
-                                            {{ Carbon\Carbon::parse(config('convention.reg_end_date'))->format('d.m.Y H:i') }}</em>, if
-                                        you
-                                        wish for your application to be taken into consideration for the Dealers' Den!
+                                            {{ Carbon\Carbon::parse(config('convention.reg_end_date'))->format('d.m.Y H:i') }}</em>,
+                                        if you wish for your application to be taken into consideration for the Dealers' Den!
                                     @endif
                                 @else
                                     Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence
@@ -156,10 +159,21 @@
 
     <div class="row">
         @if (isset($application) && $application->isActive())
-            <div class="col-md-6 mx-auto">
-                <div class="card mb-2">
+            <div class="col-lg-6 mx-auto d-flex">
+                <div class="card mb-4">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Manage your Registration</h5>
+                        @if ($application->type)
+                            <p>
+                                as
+                                <span
+                                    class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
+                                @if ($application->parent)
+                                    of <span
+                                        class="badge bg-secondary">{{ $application->parent()->first()->getFullName() }}</span>
+                                @endif
+                            </p>
+                        @endif
                         <p class="card-text lead">
                             @switch($application->type)
                                 @case(\App\Enums\ApplicationType::Dealer)
@@ -175,24 +189,20 @@
                                 @break
 
                                 @case(\App\Enums\ApplicationType::Assistant)
-                                    You may cancel your registration as assistant until the assitant registration period is over.
+                                    You may cancel your registration as assistant until the assistant registration period is over.
                                 @break
 
                                 @default
                                     <span class="badge text-bg-danger mx-2">Please report this as an error.</span>
                             @endswitch
                         </p>
-                        <a href="{{ route('applications.edit') }}" class="btn btn-lg btn-primary">Manage your
+                        <a href="{{ route('applications.edit') }}" class="btn btn-lg btn-primary mt-2">Manage your
                             Registration</a>
                         <div class="mb-3"></div>
-                        @if ($application->type === \App\Enums\ApplicationType::Dealer)
-                            <a href="{{ route('applications.invitees.view') }}"
-                                class="btn btn-sm btn-outline-primary">Assistants & Shares</a>
-                        @endif
                         @if (
                             $application->status !== \App\Enums\ApplicationStatus::TableAccepted &&
                                 $application->status !== \App\Enums\ApplicationStatus::CheckedIn)
-                            <a href="{{ route('applications.delete') }}" class="btn btn-sm btn-outline-danger">
+                            <a href="{{ route('applications.delete') }}" class="btn btn btn-outline-danger mt-2">
                                 @if ($application->type === \App\Enums\ApplicationType::Dealer)
                                     Cancel Registration
                                 @else
@@ -203,9 +213,26 @@
                     </div>
                 </div>
             </div>
+            @if ($application->type === \App\Enums\ApplicationType::Dealer)
+                <div class="col-lg-6 mx-auto d-flex">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <h5 class="card-title display-6">Seats in your Dealership</h5>
+                            <p class="card-text lead">
+                                You may invite other dealers while registration is still open and invite assistants until
+                                assistant registration closes.
+                            </p>
+                            <x-dashboard.dealership-seats-overview :seats="$application->getSeats()" />
+                            <a href="{{ route('applications.invitees.view') }}" class="btn btn-lg btn-primary">
+                                Invite or Manage <span class="text-nowrap">Assistants & Shares</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
         @elseif (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
-            <div class="col-md-6">
-                <div class="card mb-2">
+            <div class="col-lg-6 d-flex">
+                <div class="card mb-4">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Apply for a Dealership</h5>
                         <p class="card-text lead">As a Dealers’ Den dealership owner, you are responsible for managing your
@@ -219,8 +246,8 @@
         @endif
         @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture() ||
                 Carbon\Carbon::parse(config('convention.assistant_end_date'))->isFuture())
-            <div class="col-md-6 mx-auto">
-                <div class="card mb-2">
+            <div class="col-lg-6 mx-auto d-flex">
+                <div class="card mb-4">
                     <form action="{{ route('invitation.join') }}" method="post">
                         <div class="card-body text-center">
                             <h5 class="card-title display-6">Join an existing Dealership</h5>
@@ -233,13 +260,24 @@
                                 Then enter the invite code they provided you with below!
                             </p>
                             <div class="input-group input-group-lg has-validation">
-                                <input type="text" name="code"
-                                    class="form-control @error('code') is-invalid @enderror" placeholder="Invite Code">
-                                <button class="btn btn-primary" type="submit">Submit
-                                </button>
-                                @error('code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                @if (isset($application) && $application->isActive())
+                                    <input type="text" disabled class="form-control" placeholder="Invite Code">
+                                    <button class="btn btn-secondary" disabled type="submit">Submit</button>
+                                    <p class="text-danger mt-2">
+                                        You cannot join another dealership while you still have an active, uncanceled
+                                        application.
+                                    </p>
+                                @else
+                                    <input type="text" name="code"
+                                        class="form-control @error('code') is-invalid @enderror" placeholder="Invite Code">
+                                    <button class="btn btn-primary" type="submit">Submit
+                                    </button>
+                                    @error('code')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @else
+                                        <span></span>
+                                    @enderror
+                                @endif
                             </div>
                         </div>
                         @csrf
@@ -247,7 +285,5 @@
                 </div>
             </div>
         @endif
-    </div>
-
     </div>
 @endsection

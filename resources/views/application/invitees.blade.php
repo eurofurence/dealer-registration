@@ -3,17 +3,6 @@
     Shares and Assistants
 @endsection
 @section('content')
-    <style>
-        .dd-table-button {
-            width: 5ex;
-            height: 5ex;
-            font-weight: bold;
-        }
-
-        .dd-table-button.border-danger {
-            border-width: 3px
-        }
-    </style>
     <div class="">
         <div class="col-md-6 mx-auto">
             <h1 class="text-center">Manage Shares and Assistants</h1>
@@ -35,42 +24,8 @@
         @endif
         <div class="col-md-6 mx-auto">
             <h3 class="text-center">Seats in your Dealership</h3>
-            <div class="mx-auto text-center mb-1">
-                @for ($i = 0; $i < $seats['dealers']; $i++)
-                    <button
-                        class="btn btn-sm btn-primary dd-table-button @if ($i >= $seats['table']) border-danger text-danger @endif"
-                        type="button" title="Dealer">D</button>
-                @endfor
-                @for ($i = 0; $i < $seats['free']; $i++)
-                    <button class="btn btn-sm btn-secondary dd-table-button" type="button" title="Free">F</button>
-                @endfor
-                @if (!is_null($seats['additional']))
-                    <button class="btn btn-sm btn-dark dd-table-button" type="button"
-                        title="Free ({{ ucfirst($seats['additional']) }})">F{{ ucfirst(substr($seats['additional'], 0, 1)) }}</button>
-                @endif
-                @for ($i = 0; $i < $seats['assistants']; $i++)
-                    <button
-                        class="btn btn-sm bg-info dd-table-button @if ($i >= max($seats['table'] - $seats['dealers'], 1)) border-danger text-danger @endif"
-                        type="button" title="Assistant">A</button>
-                @endfor
-            </div>
-            <div class="mx-auto text-center mb-4">
-                Legend:
-                <span class="badge text-bg-primary">Dealer</span>
-                <span class="badge text-bg-secondary">Free</span>
-                @if (!is_null($seats['additional']))
-                    <span class="badge text-bg-dark">Free ({{ ucfirst($seats['additional']) }})</span>
-                @endif
-                <span class="badge text-bg-info">Assistant</span>
-            </div>
+            <x-dashboard.dealership-seats-overview :seats="$seats" />
         </div>
-        @if ($seats['free'] < 0)
-            <div class="alert alert-danger text-center fw-bold">
-                You have too many people in your dealership for the number of
-                seats available for your table size.<br />
-                Please remove excess shares or assistants.
-            </div>
-        @endif
         <div class="row">
             <div class="col-md-6">
 
