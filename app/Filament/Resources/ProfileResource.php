@@ -23,8 +23,6 @@ class ProfileResource extends Resource
             ->columns(3)
             ->schema([
                 Forms\Components\Group::make()->columnSpan(2)->columns()->schema([
-                    Forms\Components\TextInput::make('application_id'),
-
                     Forms\Components\TextInput::make('website')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('twitter')
@@ -84,7 +82,8 @@ class ProfileResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('application_id'),
+                Tables\Columns\TextColumn::make('application.user.name'),
+                Tables\Columns\TextColumn::make('application.display_name'),
                 Tables\Columns\IconColumn::make('is_hidden')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('short_desc'),
