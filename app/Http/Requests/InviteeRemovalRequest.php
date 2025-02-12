@@ -11,7 +11,7 @@ class InviteeRemovalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "invitee_id" => "required|int"
+            "invitee_id" => "required|string"
         ];
     }
 
