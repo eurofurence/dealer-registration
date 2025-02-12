@@ -17,6 +17,7 @@ use App\Notifications\AlternateTableOfferedShareNotification;
 use App\Notifications\CanceledByDealershipNotification;
 use App\Notifications\CanceledBySelfNotification;
 use App\Notifications\JoinNotification;
+use App\Notifications\LeaveNotification;
 use App\Notifications\TableAcceptanceReminderNotification;
 use App\Notifications\TableOfferedNotification;
 use App\Notifications\TableOfferedShareNotification;
@@ -206,9 +207,9 @@ class ApplicationController extends Controller
     public function update(ApplicationRequest $request)
     {
         InvitationController::verifyInvitationCodeConfirmation($request);
-        /** @var User */
+        /** @var User $user */
         $user = Auth::user();
-        /** @var Application */
+        /** @var Application $application */
         $application = $user->application;
         abort_if(is_null($application), 404, 'Application not found');
 
@@ -216,6 +217,11 @@ class ApplicationController extends Controller
         $newApplicationType = self::determineApplicationTypeByCode($code);
 
         $newParent = self::determineParentByCode($code);
+
+        /** @var ApplicationType $oldApplicationType */
+        $oldApplicationType = $application->type;
+        /** @var ?Application $oldParent */
+        $oldParent = $application->parent;
 
         if (Carbon::parse(config('convention.reg_end_date'))->isFuture()) {
             $application->update([
@@ -261,6 +267,11 @@ class ApplicationController extends Controller
             } elseif ($newApplicationType === ApplicationType::Share) {
                 $user->notify(new WelcomeShareNotification($newParent->getFullName()));
             }
+            // If this application was associated to another main dealership before, notify them, too.
+            // TODO: Check if this path actually is taken...
+            if ($oldParent) {
+                $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $user->name));
+            }
         }
 
         return Redirect::route('applications.edit')->with('save-successful');
@@ -287,6 +298,11 @@ class ApplicationController extends Controller
         abort_if($application->type !== ApplicationType::Assistant && ($application->status === ApplicationStatus::TableAccepted || $application->status === ApplicationStatus::CheckedIn || $application->status === ApplicationStatus::CheckedOut), 403, 'Applications which have accepted their table may no longer be canceled.');
         abort_if($application->type === ApplicationType::Assistant && Carbon::parse(config('convention.assistant_end_date'))->isPast(), 403, 'Assistants may no longer cancel once the assistant registration period is over.');
 
+        /** @var ApplicationType $oldApplicationType */
+        $oldApplicationType = $application->type;
+        /** @var ?Application $oldParent */
+        $oldParent = $application->parent;
+
         foreach ($application->children()->get() as $child) {
             $child->update([
                 'canceled_at' => now(),
@@ -302,6 +318,11 @@ class ApplicationController extends Controller
             'type' => 'dealer'
         ]);
         $user->notify(new CanceledBySelfNotification());
+
+        // If this application was associated to another main dealership, notify them, too.
+        if ($oldParent) {
+            $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $user->name));
+        }
 
         return Redirect::route('dashboard');
     }
