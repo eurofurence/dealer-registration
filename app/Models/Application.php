@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
@@ -15,7 +16,7 @@ use Illuminate\Support\Str;
 
 class Application extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
     protected $guarded = [];
 
     protected $appends = [
@@ -322,7 +323,7 @@ class Application extends Model
         }
     }
 
-    public static function findByUserId(int|null $user_id): Application|null
+    public static function findByUserId(string|null $user_id): Application|null
     {
         return self::where('user_id', $user_id)->first();
     }

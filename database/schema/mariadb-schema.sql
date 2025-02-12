@@ -9,12 +9,12 @@ DROP TABLE IF EXISTS `applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `applications` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL,
+  `id` char(36) NOT NULL,
+  `user_id` char(36) NOT NULL,
   `table_type_requested` bigint(20) unsigned DEFAULT NULL,
   `table_type_assigned` bigint(20) unsigned DEFAULT NULL,
   `type` varchar(255) NOT NULL,
-  `parent_id` bigint(20) unsigned DEFAULT NULL,
+  `parent_id` char(36) DEFAULT NULL,
   `display_name` varchar(255) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL,
   `table_number` varchar(255) DEFAULT NULL,
@@ -67,8 +67,8 @@ DROP TABLE IF EXISTS `comments`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `comments` (
   `uuid` char(36) NOT NULL,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `application_id` bigint(20) unsigned NOT NULL,
+  `user_id` char(36) NOT NULL,
+  `application_id` char(36) NOT NULL,
   `text` text NOT NULL,
   `admin_only` tinyint(1) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -98,7 +98,7 @@ DROP TABLE IF EXISTS `keyword_profile`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `keyword_profile` (
-  `profile_id` bigint(20) unsigned NOT NULL,
+  `profile_id` char(36) NOT NULL,
   `keyword_id` bigint(20) unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -138,8 +138,8 @@ DROP TABLE IF EXISTS `profiles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `profiles` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `application_id` bigint(20) unsigned DEFAULT NULL,
+  `id` char(36) NOT NULL,
+  `application_id` char(36) DEFAULT NULL,
   `short_desc` text DEFAULT NULL,
   `artist_desc` text DEFAULT NULL,
   `art_desc` text DEFAULT NULL,
@@ -184,7 +184,7 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` char(36) NOT NULL,
   `reg_id` varchar(255) DEFAULT NULL,
   `identity_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
