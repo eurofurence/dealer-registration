@@ -29,8 +29,8 @@
                     </p>
                 @endif
             @else
-                <p class="lead mb-4">The registration period for dealerships has ended. You can still update your profile data which will be
-                    displayed in the EF app.</p>
+                <p class="lead mb-4">The registration period for dealerships has ended. You can still update your profile
+                    data which will be displayed in the EF app.</p>
             @endif
 
             @if (Carbon\Carbon::parse(config('convention.assistant_end_date'))->isFuture())
@@ -86,7 +86,11 @@
                             <p>Your registration as a dealer was accepted! Please review and accept the table you were
                                 offered.
                             </p>
-                            <p><a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">Review Offered Table</a></p>
+                            <p>
+                                <a href="{{ route('table.confirm') }}" class="btn btn-lg btn-primary">
+                                    Review Offered Table
+                                </a>
+                            </p>
                         @else
                             <h3>Congratulations!</h3>
                             <p>The application of the dealership you are part of was accepted! The main account of your
@@ -139,9 +143,8 @@
                                         if you wish to be an assistant at the Dealers' Den!
                                     @else
                                         Please make sure to <em>register for this year's Eurofurence before
-                                            {{ Carbon\Carbon::parse(config('convention.reg_end_date'))->format('d.m.Y H:i') }}</em>, if
-                                        you
-                                        wish for your application to be taken into consideration for the Dealers' Den!
+                                            {{ Carbon\Carbon::parse(config('convention.reg_end_date'))->format('d.m.Y H:i') }}</em>,
+                                        if you wish for your application to be taken into consideration for the Dealers' Den!
                                     @endif
                                 @else
                                     Please contact us at dealers@eurofurence.org if you are not planning on attending Eurofurence
@@ -160,12 +163,14 @@
                 <div class="card mb-4">
                     <div class="card-body text-center">
                         <h5 class="card-title display-6">Manage your Registration</h5>
-                        @if($application->type)
+                        @if ($application->type)
                             <p>
                                 as
-                                <span class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
+                                <span
+                                    class="badge bg-primary">{{ \Illuminate\Support\Str::ucfirst($application->type->value) }}</span>
                                 @if ($application->parent)
-                                    of <span class="badge bg-secondary">{{ $application->parent()->first()->getFullName() }}</span>
+                                    of <span
+                                        class="badge bg-secondary">{{ $application->parent()->first()->getFullName() }}</span>
                                 @endif
                             </p>
                         @endif
@@ -214,11 +219,13 @@
                         <div class="card-body text-center">
                             <h5 class="card-title display-6">Seats in your Dealership</h5>
                             <p class="card-text lead">
-                                You may invite other dealers while registration is still open and invite assistants until assistant registration closes.
+                                You may invite other dealers while registration is still open and invite assistants until
+                                assistant registration closes.
                             </p>
-                            <x-dashboard.dealership-seats-overview :seats="$application->getSeats()"/>
-                            <a href="{{ route('applications.invitees.view') }}"
-                               class="btn btn-lg btn-primary">Invite or Manage <span class="text-nowrap">Assistants & Shares</span></a>
+                            <x-dashboard.dealership-seats-overview :seats="$application->getSeats()" />
+                            <a href="{{ route('applications.invitees.view') }}" class="btn btn-lg btn-primary">
+                                Invite or Manage <span class="text-nowrap">Assistants & Shares</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -257,7 +264,8 @@
                                     <input type="text" disabled class="form-control" placeholder="Invite Code">
                                     <button class="btn btn-secondary" disabled type="submit">Submit</button>
                                     <p class="text-danger mt-2">
-                                        You cannot join another dealership while you still have an active, uncanceled application.
+                                        You cannot join another dealership while you still have an active, uncanceled
+                                        application.
                                     </p>
                                 @else
                                     <input type="text" name="code"
@@ -266,6 +274,8 @@
                                     </button>
                                     @error('code')
                                         <div class="invalid-feedback">{{ $message }}</div>
+                                    @else
+                                        <span></span>
                                     @enderror
                                 @endif
                             </div>

@@ -13,7 +13,8 @@
                 the registration period has ended.</p>
         </div>
         @if ($applicationType === \App\Enums\ApplicationType::Share)
-            <input class="form-check-input" name="profile_hidden" role="switch" @checked(old('_token') ? old('profile_hidden') : $profile?->is_hidden === true) type="checkbox" id="dd-profile-hidden">
+            <input class="form-check-input" name="profile_hidden" role="switch" @checked(old('_token') ? old('profile_hidden') : $profile?->is_hidden === true)
+                type="checkbox" id="dd-profile-hidden">
             <label class="form-check-label" for="dd-profile-hidden">
                 <strong>Hide Profile</strong> – I wish to share the dealership's profile instead of providing my own.
             </label>
@@ -292,9 +293,7 @@
                     X)</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span clasS="input-group-text">@</span>
-                        </div>
+                        <span class="input-group-text">@</span>
                         <input type="text" name="twitter" placeholder="YourTwitterHandle"
                             class="form-control @error('twitter') is-invalid @enderror" id="twitter"
                             value="{{ old('_token') ? old('twitter') : $profile?->twitter }}">
@@ -313,9 +312,7 @@
                 <label for="mastodon" class="col-sm-2 col-form-label fw-bold">Mas&shy;to&shy;don</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span clasS="input-group-text">@</span>
-                        </div>
+                        <span class="input-group-text">@</span>
                         <input type="text" name="mastodon" placeholder="YourMastodonHandle"
                             class="form-control @error('mastodon') is-invalid @enderror" id="mastodon"
                             value="{{ old('_token') ? old('mastodon') : $profile?->mastodon }}">
@@ -332,9 +329,7 @@
                 <label for="bluesky" class="col-sm-2 col-form-label fw-bold">Blue&shy;sky</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span clasS="input-group-text">@</span>
-                        </div>
+                        <span class="input-group-text">@</span>
                         <input type="text" name="bluesky" placeholder="YourBlueskyHandle"
                             class="form-control @error('bluesky') is-invalid @enderror" id="bluesky"
                             value="{{ old('_token') ? old('bluesky') : $profile?->bluesky }}">
@@ -351,9 +346,7 @@
                 <label for="telegram" class="col-sm-2 col-form-label fw-bold">Tele&shy;gram</label>
                 <div class="col-sm-10">
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span clasS="input-group-text">@</span>
-                        </div>
+                        <span class="input-group-text">@</span>
                         <input type="text" name="telegram" placeholder="YourTelegramHandle"
                             class="form-control @error('telegram') is-invalid @enderror" id="telegram"
                             value="{{ old('_token') ? old('telegram') : $profile?->telegram }}">
