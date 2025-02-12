@@ -1,0 +1,43 @@
+name: Create and publish container image
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]'
+      - 'v[0-9]+.[0-9]+.[0-9]-**'
+
+jobs:
+  call_build-and-push-image_nightly:
+    if: startsWith(github.ref, 'refs/heads/')
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/docker-build-push-matrix.yml
+    with:
+      image-tags: nightly
+    secrets:
+      registry-pass: ${{ secrets.GITHUB_TOKEN }}
+
+  call_build-and-push-image_prerelease:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '-') }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/docker-build-push-matrix.yml
+    with:
+      image-tags: ${{ github.ref_name }}
+    secrets:
+      registry-pass: ${{ secrets.GITHUB_TOKEN }}
+
+  call_build-and-push-image_release:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-') }}
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/docker-build-push-matrix.yml
+    with:
+      image-tags: ${{ github.ref_name }} latest
+    secrets:
+      registry-pass: ${{ secrets.GITHUB_TOKEN }}
