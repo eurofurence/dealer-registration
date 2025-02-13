@@ -184,10 +184,19 @@ class Application extends Model
         return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant);
     }
 
-    public function getSeats(): array
+    /**
+     * Get an associative array of the seat assignment, counted per type.
+     *
+     * If set, the assigned table type is used as base for the calculation, else the requested table type is used.
+     * New: You can provide another table type to calculate based of that one instead of the assigned/requested one.
+     *
+     * @param TableType|null $checkAlternativeTableType If not null, check for this table type instead.
+     * @return array
+     */
+    public function getSeats(TableType|null $checkAlternativeTableType = null): array
     {
         /** @var TableType */
-        $tableType = $this->assignedTable ?? $this->requestedTable;
+        $tableType = $checkAlternativeTableType ?? $this->assignedTable ?? $this->requestedTable;
         if (is_null($tableType) || !$this->isActive()) {
             return [
                 'table' => 0,
@@ -227,6 +236,19 @@ class Application extends Model
             'free' => $free,
             'additional' => $additional,
         ];
+    }
+
+    /**
+     * Test if the application in its current state will have a valid seat count if the given table type were assigned.
+     *
+     * This check internally uses @see Application::getSeats() to apply the same counting rules.
+     *
+     * @param TableType $newTableType The table type to check for.
+     * @return bool True if changing to this table type does not violate seats assignment.
+     */
+    public function canChangeTableTypeTo(TableType $newTableType): bool
+    {
+        return $this->getSeats($newTableType)['free'] >= 0;
     }
 
     public function getStatusAttribute()
