@@ -14,10 +14,10 @@ class CommentRequest extends FormRequest
         return [
             "comment" => [
                 "filled",
-                "max:". Comment::MAX_LENGTH,
+                "max:" . Comment::MAX_LENGTH,
             ],
             "application" => [
-                "integer",
+                "string",
             ],
         ];
     }

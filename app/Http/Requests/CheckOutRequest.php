@@ -13,7 +13,7 @@ class CheckOutRequest extends FormRequest
     {
         return [
             "application" => [
-                "integer",
+                "string",
             ],
             "table_clean" => [
                 "accepted",
@@ -31,7 +31,7 @@ class CheckOutRequest extends FormRequest
                 "accepted",
             ],
             "ci_comment" => [
-                "max:". Comment::MAX_LENGTH,
+                "max:" . Comment::MAX_LENGTH,
             ],
         ];
     }
