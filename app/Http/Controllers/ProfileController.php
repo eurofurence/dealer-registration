@@ -17,7 +17,7 @@ class ProfileController extends Controller
 
     public function create(Request $request) {}
 
-    public static function createOrUpdate(Request $request, int $applicationId): Profile
+    public static function createOrUpdate(Request $request, string $applicationId): Profile
     {
         $profileData = [
             "short_desc" => $request->input('short_desc'),
@@ -71,12 +71,12 @@ class ProfileController extends Controller
         Storage::disk('public')->get($fileName);
     }
 
-    public static function getOrCreate(int|null $applicationId): Profile
+    public static function getOrCreate(string|null $applicationId): Profile
     {
         return Profile::findByApplicationId($applicationId) ?? new Profile();
     }
 
-    public static function getByApplicationId(int|null $applicationId): Profile|null
+    public static function getByApplicationId(string|null $applicationId): Profile|null
     {
         return Profile::findByApplicationId($applicationId);
     }

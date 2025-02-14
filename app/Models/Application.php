@@ -6,6 +6,7 @@ use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
@@ -15,7 +16,7 @@ use Illuminate\Support\Str;
 
 class Application extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
     protected $guarded = [];
 
     protected $appends = [
@@ -183,10 +184,19 @@ class Application extends Model
         return $this->children()->whereNull('canceled_at')->where('type', ApplicationType::Assistant);
     }
 
-    public function getSeats(): array
+    /**
+     * Get an associative array of the seat assignment, counted per type.
+     *
+     * If set, the assigned table type is used as base for the calculation, else the requested table type is used.
+     * New: You can provide another table type to calculate based of that one instead of the assigned/requested one.
+     *
+     * @param TableType|null $checkAlternativeTableType If not null, check for this table type instead.
+     * @return array
+     */
+    public function getSeats(TableType|null $checkAlternativeTableType = null): array
     {
         /** @var TableType */
-        $tableType = $this->assignedTable ?? $this->requestedTable;
+        $tableType = $checkAlternativeTableType ?? $this->assignedTable ?? $this->requestedTable;
         if (is_null($tableType) || !$this->isActive()) {
             return [
                 'table' => 0,
@@ -226,6 +236,19 @@ class Application extends Model
             'free' => $free,
             'additional' => $additional,
         ];
+    }
+
+    /**
+     * Test if the application in its current state will have a valid seat count if the given table type were assigned.
+     *
+     * This check internally uses @see Application::getSeats() to apply the same counting rules.
+     *
+     * @param TableType $newTableType The table type to check for.
+     * @return bool True if changing to this table type does not violate seats assignment.
+     */
+    public function canChangeTableTypeTo(TableType $newTableType): bool
+    {
+        return $this->getSeats($newTableType)['free'] >= 0;
     }
 
     public function getStatusAttribute()
@@ -322,7 +345,7 @@ class Application extends Model
         }
     }
 
-    public static function findByUserId(int|null $user_id): Application|null
+    public static function findByUserId(string|null $user_id): Application|null
     {
         return self::where('user_id', $user_id)->first();
     }

@@ -162,11 +162,18 @@
                 <div class="col-sm-10">
                     <select name="space" id="space" class="form-select @error('space') is-invalid @enderror"
                         @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
+                        @php($_any_too_small = false)
                         @foreach ($table_types as $type)
-                            <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested ?? (new \App\Models\Application())->table_type_requested) == $type['id'])>
+                            @php($_too_small = !($application?->canChangeTableTypeTo($type) ?? true))
+                            @php($_any_too_small = $_any_too_small || $_too_small)
+                            <option value="{{ $type['id'] }}" @selected(old('space', $application?->table_type_requested ?? (new \App\Models\Application())->table_type_requested) == $type['id'])
+                            @disabled($_too_small)>
                                 {{ $type['name'] }} - max. {{ $type['seats'] }}
                                 seat{{ $type['seats'] === 1 ? '' : 's' }} -
                                 {{ $type['price'] / 100.0 }} EUR
+                                @if($_too_small)
+                                    - too small**
+                                @endif
                             </option>
                         @endforeach
                     </select>
@@ -174,6 +181,11 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div id="spaceHelp" class="form-text">
+                        @if($_any_too_small)
+                            <b><i>**)
+                                To choose a table size marked as too small, you first have to remove shares and/or assistants from your dealership!
+                            </i></b><br>
+                        @endif
                         Please select the Dealership package that best suits your needs for selling your wares. We
                         kindly ask that you avoid requesting more space than necessary, as packages larger than Full
                         require additional information in the comments section.

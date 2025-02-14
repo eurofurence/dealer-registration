@@ -76,7 +76,7 @@ class ApplicationResource extends Resource
                         ])->selectablePlaceholder(false)->required()->reactive(),
                         Forms\Components\TextInput::make('table_number')
                             ->maxLength(255)
-                            ->disabled(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
+                            ->disabled(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
                     ]),
 
                     Forms\Components\Fieldset::make('Relationships')->inlineLabel()->columns(1)->schema([
@@ -87,25 +87,25 @@ class ApplicationResource extends Resource
                         Forms\Components\Select::make('user_id')->searchable()->relationship('user', 'name')
                             ->required(),
                         Forms\Components\Select::make('parent_id')->searchable()->options(Application::getEligibleParents()->pluck('name', 'id'))
-                            ->hidden(fn (\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value)
-                            ->required(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
+                            ->hidden(fn(\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value)
+                            ->required(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_requested')->relationship('requestedTable', 'name')
-                            ->hidden(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->required(fn (\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value),
+                            ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->required(fn(\Filament\Forms\Get $get) => $get('type') === ApplicationType::Dealer->value),
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
-                            ->hidden(fn (\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
-                            ->nullable(fn (\Filament\Forms\Get $get) => $get('status') !== ApplicationStatus::TableOffered->value),
+                            ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->nullable(fn(\Filament\Forms\Get $get) => $get('status') !== ApplicationStatus::TableOffered->value),
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
-                        Forms\Components\Placeholder::make('offer_sent_at')->content(fn (?Application $record): string => $record?->offer_sent_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('offer_accepted_at')->content(fn (?Application $record): string => $record?->offer_accepted_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('waiting_at')->content(fn (?Application $record): string => $record?->waiting_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('checked_in_at')->content(fn (?Application $record): string => $record?->checked_in_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('checked_out_at')->content(fn (?Application $record): string => $record?->checked_out_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('canceled_at')->content(fn (?Application $record): string => $record?->canceled_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('updated_at')->content(fn (?Application $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
-                        Forms\Components\Placeholder::make('created_at')->content(fn (?Application $record): string => $record?->created_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('offer_sent_at')->content(fn(?Application $record): string => $record?->offer_sent_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('offer_accepted_at')->content(fn(?Application $record): string => $record?->offer_accepted_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('waiting_at')->content(fn(?Application $record): string => $record?->waiting_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('checked_in_at')->content(fn(?Application $record): string => $record?->checked_in_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('checked_out_at')->content(fn(?Application $record): string => $record?->checked_out_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('canceled_at')->content(fn(?Application $record): string => $record?->canceled_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('updated_at')->content(fn(?Application $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                        Forms\Components\Placeholder::make('created_at')->content(fn(?Application $record): string => $record?->created_at?->diffForHumans() ?? '-'),
                     ]),
                 ]),
             ]);
@@ -115,12 +115,11 @@ class ApplicationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label("ID"),
                 Tables\Columns\TextColumn::make('user.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (ApplicationStatus $state): string => match ($state) {
+                    ->color(fn(ApplicationStatus $state): string => match ($state) {
                         ApplicationStatus::TableAccepted => 'success',
                         ApplicationStatus::Canceled => 'danger',
                         default => 'secondary',
@@ -128,9 +127,9 @@ class ApplicationResource extends Resource
                         return $record->status->name;
                     }),
                 Tables\Columns\TextColumn::make('requestedTable.name')
-                    ->icon(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation-triangle' : '')
+                    ->icon(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'heroicon-o-exclamation-triangle' : '')
                     ->iconPosition('after')
-                    ->color(fn ($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : '')
+                    ->color(fn($record) => $record->type === ApplicationType::Dealer && $record->table_type_requested !== $record->table_type_assigned ? 'warning' : '')
                     ->sortable(),
                 Tables\Columns\SelectColumn::make('tableTypeAssignedAutoNull')
                     ->label('Assigned table')
@@ -139,7 +138,7 @@ class ApplicationResource extends Resource
                         return $query
                             ->orderBy('table_type_assigned', $direction);
                     })
-                    ->disabled(fn ($record) => $record->type !== ApplicationType::Dealer),
+                    ->disabled(fn($record) => $record->type !== ApplicationType::Dealer),
                 Tables\Columns\TextColumn::make('type')
                     ->formatStateUsing(function (ApplicationType $state) {
                         return ucfirst($state->value);
@@ -148,7 +147,7 @@ class ApplicationResource extends Resource
                 Tables\Columns\TextInputColumn::make('table_number')
                     ->sortable()
                     ->searchable()
-                    ->disabled(fn ($record) => $record->type === ApplicationType::Assistant),
+                    ->disabled(fn($record) => $record->type === ApplicationType::Assistant),
                 Tables\Columns\IconColumn::make('is_ready')
                     ->label('Ready')
                     ->getStateUsing(function (Application $record) {
@@ -204,22 +203,22 @@ class ApplicationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('dealers')
-                    ->query(fn (Builder $query): Builder => $query->where('type', 'dealer'))
+                    ->query(fn(Builder $query): Builder => $query->where('type', 'dealer'))
                     ->label('Only Dealerships'),
                 Tables\Filters\Filter::make('assignedTable')
-                    ->query(fn (Builder $query): Builder => $query->whereNull('table_type_assigned'))
+                    ->query(fn(Builder $query): Builder => $query->whereNull('table_type_assigned'))
                     ->label('Missing assigned table'),
                 Tables\Filters\Filter::make('table_number')
-                    ->query(fn (Builder $query): Builder => $query->whereNull('table_number'))
+                    ->query(fn(Builder $query): Builder => $query->whereNull('table_number'))
                     ->label('Missing table number'),
                 Tables\Filters\Filter::make('is_afterdark')
-                    ->query(fn (Builder $query): Builder => $query->where('is_afterdark', '=', '1'))
+                    ->query(fn(Builder $query): Builder => $query->where('is_afterdark', '=', '1'))
                     ->label('Is Afterdark'),
                 Tables\Filters\Filter::make('additional_space_request')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('additional_space_request'))
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('additional_space_request'))
                     ->label('Has additional space request'),
                 Tables\Filters\Filter::make('table_assigned')
-                    ->query(fn (Builder $query): Builder => $query->whereNotNull('offer_sent_at'))
+                    ->query(fn(Builder $query): Builder => $query->whereNotNull('offer_sent_at'))
                     ->label('Table assigned'),
                 Tables\Filters\SelectFilter::make('requestedTable')
                     ->relationship('requestedTable', 'name')
@@ -251,7 +250,7 @@ class ApplicationResource extends Resource
                         $resultsType = StatusNotificationResult::class;
                         $results = array_fill_keys(
                             array_map(
-                                fn (StatusNotificationResult $r) => $r->name,
+                                fn(StatusNotificationResult $r) => $r->name,
                                 $resultsType::cases()
                             ),
                             0
@@ -313,7 +312,7 @@ class ApplicationResource extends Resource
                         $resultsType = StatusNotificationResult::class;
                         $results = array_fill_keys(
                             array_map(
-                                fn (StatusNotificationResult $r) => $r->name,
+                                fn(StatusNotificationResult $r) => $r->name,
                                 $resultsType::cases()
                             ),
                             0

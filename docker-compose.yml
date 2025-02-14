@@ -51,7 +51,7 @@ services:
             timeout: 5s
             retries: 30
     mariadb:
-        image: 'mariadb:11'
+        image: 'mariadb:10'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
         environment:

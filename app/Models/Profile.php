@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Profile extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $guarded = [];
 
@@ -45,7 +46,7 @@ class Profile extends Model
         return $this->keywords()->pluck('id')->toArray();
     }
 
-    public static function findByApplicationId(int|null $application_id): Profile|null
+    public static function findByApplicationId(string|null $application_id): Profile|null
     {
         return self::where('application_id', $application_id)->first();
     }

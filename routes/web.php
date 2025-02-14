@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::redirect('/login', '/auth/login')->name('login');
+
 Route::middleware('guest')->group(function () {
     Route::get('/auth/login', [\App\Http\Controllers\Auth\OidcClientController::class, 'login'])->name('auth.login');
     Route::get('/auth/callback', [
@@ -34,9 +36,9 @@ Route::get('/', function () {
 
 Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddleware::class, \App\Http\Middleware\ForceOverseatingRedirectMiddleware::class, \App\Http\Middleware\ConventionDateRestrictionMiddleware::class])->group(function () {
     Route::post('invitation/join', [\App\Http\Controllers\Applications\InvitationController::class, 'view'])->name('invitation.join');
-    Route::get('invitation/join', fn () => \Illuminate\Support\Facades\Redirect::route('dashboard'));
+    Route::get('invitation/join', fn() => \Illuminate\Support\Facades\Redirect::route('dashboard'));
     Route::post('invitation/confirm', [\App\Http\Controllers\Applications\InvitationController::class, 'store'])->name('invitation.confirm');
-    Route::get('invitation/confirm', fn () => \Illuminate\Support\Facades\Redirect::route('dashboard'));
+    Route::get('invitation/confirm', fn() => \Illuminate\Support\Facades\Redirect::route('dashboard'));
     Route::get('applications/create', [\App\Http\Controllers\Applications\ApplicationController::class, 'create'])->name('applications.create');
     Route::post('applications', [\App\Http\Controllers\Applications\ApplicationController::class, 'store'])->name('applications.store');
     Route::get('applications/edit', [\App\Http\Controllers\Applications\ApplicationController::class, 'edit'])->name('applications.edit');
@@ -64,7 +66,7 @@ Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddlew
         return \Illuminate\Support\Facades\Redirect::route('dashboard');
     });
 
-    Route::get('closed', fn () => view('closed'))->name('closed');
+    Route::get('closed', fn() => view('closed'))->name('closed');
 
     Route::get('admin/export/appdata', [ApplicationController::class, 'exportAppDataAdmin']);
     Route::get('admin/export/csv', [ApplicationController::class, 'exportCsvAdmin']);
