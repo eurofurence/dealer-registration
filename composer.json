@@ -9,7 +9,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "blade-ui-kit/blade-heroicons": "^2.5.0",
         "filament/filament": "^3.2.136",
         "guzzlehttp/guzzle": "^7.9.2",
         "intervention/image": "^3.11.1",
@@ -26,6 +25,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14.10",
         "fakerphp/faker": "^1.24.1",
+        "kitloong/laravel-migrations-generator": "^7.0",
         "laravel/pint": "^1.20",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6.12",

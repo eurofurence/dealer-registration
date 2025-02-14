@@ -13,7 +13,7 @@ class CheckInRequest extends FormRequest
     {
         return [
             "application" => [
-                "integer",
+                "string",
             ],
             "waiver_signed" => [
                 "accepted",
@@ -22,7 +22,7 @@ class CheckInRequest extends FormRequest
                 "accepted",
             ],
             "ci_comment" => [
-                "max:". Comment::MAX_LENGTH,
+                "max:" . Comment::MAX_LENGTH,
             ],
         ];
     }
