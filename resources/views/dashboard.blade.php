@@ -40,7 +40,7 @@
                 </p>
             @endif
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <a target="_blank" href="{{ config('convention.dealers_tos_url') }}" class="text-secondary small">Rules and
+                <a target="_blank" href="{{ config('convention.dealers_tos_url') }}" class="btn btn-outline-primary btn-lg">Rules and
                     Information</a>
             </div>
         </div>
