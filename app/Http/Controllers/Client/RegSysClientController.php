@@ -17,6 +17,10 @@ class RegSysClientController extends Controller
 {
     public static function getPackages(?string $regId): ?array
     {
+        if (!self::isConfigured()) {
+            return null;
+        }
+
         if (empty($regId)) {
             return null;
         }
@@ -36,6 +40,9 @@ class RegSysClientController extends Controller
 
     public static function bookPackage(string $regId, TableType $tableType): bool
     {
+        if (!self::isConfigured()) {
+            return false;
+        }
         if (empty($regId)) {
             return false;
         }
@@ -61,6 +68,9 @@ class RegSysClientController extends Controller
 
     public static function removePackage(string $regId, TableType $tableType): bool
     {
+        if (!self::isConfigured()) {
+            return false;
+        }
         if (empty($regId)) {
             return false;
         }
@@ -96,6 +106,9 @@ class RegSysClientController extends Controller
      */
     public static function getAllRegs($key = 'email'): array
     {
+        if (!self::isConfigured()) {
+            return [];
+        }
         if ($key !== 'email' && $key !== 'id') {
             throw new InvalidArgumentException('key must be either "email" or "id"');
         }
@@ -118,6 +131,9 @@ class RegSysClientController extends Controller
 
     public static function getSingleReg(?string $regId): mixed
     {
+        if (!self::isConfigured()) {
+            return null;
+        }
         if (empty($regId)) {
             return null;
         }
@@ -154,6 +170,9 @@ class RegSysClientController extends Controller
      */
     public static function setAdditionalInfoDealerReg(string $regId, bool $hasDealerReg): bool|null
     {
+        if (!self::isConfigured()) {
+            return null;
+        }
         if (empty($regId)) {
             return null;
         }
@@ -192,6 +211,9 @@ class RegSysClientController extends Controller
      */
     public static function getAdditionalInfoDealerReg(?string $regId): ?bool
     {
+        if (!self::isConfigured()) {
+            return null;
+        }
         if (empty($regId)) {
             return null;
         }
@@ -225,6 +247,9 @@ class RegSysClientController extends Controller
      */
     public static function getRegistrationIdForCurrentUser(?string $accessToken = null): ?string
     {
+        if (!self::isConfigured()) {
+            return null;
+        }
         if ($accessToken === null && !Session::has('access_token')) {
             return null;
         }
@@ -258,5 +283,17 @@ class RegSysClientController extends Controller
     private static function logError(string $message)
     {
         Log::warning("Class: " . __CLASS__ . ", Function: " . __FUNCTION__ . ": " . $message);
+    }
+
+    /**
+     * Checks if regsys client is configured to avoid making calls if it has been disabled by not
+     * providing either URL or token. Must be checked before any calls are made.
+     *
+     * @return bool `true` if all required settings are configured
+     */
+    private static function isConfigured()
+    {
+        # self::logError("Checking regsys client configuration: " . (config('services.regsys.url') !== null && config('services.regsys.token') !== null ? "configured" : "disabled"));
+        return config('services.regsys.url') !== null && config('services.regsys.token') !== null;
     }
 }
