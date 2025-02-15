@@ -20,7 +20,51 @@
             </label>
         @endif
         <div id="dd-profile" class="mt-2">
-            <div class="row mb-3">
+            <div class="row mt-4">
+                <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold required">Thumb&shy;nail</label>
+                <div class="col-sm-10">
+                    <input id="image_thumbnail" type="file"
+                        class="form-control @error('image_thumbnail') is-invalid @enderror" name="image_thumbnail"
+                        accept="image/jpeg, image/png"
+                        onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview_large').src = window.URL.createObjectURL(this.files[0]);">
+                    <div id="image_thumbnailHelp" class="form-text">Upload an image to be shown next to your name in
+                        the dealer list. This image should have a size of 60&times;60 pixels (max file size is 1 MB).
+                    </div>
+                    @error('image_thumbnail')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+
+                    <img id='image_thumbnail_preview' class="mx-auto mb-2" data-bs-toggle="modal"
+                        data-bs-target="#imageThumbnailModal"
+                        src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
+                        style="height: 100px;">
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="imageThumbnailModal" tabindex="-1"
+                        aria-labelledby="imageThumbnailModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <img id='image_thumbnail_preview_large'class="mx-auto d-block w-100"
+                                        src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
+                                        alt="">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-1">
                 <label class="col-sm-2 col-form-label fw-bold">Attend&shy;ance</label>
             </div>
             <div class="row mb-1">
@@ -84,51 +128,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-1 mt-5">
-                <label for="image_thumbnail" class="col-sm-2 col-form-label fw-bold">Thumb&shy;nail</label>
-                <div class="col-sm-10">
-                    <input id="image_thumbnail" type="file"
-                        class="form-control @error('image_thumbnail') is-invalid @enderror" name="image_thumbnail"
-                        accept="image/jpeg, image/png"
-                        onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview_large').src = window.URL.createObjectURL(this.files[0]);">
-                    <div id="image_thumbnailHelp" class="form-text">Upload an image to be shown next to your name in
-                        the dealer list. This image should have a size of 60&times;60 pixels (max file size is 1 MB).
-                    </div>
-                    @error('image_thumbnail')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-
-                    <img id='image_thumbnail_preview' class="mx-auto mb-5" data-bs-toggle="modal"
-                        data-bs-target="#imageThumbnailModal"
-                        src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
-                        style="height: 100px;">
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="imageThumbnailModal" tabindex="-1"
-                        aria-labelledby="imageThumbnailModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-sm">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <img id='image_thumbnail_preview_large'class="mx-auto d-block w-100"
-                                        src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
-                                        alt="">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
+            <div class="row mb-3 mt-5">
                 <label for="short_desc" class="col-sm-2 col-form-label fw-bold">Short De&shy;scrip&shy;tion</label>
                 <div class="col-sm-10">
                     <textarea rows="5" type="text" name="short_desc"
@@ -141,7 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-1 mt-5">
+            <div class="row mb-1 mt-3">
                 <label for="image_artist" class="col-sm-2 col-form-label fw-bold">Profile Header</label>
                 <div class="col-sm-10">
 
@@ -158,7 +158,7 @@
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
-                    <img id='image_artist_preview' class="mx-auto mb-5" data-bs-toggle="modal"
+                    <img id='image_artist_preview' class="mx-auto mb-2" data-bs-toggle="modal"
                         data-bs-target="#imageArtistModal"
                         src="{{ Storage::disk('public')->url("$profile?->image_artist") }}" alt=""
                         style="height: 100px;">
@@ -199,7 +199,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-1 mt-5">
+            <div class="row mb-1 mt-3">
                 <label for="image_art" class="col-sm-2 col-form-label fw-bold">Show&shy;case Image</label>
                 <div class="col-sm-10">
                     <input id="image_art" type="file"
@@ -217,7 +217,7 @@
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
-                    <img id='image_art_preview' class="mx-auto mb-5" data-bs-toggle="modal"
+                    <img id='image_art_preview' class="mx-auto mb-2" data-bs-toggle="modal"
                         data-bs-target="#imageArtModal"
                         src="{{ Storage::disk('public')->url("$profile?->image_art") }}" alt=""
                         style="height: 100px;">
@@ -274,7 +274,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 mt-5">
                 <label for="profile_website" class="col-sm-2 col-form-label fw-bold">Web&shy;site</label>
                 <div class="col-sm-10">
                     <input type="text" name="profile_website" placeholder="https://yourprofile.example.com/itsme"
@@ -373,7 +373,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 mt-5">
                 <label for="tweet" class="col-sm-2 col-form-label fw-bold">Ad&shy;ver&shy;tise&shy;ment
                     text</label>
                 <div class="col-sm-10">
