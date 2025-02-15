@@ -20,7 +20,7 @@
                         <h1 class="display-5 fw-bold">You are removing <span class="text-nowrap text-primary">{{ $invitee->user->name }}</span> from your Dealership!</h1>
                         <div class="col-lg-6 mx-auto">
                             <p class="lead mb-4">
-                                This action wil cause them to be completely removed as a {{ ucfirst($invitee->type->value) }} from your dealership.<br>
+                                This action will cause them to be completely removed as a {{ ucfirst($invitee->type->value) }} from your dealership.<br>
                                 They will be notified of this.
                             </p>
                             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
