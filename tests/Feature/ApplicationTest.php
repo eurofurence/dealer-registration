@@ -62,7 +62,7 @@ class ApplicationTest extends TestCase
             "attends_thu" => "on",
             "attends_fri" => "on",
             "attends_sat" => "on",
-            "image_thumbnail" => UploadedFile::fake()->image('thumbnail.jpg', 60, 60),
+            "image_thumbnail" => UploadedFile::fake()->image('thumbnail.jpg', 60, 60)->size(100)->mimeType('image/jpeg'),
         ]);
         $response->assertRedirect(route('dashboard'));
         $this->assertDatabaseHas('applications', [
@@ -174,7 +174,7 @@ class ApplicationTest extends TestCase
             "attends_thu" => "on",
             "attends_fri" => "on",
             "attends_sat" => "on",
-            "image_thumbnail" => UploadedFile::fake()->image('thumbnail.jpg', 60, 60),
+            "image_thumbnail" => UploadedFile::fake()->image('thumbnail.jpg', 60, 60)->size(100)->mimeType('image/jpeg'),
         ]);
         $response->assertRedirect(route('applications.edit'));
         $this->assertDatabaseHas('applications', [
