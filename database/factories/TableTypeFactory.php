@@ -14,8 +14,8 @@ class TableTypeFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'spaces' => $this->faker->randomNumber(),
-            'seats' => $this->faker->randomNumber(),
+            'spaces' => $this->faker->randomDigitNotZero() + 1,
+            'seats' => $this->faker->randomDigitNotZero() + 1,
             'price' => $this->faker->randomNumber(),
             'package' => $this->faker->word(),
             'created_at' => Carbon::now(),
