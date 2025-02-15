@@ -7,13 +7,14 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Application;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\RequiredIf;
 
 class ApplicationRequest extends FormRequest
 {
-    public function rules(): array
+    public function rules(Request $request): array
     {
         /**
          * This is a multi request, it is accessed in the following circumstances
@@ -83,7 +84,7 @@ class ApplicationRequest extends FormRequest
             ],
         ];
 
-        $profileValidations = ProfileController::getValidations();
+        $profileValidations = ProfileController::getValidations($request);
 
         if (Carbon::parse(config('convention.reg_end_date'))->isFuture()) {
             return array_merge($appValidations, $profileValidations);

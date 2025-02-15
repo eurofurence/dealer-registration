@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use ZipArchive;
@@ -91,10 +92,16 @@ class ProfileController extends Controller
 
     public function destroy(Profile $profile) {}
 
-    public static function getValidations()
+    public static function getValidations(Request $request)
     {
         return [
+            "profile_hidden" => [
+                'prohibited_unless:applicationType,share'
+            ],
             "image_thumbnail" => [
+                Rule::requiredIf(fn() => empty($request->user()?->application?->profile?->image_thumbnail) &&
+                    ($request->input('applicationType') === 'dealer' ||
+                        ($request->input('applicationType') === 'share' && !$request->has('profile_hidden')))),
                 'image',
                 'mimes:jpeg,png',
                 'max:1024',
