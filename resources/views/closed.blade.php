@@ -4,7 +4,7 @@
     Closed
 @endsection
 @section('content')
-    <div class="px-4 py-5 my-5 text-center">
+    <div class="px-4 py-3 my-3 text-center">
         <h1 class="display-5 fw-bold">Thank you!</h1>
         <div class="col-lg-6 mx-auto">
             <p class="lead mb-4">
