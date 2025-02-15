@@ -1,17 +1,22 @@
 $primary: #00504b;
 @import "bootstrap/scss/bootstrap.scss";
 
-label.required:after, legend.required:after, span.required:after {
+label.required:after,
+legend.required:after,
+span.required:after {
     content: "*";
     color: red;
 }
 
 /* DD Specific */
 .dd-table-button {
-    width: 5ex;
-    height: 5ex;
+    width: 5.5ex;
+    height: 5.5ex;
     font-weight: bold;
     margin: 0.25ex;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .dd-table-button.border-danger {
