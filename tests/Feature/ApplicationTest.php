@@ -7,8 +7,10 @@ use App\Models\Application;
 use App\Models\TableType;
 use http\Client\Curl\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -18,6 +20,11 @@ use Tests\TestCase;
 class ApplicationTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * @var string
+     */
+    private $thumbnailPath;
 
     public function setUp(): void
     {
@@ -55,6 +62,7 @@ class ApplicationTest extends TestCase
             "attends_thu" => "on",
             "attends_fri" => "on",
             "attends_sat" => "on",
+            "image_thumbnail" => UploadedFile::fake()->image('thumbnail.jpg', 60, 60),
         ]);
         $response->assertRedirect(route('dashboard'));
         $this->assertDatabaseHas('applications', [
@@ -166,6 +174,7 @@ class ApplicationTest extends TestCase
             "attends_thu" => "on",
             "attends_fri" => "on",
             "attends_sat" => "on",
+            "image_thumbnail" => UploadedFile::fake()->image('thumbnail.jpg', 60, 60),
         ]);
         $response->assertRedirect(route('applications.edit'));
         $this->assertDatabaseHas('applications', [
