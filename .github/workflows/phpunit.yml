@@ -37,4 +37,4 @@ jobs:
           DB_DATABASE: dealers
           DB_USERNAME: dealers
           DB_PASSWORD: dealers
-        run: vendor/bin/phpunit
+        run: php artisan test
