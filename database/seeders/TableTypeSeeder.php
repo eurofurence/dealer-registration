@@ -37,7 +37,7 @@ class TableTypeSeeder extends Seeder
             "spaces" => 1,
             "price" => 15000,
             "name" => "Full Plus (195cm x 65cm)",
-            "package" => "dealer-full",
+            "package" => "dealer-fullplus",
         ]);
         TableType::firstOrCreate([
             "id" => 4,
