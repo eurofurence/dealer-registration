@@ -24,7 +24,7 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 ######################################################
 # NodeJS Stage
 ######################################################
-FROM node:22 AS vite
+FROM node:23 AS vite
 WORKDIR /app
 ######################################################
 # Step 4 | Install Node.js packages
