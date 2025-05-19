@@ -42,10 +42,12 @@
         @endif
 
         <form class="needs-validation" method="POST" action="{{ route('applications.store') }}" enctype="multipart/form-data">
-            @include('forms.application')
-            @if ($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
-                @include('forms.profile')
-            @endif
+            <div class="accordion" id="application-form">
+                @include('forms.application')
+                @if ($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
+                    @include('forms.profile')
+                @endif
+            </div>
             @csrf
             <button class="w-100 btn btn-primary btn-lg mt-4" type="submit">Submit your application</button>
             <input type="hidden" name="confirmation" value="{{ $confirmation }}">
