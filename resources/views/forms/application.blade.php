@@ -13,9 +13,14 @@
             <div class="row">
                 <h3 class="col-md">Application</h3>
                 <div class="col-10">
-                    This information is relevant to the application process and can only be changed until the
-                    registration period has ended. It will be used for curating applications and determining the seating
-                    plan.
+                    @if ($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
+                        This information is relevant to the application process and can only be changed until the
+                        registration period has ended. It will be used for curating applications and determining the
+                        seating plan.
+                    @else
+                        Mandatory information required as part of your application as {{ $applicationType->value }} at
+                        the Dealers' Den.
+                    @endif
                 </div>
             </div>
         </button>
