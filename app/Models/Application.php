@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Eloquent model for the application database table entry.
+ *
+ * Starting to add at least some typehints:
+ * @property int $physical_chairs The number of assigned physical chairs.
+ */
 class Application extends Model
 {
     use HasFactory, HasUuids;
@@ -42,7 +48,9 @@ class Application extends Model
     ];
 
     protected $attributes = [
-        "table_type_requested" => 2
+        "table_type_requested" => 2,
+        // By default, set chairs to a negative value, indicating "not set yet".
+        "physical_chairs" => -1,
     ];
 
     public function user()
