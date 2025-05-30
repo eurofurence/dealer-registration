@@ -212,6 +212,7 @@ class Application extends Model
                 'assistants' => 0,
                 'free' => 0,
                 'additional' => null,
+                'physical_chairs' => 0,
             ];
         }
 
@@ -243,6 +244,7 @@ class Application extends Model
             'assistants' => $assistants,
             'free' => $free,
             'additional' => $additional,
+            'physical_chairs' => $this->physical_chairs,
         ];
     }
 
@@ -257,6 +259,74 @@ class Application extends Model
     public function canChangeTableTypeTo(TableType $newTableType): bool
     {
         return $this->getSeats($newTableType)['free'] >= 0;
+    }
+
+    /**
+     * Adjust the number of physical chairs and apply hard rules.
+     *
+     * @param int $delta Number of chairs to add (positive) or remove (negative).
+     * @return array Contains old and new count as well as an optional message.
+     */
+    public function changePhysicalChairsBy(int $delta = 0): array
+    {
+        /** @var int $oldChairCount */
+        $oldChairCount = $this->physical_chairs ?? 0;
+        $newChairCount = $oldChairCount + $delta;
+
+        /** @var TableType $tableType */
+        $tableType = $this->assignedTable ?? $this->requestedTable;
+        /** @var int $maximumChairs */
+        $maximumChairs = $tableType->seats;
+
+        // Default message: Indicate chair change
+        switch ($delta) {
+            case 1:
+                $message = 'Added one chair to your table.';
+                break;
+            case -1:
+                $message = 'Removed one chair to your table.';
+                break;
+            default:
+                $message = sprintf('%s %d chairs to your table.',
+                        $delta < 0 ? 'Removed' : 'Added', abs($delta));
+                break;
+        }
+
+        // Allow at maximum as many chairs as fit for this table
+        if ($newChairCount > $maximumChairs) {
+            $newChairCount = $maximumChairs;
+            $message = sprintf('Maximum number of chairs reached for table size!');
+        }
+
+        // Allow at minimum no chairs.
+        if ($newChairCount < 0) {
+            $newChairCount = 0;
+            $message = sprintf('Cannot have less than zero chairs!');
+        }
+
+        // TODO: Trigger notification?
+        $this->update([
+            'physical_chairs' => $newChairCount,
+        ]);
+        return [
+            'old' => $oldChairCount,
+            'new' => $newChairCount,
+            'success' => ($newChairCount == ($oldChairCount + $delta)),
+            'message' => $message,
+        ];
+    }
+
+    /**
+     * Adjust the number of physical chairs and apply hard rules.
+     *
+     * @param int $newCount Number of chairs that shall result from this action.
+     * @return array Contains old and new count as well as an optional message.
+     */
+    public function setPhysicalChairsTo(int $newCount): array
+    {
+        /** @var int $oldChairCount */
+        $oldChairCount = ($this->physical_chairs > 0) ? $this->physical_chairs : 0;
+        return $this->changePhysicalChairsBy($newCount - $oldChairCount);
     }
 
     public function getStatusAttribute()
