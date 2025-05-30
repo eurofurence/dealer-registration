@@ -50,6 +50,7 @@ Route::middleware(['auth:web', \App\Http\Middleware\AccessTokenValidationMiddlew
     Route::post('applications/invitees/delete', [\App\Http\Controllers\Applications\InviteesController::class, 'delete'])->name('applications.invitees.delete');
     Route::delete('applications/invitees', [\App\Http\Controllers\Applications\InviteesController::class, 'destroy'])->name('applications.invitees.destroy');
     Route::post('applications/invitees/codes', [\App\Http\Controllers\Applications\InviteesController::class, 'codes'])->name('applications.invitees.codes');
+    Route::post('applications/change-chairs', [\App\Http\Controllers\Applications\InviteesController::class, 'changeChairs'])->name('applications.invitees.change-chairs');
 
     Route::get('table/confirm', [\App\Http\Controllers\TableVerifyController::class, 'view'])->name('table.confirm');
     Route::put('table/confirm', [\App\Http\Controllers\TableVerifyController::class, 'update'])->name('table.update');
