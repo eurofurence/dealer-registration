@@ -95,6 +95,25 @@ class ApplicationResource extends Resource
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
                             ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
                             ->nullable(fn(\Filament\Forms\Get $get) => $get('status') !== ApplicationStatus::TableOffered->value),
+                        Forms\Components\TextInput::make('physical_chairs')->integer(true)->minValue(-1)->maxValue(4)
+                            ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->rule(fn (Forms\Get $get) => function (string $attribute, $value, $fail) use ($get) {
+                                // This should allow maximum freedom for admins without breaking the number of allowable chairs
+                                if ($value >= 0) {
+                                    $tableType = TableType::find($get('table_type_assigned'));
+                                    if (!$tableType) {
+                                        $tableType = TableType::find($get('table_type_requested'));
+                                    }
+                                    if (!$tableType && $value > 0) {
+                                        $fail("Cannot assign chairs without an assigned table type!");
+                                    } else {
+                                        $maxChairs = $tableType?->seats ?? 0;
+                                        if ($value > $maxChairs) {
+                                            $fail("Cannot assign $value chairs to a $maxChairs seat table!");
+                                        }
+                                    }
+                                }
+                            })
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
