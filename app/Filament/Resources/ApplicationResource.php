@@ -158,6 +158,14 @@ class ApplicationResource extends Resource
                             ->orderBy('table_type_assigned', $direction);
                     })
                     ->disabled(fn($record) => $record->type !== ApplicationType::Dealer),
+                Tables\Columns\TextColumn::make('physical_chairs')->numeric(0)
+                    ->label('Chairs')
+                    //->options(TableType::pluck('name', 'id')->toArray())
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->orderBy('physical_chairs', $direction);
+                    })
+                    ->disabled(true), // Do not allow changing in table view! It would not create proper notification mail!
                 Tables\Columns\TextColumn::make('type')
                     ->formatStateUsing(function (ApplicationType $state) {
                         return ucfirst($state->value);
