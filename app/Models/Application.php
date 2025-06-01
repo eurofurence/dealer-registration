@@ -304,7 +304,7 @@ class Application extends Model
             $message = sprintf('Cannot have less than zero chairs!');
         }
 
-        // TODO: Trigger notification?
+        // Note: Notification Emails are sent by \App\Observers\ApplicationObserver
         $this->update([
             'physical_chairs' => $newChairCount,
         ]);
