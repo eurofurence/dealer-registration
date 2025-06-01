@@ -97,6 +97,7 @@ class ApplicationResource extends Resource
                             ->nullable(fn(\Filament\Forms\Get $get) => $get('status') !== ApplicationStatus::TableOffered->value),
                         Forms\Components\TextInput::make('physical_chairs')->integer(true)->minValue(-1)->maxValue(4)
                             ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->helperText('Automatic email when changed to valid number. "-1" means "not specified".')
                             ->rule(fn (Forms\Get $get) => function (string $attribute, $value, $fail) use ($get) {
                                 // This should allow maximum freedom for admins without breaking the number of allowable chairs
                                 if ($value >= 0) {
@@ -160,7 +161,7 @@ class ApplicationResource extends Resource
                     ->disabled(fn($record) => $record->type !== ApplicationType::Dealer),
                 Tables\Columns\TextColumn::make('physical_chairs')->numeric(0)
                     ->label('Chairs')
-                    //->options(TableType::pluck('name', 'id')->toArray())
+                    ->formatStateUsing(fn ($state) => $state < 0 ? '-/-' : $state)
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
                             ->orderBy('physical_chairs', $direction);
