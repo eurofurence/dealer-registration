@@ -263,6 +263,7 @@ class Application extends Model
 
     /**
      * Adjust the number of physical chairs and apply hard rules.
+     * To just enforce the limits without changing otherwise, call without argument.
      *
      * @param int $delta Number of chairs to add (positive) or remove (negative).
      * @return array Contains old and new count as well as an optional message.
@@ -337,6 +338,40 @@ class Application extends Model
         /** @var int $oldChairCount */
         $oldChairCount = ($this->physical_chairs > 0) ? $this->physical_chairs : 0;
         return $this->changePhysicalChairsBy($newCount - $oldChairCount);
+    }
+
+    /**
+     * This should be called whenever a share joins or leaves the dealership.
+     * It adjusts the physical chair count by up to one chair as long as
+     * the default assignment of one chair per dealer/share is not reached.
+     *
+     * Normally, upon one share joining, call with $adjustBy = 1.
+     * Upon one share leaving, call with $adjustBy = -1.
+     * To execute the default assignment in case no chairs are yet configured, can call without argument.
+     * In the latter case, if a valid chair count is already set up, nothing will change.
+     *
+     * @param int $adjustBy Number of chairs to add (remove if negative).
+     */
+    public function applyPhysicalChairsDefaultAdjustment(int $adjustBy = 0)
+    {
+        $defaultChairCount = $this->shares()->count() + 1;
+        $chairCount = $this->physical_chairs;
+
+        if ($chairCount < 0) {
+            // If not yet set to a valid value, use default.
+            $chairCount = $defaultChairCount;
+        } elseif ($chairCount != $defaultChairCount) {
+            // If we have not reached the default, apply adjustment
+            // RULE 1: When adding shares, always try to add as many chairs on top, up to maximum
+            // (maximum will be handled by setPhysicalChairsTo).
+            $chairCount += $adjustBy;
+            // RULE 2: When removing shares, remove as many shares but keep the default as minimum
+            // (but if there were less than default to begin with, do not re-add them either!)
+            if ($adjustBy < 0 && $chairCount < $defaultChairCount) {
+                $chairCount = $defaultChairCount;
+            }
+        }
+        $this->setPhysicalChairsTo($chairCount);
     }
 
     public function getStatusAttribute()
