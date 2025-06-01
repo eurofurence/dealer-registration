@@ -226,6 +226,10 @@
                             <a href="{{ route('applications.invitees.view') }}" class="btn btn-lg btn-primary">
                                 Invite or Manage <span class="text-nowrap">Assistants & Shares</span>
                             </a>
+                            <div class="mb-3"></div>
+                            <a href="{{ route('applications.invitees.view') }}" class="btn btn btn-outline-primary mt-2">
+                                <span class="badge text-bg-warning me-2">New:</span> Change number of physical chairs
+                            </a>
                         </div>
                     </div>
                 </div>
