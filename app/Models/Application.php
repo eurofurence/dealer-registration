@@ -275,6 +275,16 @@ class Application extends Model
 
         /** @var TableType $tableType */
         $tableType = $this->assignedTable ?? $this->requestedTable;
+
+        if (!$tableType) {
+            return [
+                'old' => $oldChairCount,
+                'new' => $oldChairCount,
+                'success' => false,
+                'message' => 'Cannot assign chairs without a table!',
+            ];
+        }
+
         /** @var int $maximumChairs */
         $maximumChairs = $tableType->seats;
 
