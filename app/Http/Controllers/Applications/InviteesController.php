@@ -86,6 +86,10 @@ class InviteesController extends Controller
         // Usually this is the one executing this call, but they should get an email about it nevertheless.
         if ($oldParent) {
             $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $invitee->user()->first()->name));
+            if ($oldApplicationType === ApplicationType::Share) {
+                // Adjust chair count of the previous parent dealership
+                $oldParent->applyPhysicalChairsDefaultAdjustment(-1);
+            }
         }
         return Redirect::route('applications.invitees.view');
     }
