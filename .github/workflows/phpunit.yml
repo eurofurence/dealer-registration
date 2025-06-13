@@ -10,7 +10,7 @@ jobs:
   phpunit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: shivammathur/setup-php@cf4cade2721270509d5b1c766ab3549210a39a2a
+      - uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e
         with:
           php-version: "8.3"
           extensions: gd
