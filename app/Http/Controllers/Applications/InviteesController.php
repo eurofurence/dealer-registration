@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Applications;
 
 use App\Enums\ApplicationType;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePhysicalChairsRequest;
 use App\Http\Requests\InviteeRemovalRequest;
 use App\Models\Application;
 use App\Notifications\CanceledByDealershipNotification;
@@ -85,6 +86,10 @@ class InviteesController extends Controller
         // Usually this is the one executing this call, but they should get an email about it nevertheless.
         if ($oldParent) {
             $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $invitee->user()->first()->name));
+            if ($oldApplicationType === ApplicationType::Share) {
+                // Adjust chair count of the previous parent dealership
+                $oldParent->applyPhysicalChairsDefaultAdjustment(-1);
+            }
         }
         return Redirect::route('applications.invitees.view');
     }
@@ -106,5 +111,25 @@ class InviteesController extends Controller
         abort_if(!Auth::user()->application->updateCode($request->get('type'), $clear), 400, 'invalid code type');
 
         return Redirect::route('applications.invitees.view');
+    }
+
+    /**
+     * Route called from User Dashboard to change the number of assigned physical chairs.
+     *
+     * @param ChangePhysicalChairsRequest $changePhysicalChairsRequest Contains
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function changeChairs(ChangePhysicalChairsRequest $changePhysicalChairsRequest)
+    {
+        /** @var Application $application */
+        $application = Auth::user()->application;
+        abort_if(is_null($application), 404, 'Application not found');
+        abort_if(!$application->isActive(), 403, 'Application not active');
+
+        /** @var int $desiredChange */
+        $desiredChange = intval($changePhysicalChairsRequest->change_by);
+
+        $result = $application->changePhysicalChairsBy($desiredChange);
+        return Redirect::route('applications.invitees.view')->with('physical-chair-change', $result);
     }
 }
