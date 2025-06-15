@@ -389,6 +389,35 @@ class ApplicationResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-envelope'),
+                Tables\Actions\BulkAction::make('Fix Chairs')
+                    ->action(function (Collection $records): void {
+                        /* @var Application $record */
+                        $count = 0;
+                        $count_changed = 0;
+                        foreach ($records as $record) {
+                            if (// this application is a dealer (not share or assistant)
+                                $record->type?->value == 'dealer' &&
+                                // ... and is not cancelled
+                                $record->canceled_at === null) {
+                                $numberOfDealersAndShares = $record->shares()->count() + 1;
+                                dump($numberOfDealersAndShares);
+                                $result = $record->setPhysicalChairsTo($numberOfDealersAndShares);
+                                $record->save();
+                                if ($result['new'] !== $result['old']) $count_changed++;
+                            }
+                            $count++;
+                        }
+                        $msg = "Updated and actively changed chair count on <b>{$count_changed} of {$count}</b> applications";
+                        $frontendNotification = Notification::make();
+                        $frontendNotification->title('Physical Chairs Fixed for Selected');
+                        $frontendNotification->body($msg)->persistent()->send();
+                    })
+                ->requiresConfirmation()
+                ->modalDescription('THIS IS A REPAIR COMMAND! It applies the physical chair rules to all selected applications. '.
+                    'Any dealerships without a chair count will have one chair per dealer and share added up to the table size. '.
+                    'Also, this SENDS NOTIFICATION EMAILS to all dealers who had an unset/invalid physical chair count before!')
+                ->color('warning')
+                ->icon('heroicon-o-wrench-screwdriver')
             ])
             ->paginated([10, 20, 30, 40, 50])
             ->defaultPaginationPageOption(10);
