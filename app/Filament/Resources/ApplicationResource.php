@@ -400,7 +400,6 @@ class ApplicationResource extends Resource
                                 // ... and is not cancelled
                                 $record->canceled_at === null) {
                                 $numberOfDealersAndShares = $record->shares()->count() + 1;
-                                dump($numberOfDealersAndShares);
                                 $result = $record->setPhysicalChairsTo($numberOfDealersAndShares);
                                 $record->save();
                                 if ($result['new'] !== $result['old']) $count_changed++;
