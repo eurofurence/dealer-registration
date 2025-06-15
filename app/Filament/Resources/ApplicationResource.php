@@ -254,6 +254,9 @@ class ApplicationResource extends Resource
                 Tables\Filters\SelectFilter::make('assignedTable')
                     ->relationship('assignedTable', 'name')
                     ->multiple(),
+                Tables\Filters\Filter::make('physical_chairs_undefined')
+                    ->query(fn(Builder $query): Builder => $query->where('physical_chairs', '<', '0'))
+                    ->label('Undefined Physical Chairs'),
                 Tables\Filters\SelectFilter::make('status')
                     ->options(array_combine(array_column(ApplicationStatus::cases(), 'value'), array_column(ApplicationStatus::cases(), 'name')))
                     ->query(function (Builder $query, array $data) {
