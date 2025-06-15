@@ -394,19 +394,32 @@ class ApplicationResource extends Resource
                         /* @var Application $record */
                         $count = 0;
                         $count_changed = 0;
+                        $count_cleared = 0;
                         foreach ($records as $record) {
                             if (// this application is a dealer (not share or assistant)
                                 $record->type?->value == 'dealer' &&
                                 // ... and is not cancelled
                                 $record->canceled_at === null) {
-                                $numberOfDealersAndShares = $record->shares()->count() + 1;
-                                $result = $record->setPhysicalChairsTo($numberOfDealersAndShares);
-                                $record->save();
-                                if ($result['new'] !== $result['old']) $count_changed++;
+                                if ($record->physical_chairs < 0) {
+                                    // Directly apply full default if not set yet
+                                    $numberOfDealersAndShares = $record->shares()->count() + 1;
+                                    $result = $record->setPhysicalChairsTo($numberOfDealersAndShares);
+                                } else {
+                                    // Else, just apply the fix-and-adjust to make sure none are out of bounds
+                                    $result = $record->changePhysicalChairsBy();
+                                }
+                                if ($result['new'] !== $result['old']) {
+                                    $record->save();
+                                    $count_changed++;
+                                }
+                            } elseif ($record->physical_chairs >= 0) {
+                                // If not a main dealer or cancelled, clear chair count (just for tidiness)
+                                $record->update(['physical_chairs' => -1]);
+                                $count_cleared++;
                             }
                             $count++;
                         }
-                        $msg = "Updated and actively changed chair count on <b>{$count_changed} of {$count}</b> applications";
+                        $msg = "Updated and actively changed chair count on <b>{$count_changed} of {$count}</b> applications and cleared <b>{$count_cleared}</b> stale values";
                         $frontendNotification = Notification::make();
                         $frontendNotification->title('Physical Chairs Fixed for Selected');
                         $frontendNotification->body($msg)->persistent()->send();
