@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Application;
-use App\Notifications\PhyiscalChairsChangedNotification;
+use App\Notifications\PhysicalChairsChangedNotification;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 
 class ApplicationObserver implements ShouldHandleEventsAfterCommit
@@ -21,7 +21,7 @@ class ApplicationObserver implements ShouldHandleEventsAfterCommit
             if ($physicalChairs >= 0) {
                 // ... send a notification email to the main dealer.
                 $application->user()->first()->notify(
-                    new PhyiscalChairsChangedNotification($application->physical_chairs)
+                    new PhysicalChairsChangedNotification($application->physical_chairs)
                 );
             }
         }

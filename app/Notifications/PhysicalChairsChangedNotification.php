@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class PhyiscalChairsChangedNotification extends Notification implements ShouldQueue
+class PhysicalChairsChangedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
