@@ -26,6 +26,8 @@ class PhysicalChairsChangedNotification extends Notification implements ShouldQu
 
     public function toMail($notifiable): MailMessage
     {
+        // Note: When changing the text here, please check that the assertion
+        // in \Tests\Feature\ChairNotificationTest::assertChairChangeNotification still matches!
         return (new MailMessage)
             ->subject(config('convention.con_name') . ' Dealers\' Den - Physical Chairs')
             ->greeting("Dear $notifiable->name,")
