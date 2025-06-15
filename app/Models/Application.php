@@ -396,8 +396,9 @@ class Application extends Model
      * In the latter case, if a valid chair count is already set up, nothing will change.
      *
      * @param int $adjustBy Number of chairs to add (remove if negative).
+     * @return array Contains old and new count as well as an optional message.
      */
-    public function applyPhysicalChairsDefaultAdjustment(int $adjustBy = 0)
+    public function applyPhysicalChairsDefaultAdjustment(int $adjustBy = 0): array
     {
         $defaultChairCount = $this->shares()->count() + 1;
         $chairCount = $this->physical_chairs;
@@ -416,7 +417,7 @@ class Application extends Model
                 $chairCount = $defaultChairCount;
             }
         }
-        $this->setPhysicalChairsTo($chairCount);
+        return $this->setPhysicalChairsTo($chairCount);
     }
 
     public function getStatusAttribute()
