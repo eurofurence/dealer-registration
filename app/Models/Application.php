@@ -278,7 +278,7 @@ class Application extends Model
     public function changePhysicalChairsBy(int $delta = 0): array
     {
         /** @var int $oldChairCount */
-        $oldChairCount = $this->physical_chairs ?? 0;
+        $oldChairCount = $this->physical_chairs > 0 ? $this->physical_chairs : 0;
         $newChairCount = $oldChairCount + $delta;
 
         /** @var TableType $tableType */
