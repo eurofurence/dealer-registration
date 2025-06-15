@@ -53,6 +53,13 @@ class Application extends Model
         "physical_chairs" => -1,
     ];
 
+    protected static function booted()
+    {
+        static::saving(function (Application $model) {
+            $model->enforcePhysicalChairsMaximum();
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -325,6 +332,44 @@ class Application extends Model
             'success' => ($newChairCount == ($oldChairCount + $delta)),
             'message' => $message,
         ];
+    }
+
+    /**
+     * Local event handler to limit the chair maximum according to the table type.
+     * Called as assigned in static::booted above.
+     */
+    private function enforcePhysicalChairsMaximum(): void
+    {
+        // Ignore if not set yet
+        if ($this->physical_chairs < 0) return;
+
+        /** @var TableType $tableType */
+        // Since this is called inside a lifecycle hook, the pseudo properties are NOT updated!
+        // This won't work in that case: $tableType = $this->assignedTable ?? $this->requestedTable;
+        // Instead we MUST re-fetch the fresh objects, but we limit that based on the dirty flag to reduce overhead:
+        if ($this->isDirty(['table_type_assigned','table_type_requested'])) {
+            $tableType = TableType::find($this->table_type_assigned) ?? TableType::find($this->table_type_requested);
+        } else {
+            // If the above are not dirty, we first see if physical chairs are dirty, else we skip for optimization:
+            if (!$this->isDirty('physical_chairs')) return;
+            // Else we can use the already fetched variable values
+            $tableType = $this->assignedTable ?? $this->requestedTable;
+        }
+
+        if ($tableType) {
+            /** @var int $maximumChairs */
+            $maximumChairs = $tableType->seats;
+
+            if ($maximumChairs > 0 && $this->physical_chairs > $maximumChairs) {
+                /* Only enforce if:
+                 * - a table type is set and has a valid seat count
+                 * - the physical chairs are set to a valid value and
+                 * - the chair count exceeds the seat count
+                 * This should in turn trigger the notification mail from the observer
+                 */
+                $this->physical_chairs = $maximumChairs;
+            }
+        }
     }
 
     /**
