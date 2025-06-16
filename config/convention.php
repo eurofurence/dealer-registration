@@ -6,6 +6,7 @@ return [
     'timezone' => env('CON_TIMEZONE'),
     'reg_start_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_REG_START_DATETIME_ISO', '1970-01-01T00:00:00'), env('CON_TIMEZONE')),
     'reg_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_REG_END_DATETIME_ISO', '1970-01-01T12:00:00'), env('CON_TIMEZONE')),
+    'physical_chairs_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_PHYSICAL_CHAIRS_END_DATETIME_ISO', '1970-01-01T12:00:00'), env('CON_TIMEZONE')),
     'assistant_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_ASSISTANT_END_DATETIME_ISO', '1970-01-01T20:00:00'), env('CON_TIMEZONE')),
     'con_end_date' => Carbon::createFromIsoFormat('YYYY-MM-DDTHH:mm:ss', env('CON_END_DATETIME_ISO', '1970-01-01T23:59:59'), env('CON_TIMEZONE')),
     'dealers_tos_url' => env('CON_DEALERS_TOS_URL'),
