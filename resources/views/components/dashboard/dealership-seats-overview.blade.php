@@ -44,12 +44,14 @@
             Please remove excess shares or assistants.
         </div>
     @endif
-    @if($chairControls)
+    @if($chairControls && Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture())
         <div class=" alert alert-info mx-auto text-center mt-3 py-2">
             <p>
                 <b class="badge text-bg-warning">NEW:</b>
                 Please tell us how many <b>physical chairs</b> (stools to sit on) you really need.
-                This helps us to set up the Dealers' Den most efficiently.
+                This helps us to set up the Dealers' Den most efficiently.<br>
+                You can adjust this number until
+                <b>{{ Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->format('d.m.Y H:i') }}</b>.
             </p>
             <p class="h5 text-dark">
                 You will get <b>{{ $seats['physical_chairs'] }}</b>

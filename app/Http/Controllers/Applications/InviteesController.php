@@ -87,8 +87,10 @@ class InviteesController extends Controller
         if ($oldParent) {
             $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $invitee->user()->first()->name));
             if ($oldApplicationType === ApplicationType::Share) {
-                // Adjust chair count of the previous parent dealership
-                $oldParent->applyPhysicalChairsDefaultAdjustment(-1);
+                // Adjust chair count of the previous parent dealership (only if chair change deadline has not expired to prevent accidental removal - just an edge case)
+                if (Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture()) {
+                    $oldParent->applyPhysicalChairsDefaultAdjustment(-1);
+                }
             }
         }
         return Redirect::route('applications.invitees.view');
@@ -125,6 +127,7 @@ class InviteesController extends Controller
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
         abort_if(!$application->isActive(), 403, 'Application not active');
+        abort_if(!Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture(), 403, 'Physical chairs can not be modified anymore.');
 
         /** @var int $desiredChange */
         $desiredChange = intval($changePhysicalChairsRequest->change_by);

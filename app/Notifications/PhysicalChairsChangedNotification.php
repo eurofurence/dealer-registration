@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -33,7 +34,10 @@ class PhysicalChairsChangedNotification extends Notification implements ShouldQu
             ->greeting("Dear $notifiable->name,")
             ->line(new HtmlString(sprintf('Currently, your dealership will receive <b>%d physical chairs</b>.', $this->newChairCount)))
             ->line('This year, we kindly ask you to tell us how many physical chairs (stools to sit on) you actually need for your dealership.')
-            ->line('You can change how many chairs you need in our dashboard:')
+            ->line(new HtmlString(sprintf(
+                'You can change how many chairs you need <b>until %s</b> in our dashboard. <i>After this deadline, requesting more chairs is not possible!</i>',
+                Carbon::parse(config('convention.physical_chairs_end_date'))->format('d.m.Y H:i')
+            )))
             ->action('Manage dealership chair count', url('/applications/invitees'))
             ->salutation(new HtmlString("Best regards,<br />\nthe Eurofurence Dealers' Den Team"));
     }
