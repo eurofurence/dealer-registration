@@ -48,6 +48,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\RegistrationStatusChart::class,
                 \App\Filament\Widgets\ApplicationTablesRequestedChart::class,
                 \App\Filament\Widgets\ApplicationTablesAssignedChart::class,
+                \App\Filament\Widgets\PhysicalChairStats::class,
             ])
             ->middleware([
                 EncryptCookies::class,

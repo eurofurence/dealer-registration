@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Eloquent model for the application database table entry.
+ *
+ * Starting to add at least some typehints:
+ * @property int $physical_chairs The number of assigned physical chairs.
+ */
 class Application extends Model
 {
     use HasFactory, HasUuids;
@@ -42,8 +48,17 @@ class Application extends Model
     ];
 
     protected $attributes = [
-        "table_type_requested" => 2
+        "table_type_requested" => 2,
+        // By default, set chairs to a negative value, indicating "not set yet".
+        "physical_chairs" => -1,
     ];
+
+    protected static function booted()
+    {
+        static::saving(function (Application $model) {
+            $model->enforcePhysicalChairsMaximum();
+        });
+    }
 
     public function user()
     {
@@ -204,6 +219,7 @@ class Application extends Model
                 'assistants' => 0,
                 'free' => 0,
                 'additional' => null,
+                'physical_chairs' => 0,
             ];
         }
 
@@ -235,6 +251,7 @@ class Application extends Model
             'assistants' => $assistants,
             'free' => $free,
             'additional' => $additional,
+            'physical_chairs' => $this->physical_chairs,
         ];
     }
 
@@ -249,6 +266,160 @@ class Application extends Model
     public function canChangeTableTypeTo(TableType $newTableType): bool
     {
         return $this->getSeats($newTableType)['free'] >= 0;
+    }
+
+    /**
+     * Adjust the number of physical chairs and apply hard rules.
+     * To just enforce the limits without changing otherwise, call without argument.
+     *
+     * @param int $delta Number of chairs to add (positive) or remove (negative).
+     * @return array Contains old and new count as well as an optional message.
+     */
+    public function changePhysicalChairsBy(int $delta = 0): array
+    {
+        /** @var int $oldChairCount */
+        $oldChairCount = $this->physical_chairs > 0 ? $this->physical_chairs : 0;
+        $newChairCount = $oldChairCount + $delta;
+
+        /** @var TableType $tableType */
+        $tableType = $this->assignedTable ?? $this->requestedTable;
+
+        if (!$tableType) {
+            return [
+                'old' => $oldChairCount,
+                'new' => $oldChairCount,
+                'success' => false,
+                'message' => 'Cannot assign chairs without a table!',
+            ];
+        }
+
+        /** @var int $maximumChairs */
+        $maximumChairs = $tableType->seats;
+
+        // Default message: Indicate chair change
+        switch ($delta) {
+            case 1:
+                $message = 'Added one chair to your table.';
+                break;
+            case -1:
+                $message = 'Removed one chair to your table.';
+                break;
+            default:
+                $message = sprintf(
+                    '%s %d chairs to your table.',
+                    $delta < 0 ? 'Removed' : 'Added',
+                    abs($delta)
+                );
+                break;
+        }
+
+        // Allow at maximum as many chairs as fit for this table
+        if ($newChairCount > $maximumChairs) {
+            $newChairCount = $maximumChairs;
+            $message = sprintf('Maximum number of chairs reached for table size!');
+        }
+
+        // Allow at minimum no chairs.
+        if ($newChairCount < 0) {
+            $newChairCount = 0;
+            $message = sprintf('Cannot have less than zero chairs!');
+        }
+
+        // Note: Notification Emails are sent by \App\Observers\ApplicationObserver
+        $this->update([
+            'physical_chairs' => $newChairCount,
+        ]);
+        return [
+            'old' => $oldChairCount,
+            'new' => $newChairCount,
+            'success' => ($newChairCount == ($oldChairCount + $delta)),
+            'message' => $message,
+        ];
+    }
+
+    /**
+     * Local event handler to limit the chair maximum according to the table type.
+     * Called as assigned in static::booted above.
+     */
+    private function enforcePhysicalChairsMaximum(): void
+    {
+        // Ignore if not set yet
+        if ($this->physical_chairs < 0) return;
+
+        /** @var TableType $tableType */
+        // Since this is called inside a lifecycle hook, the pseudo properties are NOT updated!
+        // This won't work in that case: $tableType = $this->assignedTable ?? $this->requestedTable;
+        // Instead we MUST re-fetch the fresh objects, but we limit that based on the dirty flag to reduce overhead:
+        if ($this->isDirty(['table_type_assigned', 'table_type_requested'])) {
+            $tableType = TableType::find($this->table_type_assigned) ?? TableType::find($this->table_type_requested);
+        } else {
+            // If the above are not dirty, we first see if physical chairs are dirty, else we skip for optimization:
+            if (!$this->isDirty('physical_chairs')) return;
+            // Else we can use the already fetched variable values
+            $tableType = $this->assignedTable ?? $this->requestedTable;
+        }
+
+        if ($tableType) {
+            /** @var int $maximumChairs */
+            $maximumChairs = $tableType->seats;
+
+            if ($maximumChairs > 0 && $this->physical_chairs > $maximumChairs) {
+                /* Only enforce if:
+                 * - a table type is set and has a valid seat count
+                 * - the physical chairs are set to a valid value and
+                 * - the chair count exceeds the seat count
+                 * This should in turn trigger the notification mail from the observer
+                 */
+                $this->physical_chairs = $maximumChairs;
+            }
+        }
+    }
+
+    /**
+     * Adjust the number of physical chairs and apply hard rules.
+     *
+     * @param int $newCount Number of chairs that shall result from this action.
+     * @return array Contains old and new count as well as an optional message.
+     */
+    public function setPhysicalChairsTo(int $newCount): array
+    {
+        /** @var int $oldChairCount */
+        $oldChairCount = ($this->physical_chairs > 0) ? $this->physical_chairs : 0;
+        return $this->changePhysicalChairsBy($newCount - $oldChairCount);
+    }
+
+    /**
+     * This should be called whenever a share joins or leaves the dealership.
+     * It adjusts the physical chair count by up to one chair as long as
+     * the default assignment of one chair per dealer/share is not reached.
+     *
+     * Normally, upon one share joining, call with $adjustBy = 1.
+     * Upon one share leaving, call with $adjustBy = -1.
+     * To execute the default assignment in case no chairs are yet configured, can call without argument.
+     * In the latter case, if a valid chair count is already set up, nothing will change.
+     *
+     * @param int $adjustBy Number of chairs to add (remove if negative).
+     * @return array Contains old and new count as well as an optional message.
+     */
+    public function applyPhysicalChairsDefaultAdjustment(int $adjustBy = 0): array
+    {
+        $defaultChairCount = $this->shares()->count() + 1;
+        $chairCount = $this->physical_chairs;
+
+        if ($chairCount < 0) {
+            // If not yet set to a valid value, use default.
+            $chairCount = $defaultChairCount;
+        } else {
+            if ($adjustBy < 0) {
+                // Reduce chair count by requested amount, but with lower limit of 1 or 0
+                // depending on current chair count.
+                $chairCount = max(min(1, $chairCount), $chairCount + $adjustBy);
+            } else {
+                // Always increment; upper limit enforced by Application::setPhysicalChairsTo()
+                $chairCount += $adjustBy;
+            }
+        }
+        return $this->setPhysicalChairsTo($chairCount);
     }
 
     public function getStatusAttribute()

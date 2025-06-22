@@ -95,6 +95,26 @@ class ApplicationResource extends Resource
                         Forms\Components\Select::make('table_type_assigned')->relationship('assignedTable', 'name')
                             ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
                             ->nullable(fn(\Filament\Forms\Get $get) => $get('status') !== ApplicationStatus::TableOffered->value),
+                        Forms\Components\TextInput::make('physical_chairs')->integer(true)->minValue(-1)->maxValue(4)
+                            ->hidden(fn(\Filament\Forms\Get $get) => $get('type') !== ApplicationType::Dealer->value)
+                            ->helperText('Automatic email when changed to valid number. "-1" means "not specified".')
+                            ->rule(fn (Forms\Get $get) => function (string $attribute, $value, $fail) use ($get) {
+                                // This should allow maximum freedom for admins without breaking the number of allowable chairs
+                                if ($value >= 0) {
+                                    $tableType = TableType::find($get('table_type_assigned'));
+                                    if (!$tableType) {
+                                        $tableType = TableType::find($get('table_type_requested'));
+                                    }
+                                    if (!$tableType && $value > 0) {
+                                        $fail("Cannot assign chairs without an assigned table type!");
+                                    } else {
+                                        $maxChairs = $tableType?->seats ?? 0;
+                                        if ($value > $maxChairs) {
+                                            $fail("Cannot assign $value chairs to a $maxChairs seat table!");
+                                        }
+                                    }
+                                }
+                            })
                     ]),
 
                     Forms\Components\Fieldset::make('Dates')->inlineLabel()->columns(1)->schema([
@@ -139,6 +159,14 @@ class ApplicationResource extends Resource
                             ->orderBy('table_type_assigned', $direction);
                     })
                     ->disabled(fn($record) => $record->type !== ApplicationType::Dealer),
+                Tables\Columns\TextColumn::make('physical_chairs')->numeric(0)
+                    ->label('Chairs')
+                    ->formatStateUsing(fn ($state) => $state < 0 ? '-/-' : $state)
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->orderBy('physical_chairs', $direction);
+                    })
+                    ->disabled(true), // Do not allow changing in table view! It would not create proper notification mail!
                 Tables\Columns\TextColumn::make('type')
                     ->formatStateUsing(function (ApplicationType $state) {
                         return ucfirst($state->value);
@@ -226,6 +254,9 @@ class ApplicationResource extends Resource
                 Tables\Filters\SelectFilter::make('assignedTable')
                     ->relationship('assignedTable', 'name')
                     ->multiple(),
+                Tables\Filters\Filter::make('physical_chairs_undefined')
+                    ->query(fn(Builder $query): Builder => $query->where('physical_chairs', '<', '0'))
+                    ->label('Undefined Physical Chairs'),
                 Tables\Filters\SelectFilter::make('status')
                     ->options(array_combine(array_column(ApplicationStatus::cases(), 'value'), array_column(ApplicationStatus::cases(), 'name')))
                     ->query(function (Builder $query, array $data) {
@@ -358,6 +389,47 @@ class ApplicationResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->icon('heroicon-o-envelope'),
+                Tables\Actions\BulkAction::make('Fix Chairs')
+                    ->action(function (Collection $records): void {
+                        /* @var Application $record */
+                        $count = 0;
+                        $count_changed = 0;
+                        $count_cleared = 0;
+                        foreach ($records as $record) {
+                            if (// this application is a dealer (not share or assistant)
+                                $record->type?->value == 'dealer' &&
+                                // ... and is not cancelled
+                                $record->canceled_at === null) {
+                                if ($record->physical_chairs < 0) {
+                                    // Directly apply full default if not set yet
+                                    $numberOfDealersAndShares = $record->shares()->count() + 1;
+                                    $result = $record->setPhysicalChairsTo($numberOfDealersAndShares);
+                                } else {
+                                    // Else, just apply the fix-and-adjust to make sure none are out of bounds
+                                    $result = $record->changePhysicalChairsBy();
+                                }
+                                if ($result['new'] !== $result['old']) {
+                                    $record->save();
+                                    $count_changed++;
+                                }
+                            } elseif ($record->physical_chairs >= 0) {
+                                // If not a main dealer or cancelled, clear chair count (just for tidiness)
+                                $record->update(['physical_chairs' => -1]);
+                                $count_cleared++;
+                            }
+                            $count++;
+                        }
+                        $msg = "Updated and actively changed chair count on <b>{$count_changed} of {$count}</b> applications and cleared <b>{$count_cleared}</b> stale values";
+                        $frontendNotification = Notification::make();
+                        $frontendNotification->title('Physical Chairs Fixed for Selected');
+                        $frontendNotification->body($msg)->persistent()->send();
+                    })
+                ->requiresConfirmation()
+                ->modalDescription('THIS IS A REPAIR COMMAND! It applies the physical chair rules to all selected applications. '.
+                    'Any dealerships without a chair count will have one chair per dealer and share added up to the table size. '.
+                    'Also, this SENDS NOTIFICATION EMAILS to all dealers who had an unset/invalid physical chair count before!')
+                ->color('warning')
+                ->icon('heroicon-o-wrench-screwdriver')
             ])
             ->paginated([10, 20, 30, 40, 50])
             ->defaultPaginationPageOption(10);
