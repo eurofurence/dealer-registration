@@ -126,6 +126,7 @@ class InviteesController extends Controller
         /** @var Application $application */
         $application = Auth::user()->application;
         abort_if(is_null($application), 404, 'Application not found');
+        abort_if($application->type !== ApplicationType::Dealer, 403, 'Shares and Assistants cannot manage this.');
         abort_if(!$application->isActive(), 403, 'Application not active');
         abort_if(!Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture(), 403, 'Physical chairs can not be modified anymore.');
 

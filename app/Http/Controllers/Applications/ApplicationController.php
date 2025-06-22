@@ -190,7 +190,7 @@ class ApplicationController extends Controller
             case ApplicationType::Dealer:
                 $user->notify(new WelcomeNotification());
                 // Apply automatic chair assignment, which also indirectly triggers the email notification about chairs
-                $application->applyPhysicalChairsDefaultAdjustment();
+                $application->setPhysicalChairsTo(1);
                 break;
             case ApplicationType::Share:
                 $user->notify(new WelcomeShareNotification($parent->getFullName()));
@@ -205,10 +205,6 @@ class ApplicationController extends Controller
             default:
                 abort(400, 'Unknown application type.');
         }
-
-        // Apply hard rules
-        $application->refresh();
-        $application->changePhysicalChairsBy(0);
 
         return Redirect::route('dashboard')->with('save-successful');
     }
@@ -288,10 +284,6 @@ class ApplicationController extends Controller
                 }
             }
         }
-
-        // Apply hard rules
-        $application->refresh();
-        $application->changePhysicalChairsBy(0);
 
         return Redirect::route('applications.edit')->with('save-successful');
     }

@@ -305,8 +305,11 @@ class Application extends Model
                 $message = 'Removed one chair to your table.';
                 break;
             default:
-                $message = sprintf('%s %d chairs to your table.',
-                        $delta < 0 ? 'Removed' : 'Added', abs($delta));
+                $message = sprintf(
+                    '%s %d chairs to your table.',
+                    $delta < 0 ? 'Removed' : 'Added',
+                    abs($delta)
+                );
                 break;
         }
 
@@ -347,7 +350,7 @@ class Application extends Model
         // Since this is called inside a lifecycle hook, the pseudo properties are NOT updated!
         // This won't work in that case: $tableType = $this->assignedTable ?? $this->requestedTable;
         // Instead we MUST re-fetch the fresh objects, but we limit that based on the dirty flag to reduce overhead:
-        if ($this->isDirty(['table_type_assigned','table_type_requested'])) {
+        if ($this->isDirty(['table_type_assigned', 'table_type_requested'])) {
             $tableType = TableType::find($this->table_type_assigned) ?? TableType::find($this->table_type_requested);
         } else {
             // If the above are not dirty, we first see if physical chairs are dirty, else we skip for optimization:
@@ -406,15 +409,14 @@ class Application extends Model
         if ($chairCount < 0) {
             // If not yet set to a valid value, use default.
             $chairCount = $defaultChairCount;
-        } elseif ($chairCount != $defaultChairCount) {
-            // If we have not reached the default, apply adjustment
-            // RULE 1: When adding shares, always try to add as many chairs on top, up to maximum
-            // (maximum will be handled by setPhysicalChairsTo).
-            $chairCount += $adjustBy;
-            // RULE 2: When removing shares, remove as many shares but keep the default as minimum
-            // (but if there were less than default to begin with, do not re-add them either!)
-            if ($adjustBy < 0 && $chairCount < $defaultChairCount) {
-                $chairCount = $defaultChairCount;
+        } else {
+            if ($adjustBy < 0) {
+                // Reduce chair count by requested amount, but with lower limit of 1 or 0
+                // depending on current chair count.
+                $chairCount = max(min(1, $chairCount), $chairCount + $adjustBy);
+            } else {
+                // Always increment; upper limit enforced by Application::setPhysicalChairsTo()
+                $chairCount += $adjustBy;
             }
         }
         return $this->setPhysicalChairsTo($chairCount);

@@ -15,8 +15,9 @@ class ApplicationObserver implements ShouldHandleEventsAfterCommit
     public function updated(Application $application)
     {
         // If (and only if) the chair assignment has changed ...
-        if ($application->wasChanged('physical_chairs') &&
-            // ... and this application is a dealer (not share or assistand)
+        if (
+            $application->wasChanged('physical_chairs') &&
+            // ... and this application is a dealer (not share or assistant)
             $application->type?->value == 'dealer' &&
             // ... and is not cancelled
             $application->canceled_at === null
