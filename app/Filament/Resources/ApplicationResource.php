@@ -154,18 +154,20 @@ class ApplicationResource extends Resource
                         return $record->isReady();
                     })
                     ->boolean(),
-                Tables\Columns\TextColumn::make('dlrshp')
+                Tables\Columns\TextColumn::make('Parent Dealership')
                     ->getStateUsing(function (Application $record) {
-                        return $record->parent_id ?: $record->id;
+                        return ($record->parent()->first()?->getFullName() ?? $record->getFullName());
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
-                            ->orderBy(DB::raw('IF(`type` = \'dealer\', `id`,`parent_id`)'), $direction);
+                            ->leftJoinSub('SELECT id AS parents_id, display_name AS parents_display_name FROM applications', 'parents', 'parent_id', '=', 'parents_id')
+                            ->orderBy(DB::raw('IF(`type` = \'dealer\', `display_name`, `parents_display_name`)'), $direction);
                     })
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('id', '=', $search)
-                            ->orWhere('parent_id', '=', $search);
+                        return $query->whereHas(
+                            relation: 'parent',
+                            callback: fn(Builder $q) => $q->where('display_name', 'LIKE', "%{$search}%")
+                        );
                     }),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
