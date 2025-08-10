@@ -5,7 +5,7 @@
 @section('content')
     <div class="">
         <h1>Apply as a {{ $applicationType->value }}</h1>
-        <x-application.intro></x-application.intro>
+        <x-application.intro :applicationType="$applicationType"></x-application.intro>
 
         @if ($invitingApplication)
             <div class="alert alert-info text-center">
