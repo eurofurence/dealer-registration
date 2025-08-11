@@ -159,6 +159,19 @@
 
     <div class="row">
         @if (isset($application) && $application->isActive())
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-center display-6">Profile Completion Progress</h5>
+                        <p>
+                            <a href="{{ route('applications.edit') }}" class="btn btn-md  float-end btn-primary mt-2">Edit your Profile</a>
+                            Please try to fill out as much of your profile as possible! Click on the progress bar to show more details and help us providing our attendees with all the information they need.
+                        </p>
+                        <x-application.completion-progress :application="$application" />
+
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-6 mx-auto d-flex">
                 <div class="card mb-4">
                     <div class="card-body text-center">
