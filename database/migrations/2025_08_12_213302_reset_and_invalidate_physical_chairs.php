@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->integer('physical_chairs')->default(0);
+            $table->dropColumn('physical_chairs');
+            $table->integer('physical_chairs')->default(-1);
         });
     }
 
@@ -21,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->dropColumn('physical_chairs');
-        });
+        //
     }
 };
