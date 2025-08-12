@@ -113,7 +113,7 @@ services:
             - sail
         entrypoint: >
             /bin/sh -c "
-            /usr/bin/mc config host add ef-minio ${AWS_ENDPOINT} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
+            /usr/bin/mc alias set ef-minio ${AWS_ENDPOINT} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
             /usr/bin/mc ready ef-minio;
             /usr/bin/mc mb -p ef-minio/${AWS_BUCKET};
             /usr/bin/mc anonymous set download ef-minio/${AWS_BUCKET};
