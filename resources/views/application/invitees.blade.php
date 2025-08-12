@@ -24,7 +24,7 @@
         @endif
         <div class="col-md-6 mx-auto">
             <h3 class="text-center">Seats in your Dealership</h3>
-            <x-dashboard.dealership-seats-overview :seats="$seats" />
+            <x-dashboard.dealership-seats-overview :seats="$seats" :chair-controls="true" />
         </div>
         <div class="row">
             <div class="col-md-6">

@@ -189,10 +189,14 @@ class ApplicationController extends Controller
         switch ($application->type) {
             case ApplicationType::Dealer:
                 $user->notify(new WelcomeNotification());
+                // Apply automatic chair assignment, which also indirectly triggers the email notification about chairs
+                $application->setPhysicalChairsTo(1);
                 break;
             case ApplicationType::Share:
                 $user->notify(new WelcomeShareNotification($parent->getFullName()));
                 $parent->user->notify(new JoinNotification($application->type->value, $application->getFullName()));
+                // Adjust chair count of the parent dealership
+                $parent->applyPhysicalChairsDefaultAdjustment(1);
                 break;
             case ApplicationType::Assistant:
                 $user->notify(new WelcomeAssistantNotification($parent->getFullName()));
@@ -201,6 +205,7 @@ class ApplicationController extends Controller
             default:
                 abort(400, 'Unknown application type.');
         }
+
         return Redirect::route('dashboard')->with('save-successful');
     }
 
@@ -266,11 +271,17 @@ class ApplicationController extends Controller
                 $user->notify(new WelcomeAssistantNotification($newParent->getFullName()));
             } elseif ($newApplicationType === ApplicationType::Share) {
                 $user->notify(new WelcomeShareNotification($newParent->getFullName()));
+                // Adjust chair count of the parent dealership
+                $newParent->applyPhysicalChairsDefaultAdjustment(1);
             }
             // If this application was associated to another main dealership before, notify them, too.
             // TODO: Check if this path actually is taken...
             if ($oldParent) {
                 $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $user->name));
+                if ($oldApplicationType === ApplicationType::Share) {
+                    // Adjust chair count of the previous parent dealership
+                    $oldParent->applyPhysicalChairsDefaultAdjustment(-1);
+                }
             }
         }
 
@@ -307,7 +318,8 @@ class ApplicationController extends Controller
             $child->update([
                 'canceled_at' => now(),
                 'parent_id' => null,
-                'type' => 'dealer'
+                'type' => 'dealer',
+                'physical_chairs' => -1, // Invalidate chair assignment
             ]);
             $child->user()->first()->notify(new CanceledByDealershipNotification());
         }
@@ -315,13 +327,18 @@ class ApplicationController extends Controller
         $application->update([
             'canceled_at' => now(),
             'parent_id' => null,
-            'type' => 'dealer'
+            'type' => 'dealer',
+            'physical_chairs' => -1, // Invalidate chair assignment
         ]);
         $user->notify(new CanceledBySelfNotification());
 
         // If this application was associated to another main dealership, notify them, too.
         if ($oldParent) {
             $oldParent->user()->first()->notify(new LeaveNotification($oldApplicationType->value, $user->name));
+            if ($oldApplicationType === ApplicationType::Share) {
+                // Adjust chair count of the previous parent dealership
+                $oldParent->applyPhysicalChairsDefaultAdjustment(-1);
+            }
         }
 
         return Redirect::route('dashboard');

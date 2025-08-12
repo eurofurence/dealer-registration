@@ -39,6 +39,15 @@
                     <b>{{ Carbon\Carbon::parse(config('convention.assistant_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
             @endif
+            @if ($application->type === \App\Enums\ApplicationType::Dealer && Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture())
+                <p class="lead mb-4">
+                    <span class="badge text-bg-warning">New:</span> Please adjust the number of physical chairs you need for your dealership until
+                    <b>{{ Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->format('d.m.Y H:i') }}</b>.<br>
+                    <a href="{{ route('applications.invitees.view') }}" class="btn btn btn-outline-primary mt-2">
+                        Change number of physical chairs
+                    </a>
+                </p>
+            @endif
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                 <a target="_blank" href="{{ config('convention.dealers_tos_url') }}" class="btn btn-outline-primary btn-lg">Rules and
                     Information</a>
@@ -226,6 +235,12 @@
                             <a href="{{ route('applications.invitees.view') }}" class="btn btn-lg btn-primary">
                                 Invite or Manage <span class="text-nowrap">Assistants & Shares</span>
                             </a>
+                            @if(Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture())
+                                <div class="mb-3"></div>
+                                <a href="{{ route('applications.invitees.view') }}" class="btn btn btn-outline-primary mt-2">
+                                    <span class="badge text-bg-warning me-2">New:</span> Change number of physical chairs
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
