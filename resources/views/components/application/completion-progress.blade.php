@@ -9,7 +9,7 @@
                          style="width: {{ $completion->weightedPercent }}%; font-weight: bold;"
                          aria-valuenow="{{ $completion->progress }}" aria-valuemin="0" aria-valuemax="{{ $completion->maxProgress }}"
                     >
-                        {{ $completion->progress }} / {{ $completion->maxProgress }} ({{ $completion->weightedPercent }} %)
+                        {{ $completion->weightedPercent }} % ({{ $completion->progress }} / {{ $completion->maxProgress }})
                     </div>
                 </div>
             </button>

@@ -71,7 +71,7 @@ class ProfileCompletionEvaluator
             ));
 
             // Short Description
-            $expectCharsAtLeast = 50;
+            $expectCharsAtLeast = 30;
             $this->addStep(new ProfileCompletionStep(
                 'short_desc', 'Short Description',
                 description: "Give your dealership an inviting short description of at least $expectCharsAtLeast characters.",
@@ -100,7 +100,7 @@ class ProfileCompletionEvaluator
             ));
 
             // "About the Artist"
-            $expectCharsAtLeast = 100;
+            $expectCharsAtLeast = 50;
             $this->addStep(new ProfileCompletionStep(
                 'artist_desc', 'About You',
                 description: "Describe yourself in the \"About the Artist\" field with at least $expectCharsAtLeast characters.",
@@ -111,7 +111,7 @@ class ProfileCompletionEvaluator
 
             // "Showcase Image"
             $hasShowcaseImage = self::string_has_chars($profile->image_art) > 0;
-            $hasShowcaseText = self::string_has_chars($profile->art_preview_caption) > 10;
+            $hasShowcaseText = self::string_has_chars($profile->art_preview_caption) > 5;
             $this->addStep(new ProfileCompletionStep(
                 'showcase_image', 'Showcase Image',
                 description: "Provide a Showcase Image with a Caption to present what you are offering.",
@@ -120,7 +120,7 @@ class ProfileCompletionEvaluator
                 weight: 1,
             ));
 
-            $expectCharsAtLeast = 100;
+            $expectCharsAtLeast = 50;
             $this->addStep(new ProfileCompletionStep(
                 'art_desc', 'About your Art',
                 description: "Describe in more detail what you are offering in the \"About the Art\" field with at least $expectCharsAtLeast characters.",
@@ -151,7 +151,7 @@ class ProfileCompletionEvaluator
                 weight: 3,
             ));
 
-            $expectCharsAtLeast = 100;
+            $expectCharsAtLeast = 50;
             $this->addStep(new ProfileCompletionStep(
                 'tweet', 'Advertisement Text',
                 description: "Write a short advertisement message of at least $expectCharsAtLeast characters.",
@@ -176,24 +176,27 @@ class ProfileCompletionEvaluator
             ));
         } else {
             $this->evaluate($application);
-            $this->maxProgress = 0;
-            $this->progress = 0;
-            $this->weightedMaxProgress = 0;
-            $this->weightedProgress = 0;
+            $maxProgress = 0;
+            $progress = 0;
+            $weightedMaxProgress = 0;
+            $weightedProgress = 0;
 
             foreach ($this->steps as $step) {
-                $maxScore = min(1, $step->maxScore);
-                $score = min($step->score, $maxScore);
-                $this->maxProgress++;
+                $maxScore = max(1, $step->maxScore);
+                $score = max(0, min($step->score, $maxScore));
+                $maxProgress++;
                 $weight = max(1, $step->weight);
-                $this->weightedMaxProgress += $weight;
-                $progress = $score / $maxScore;
-                $this->progress += $progress;
-                $this->weightedProgress += $progress * $weight;
+                $weightedMaxProgress += $weight;
+                if ($score >= $maxScore) {
+                    $progress += 1;
+                    $weightedProgress += $weight;
+                }
             }
-            $this->weightedPercent = floor(100*$this->weightedProgress) / $this->weightedMaxProgress;
-            $this->progress = floor($this->progress);
-            $this->weightedProgress = floor($this->weightedProgress);
+            $this->maxProgress = floor($maxProgress);
+            $this->weightedMaxProgress = floor($weightedMaxProgress);
+            $this->weightedPercent = floor(100*$weightedProgress) / $weightedMaxProgress;
+            $this->progress = floor($progress);
+            $this->weightedProgress = floor($weightedProgress);
         }
     }
 }
