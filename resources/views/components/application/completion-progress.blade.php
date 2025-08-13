@@ -16,6 +16,7 @@
         </div>
         <div id="collapseProfileCompletion" class="accordion-collapse collapse">
             <div class="accordion-body">
+                <div class="mb-3">The number of stars (<x-heroicon-s-star class="text-primary" width="0.75em" />) indicates how much impact each item has.</div>
                 @foreach($completion->steps as $step)
                     <div class="row mb-3">
                         <div class="col-12 col-xl-4">

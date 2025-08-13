@@ -20,6 +20,18 @@
     </h2>
     <div id="profile-form-item" class="accordion-collapse collapse show">
         <div class="accordion-body mt-2">
+            <div class="card mb-4 bg-light">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h5>Profile Completion Progress</h5>
+                        <p>
+                            Please try to fill out as much of your profile as possible!
+                            Click on the progress bar to show more details and help us providing our attendees with all the information they need.
+                        </p>
+                    </div>
+                    <x-application.completion-progress :application="$application" />
+                </div>
+            </div>
             @if ($applicationType === \App\Enums\ApplicationType::Share)
                 <input class="form-check-input" name="profile_hidden" role="switch" @checked(old('_token') ? old('profile_hidden') : $profile?->is_hidden === true)
                     type="checkbox" id="dd-profile-hidden">
