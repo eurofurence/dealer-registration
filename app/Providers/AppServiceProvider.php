@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Application;
+use App\Observers\ApplicationObserver;
 use DB;
 use Log;
 use Illuminate\Support\Facades\Http;
@@ -25,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
         Http::macro('identity', function () {
             return Http::baseUrl(config('services.oidc.url'));
         });
+
+        Application::observe(ApplicationObserver::class);
 
         // DB::listen(function($query) {
         //     Log::debug(
