@@ -9,7 +9,7 @@
         <button class="accordion-button block" type="button" data-bs-toggle="collapse" data-bs-target="#profile-form-item"
             aria-expanded="true" aria-controls="profile-form-item">
             <div class="row">
-                <h3 class="col-md">Profile</h3>
+                <h3 class="col-md" id="profile">Profile</h3>
                 <div class="col-10">
                     The following information will be used to present you and your goods in the official Eurofurence
                     App, as well as in other media associated with Eurofurence. You will be able to edit this

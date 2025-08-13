@@ -11,7 +11,7 @@
             aria-expanded="{{ Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture() || $applicationType === \App\Enums\ApplicationType::Assistant ? 'true' : 'false' }}"
             aria-controls="application-form-item">
             <div class="row">
-                <h3 class="col-md">Application</h3>
+                <h3 class="col-md" id="application">Application</h3>
                 <div class="col-10">
                     @if ($applicationType === \App\Enums\ApplicationType::Dealer || $applicationType === \App\Enums\ApplicationType::Share)
                         This information is relevant to the application process and can only be changed until the

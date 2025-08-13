@@ -173,8 +173,9 @@
                     <div class="card-body">
                         <h5 class="card-title text-center display-6">Profile Completion Progress</h5>
                         <p>
-                            <a href="{{ route('applications.edit') }}" class="btn btn-md  float-end btn-primary mt-2">Edit your Profile</a>
-                            Please try to fill out as much of your profile as possible! Click on the progress bar to show more details and help us providing our attendees with all the information they need.
+                            <a href="{{ route('applications.edit') }}#profile" class="btn btn-md  float-end btn-primary mt-2">Edit your Profile</a>
+                            Please try to fill out as much of your profile as possible!
+                            Click on the progress bar to show more details and help us providing our attendees with all the information they need.
                         </p>
                         <x-application.completion-progress :application="$application" />
 
