@@ -50,8 +50,17 @@ class ProfileCompletionEvaluator
         /** @var Profile|null $profile */
         $profile = $application->profile;
 
+        // Allow shares to share profile, in that case we display them a completed form (no leak information from main).
+        if ($isShare && $profile->is_hidden) {
+            $this->addStep(new ProfileCompletionStep(
+                'hidden_share', 'Share Profile',
+                description: "You chose to hide your own profile, so you do not need to set anything. Please still make sure your main dealership profile is well filled!",
+                score: true,
+                weight: 0, // No score.
+            ));
+        }
         // Main Rules
-        if ($isDealer) {
+        elseif ($isDealer || $isShare) {
 
             // "Thumbnail"
             $this->addStep(new ProfileCompletionStep(
@@ -167,15 +176,20 @@ class ProfileCompletionEvaluator
             ));
         } else {
             $this->evaluate($application);
+            $this->maxProgress = 0;
+            $this->progress = 0;
+            $this->weightedMaxProgress = 0;
+            $this->weightedProgress = 0;
 
             foreach ($this->steps as $step) {
                 $maxScore = min(1, $step->maxScore);
                 $score = min($step->score, $maxScore);
                 $this->maxProgress++;
-                $this->weightedMaxProgress += $step->weight;
+                $weight = max(1, $step->weight);
+                $this->weightedMaxProgress += $weight;
                 $progress = $score / $maxScore;
                 $this->progress += $progress;
-                $this->weightedProgress += $progress * $step->weight;
+                $this->weightedProgress += $progress * $weight;
             }
             $this->weightedPercent = floor(100*$this->weightedProgress) / $this->weightedMaxProgress;
             $this->progress = floor($this->progress);

@@ -168,6 +168,7 @@
 
     <div class="row">
         @if (isset($application) && $application->isActive())
+            @if ($application->type === \App\Enums\ApplicationType::Dealer || $application->type === \App\Enums\ApplicationType::Share)
             <div class="col-12 mb-4">
                 <div class="card">
                     <div class="card-body">
@@ -182,6 +183,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <div class="col-lg-6 mx-auto d-flex">
                 <div class="card mb-4">
                     <div class="card-body text-center">
