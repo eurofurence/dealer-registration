@@ -34,11 +34,12 @@
                     <div class="col-sm-10">
                         <input id="image_thumbnail" type="file"
                             class="form-control @error('image_thumbnail') is-invalid @enderror" name="image_thumbnail"
-                            accept="image/jpeg, image/png"
-                            onchange="document.getElementById('image_thumbnail_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_thumbnail_preview_large').src = window.URL.createObjectURL(this.files[0]);">
+                            accept="image/jpeg, image/png" data-file-size-limit="{{ 1*1024*1024 }}"
+                            data-image-preview-targets="image_thumbnail_preview,image_thumbnail_preview_cropped,image_thumbnail_preview_large">
                         <div id="image_thumbnailHelp" class="form-text">Upload an image to be shown next to your name in
                             the dealer list. This image should have a size of 60&times;60 pixels (max file size is 1
-                            MB).
+                            MB).<br>
+                            <b>Please note:</b> This image will also be shown cropped to a circle in some places, so make sure the relevant content is visible!
                         </div>
                         @error('image_thumbnail')
                             <span class="invalid-feedback" role="alert">
@@ -46,10 +47,14 @@
                             </span>
                         @enderror
 
-                        <img id='image_thumbnail_preview' class="mx-auto mb-2" data-bs-toggle="modal"
+                        <img id='image_thumbnail_preview' class="mx-auto my-2" data-bs-toggle="modal"
                             data-bs-target="#imageThumbnailModal"
                             src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
                             style="height: 100px;">
+                        <img id='image_thumbnail_preview_cropped' class="mx-auto my-2 ms-2" data-bs-toggle="modal"
+                             data-bs-target="#imageThumbnailModal"
+                             src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
+                             style="height: 100px; border-radius: 50px; outline: 4px solid rgb(0 0 0 / 50%); outline-offset: -4px;">
 
                         <!-- Modal -->
                         <div class="modal fade" id="imageThumbnailModal" tabindex="-1"
@@ -61,7 +66,7 @@
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <img id='image_thumbnail_preview_large'class="mx-auto d-block w-100"
+                                        <img id='image_thumbnail_preview_large' class="mx-auto d-block w-100"
                                             src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
                                             alt="">
                                     </div>
@@ -158,8 +163,8 @@
 
                         <input id="image_artist" type="file"
                             class="form-control @error('image_artist') is-invalid @enderror" name="image_artist"
-                            accept="image/jpeg, image/png"
-                            onchange="document.getElementById('image_artist_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_artist_preview_large').src = window.URL.createObjectURL(this.files[0]);">
+                            accept="image/jpeg, image/png" data-file-size-limit="{{ 1*1024*1024 }}"
+                            data-image-preview-targets="image_artist_preview,image_artist_preview_large">
                         <div id="image_artistHelp" class="form-text">This image is shown on your dedicated page in the
                             EF
                             app.
@@ -173,7 +178,7 @@
                         <img id='image_artist_preview' class="mx-auto mb-2" data-bs-toggle="modal"
                             data-bs-target="#imageArtistModal"
                             src="{{ Storage::disk('public')->url("$profile?->image_artist") }}" alt=""
-                            style="height: 100px;">
+                            style="height: 100px; aspect-ratio: 1; object-fit: cover;">
 
                         <!-- Modal -->
                         <div class="modal fade" id="imageArtistModal" tabindex="-1"
@@ -186,6 +191,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <img id='image_artist_preview_large' class="mx-auto d-block w-100"
+                                            style="aspect-ratio: 1; object-fit: cover; max-height: 75vh;"
                                             src="{{ Storage::disk('public')->url("$profile?->image_artist") }}"
                                             alt="">
                                     </div>
@@ -216,8 +222,8 @@
                     <div class="col-sm-10">
                         <input id="image_art" type="file"
                             class="form-control @error('image_art') is-invalid @enderror" name="image_art"
-                            accept="image/jpeg, image/png"
-                            onchange="document.getElementById('image_art_preview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('image_art_preview_large').src = window.URL.createObjectURL(this.files[0]);">
+                            accept="image/jpeg, image/png" data-file-size-limit="{{ 1*1024*1024 }}"
+                            data-image-preview-targets="image_art_preview,image_art_preview_large">
                         <div id="image_artHelp" class="form-text">You can upload a preview image of your art or
                             merchandise,
                             which will be shown on your dedicated page in the EF app. The size of this image should be
@@ -232,7 +238,7 @@
                         <img id='image_art_preview' class="mx-auto mb-2" data-bs-toggle="modal"
                             data-bs-target="#imageArtModal"
                             src="{{ Storage::disk('public')->url("$profile?->image_art") }}" alt=""
-                            style="height: 100px;">
+                            style="height: 100px; aspect-ratio: 40/45; object-fit: cover;">
 
                         <!-- Modal -->
                         <div class="modal fade" id="imageArtModal" tabindex="-1"
@@ -246,6 +252,7 @@
                                     <div class="modal-body">
                                         <img id='image_art_preview_large' class="mx-auto d-block w-100"
                                             src="{{ Storage::disk('public')->url("$profile?->image_art") }}"
+                                            style="aspect-ratio: 40/45; object-fit: cover; max-height: 75vh;"
                                             alt="">
                                     </div>
                                     <div class="modal-footer">
