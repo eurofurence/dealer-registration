@@ -20,7 +20,9 @@ class ApplicationObserver implements ShouldHandleEventsAfterCommit
             // ... and this application is a dealer (not share or assistant)
             $application->type?->value == 'dealer' &&
             // ... and is not cancelled
-            $application->canceled_at === null
+            $application->canceled_at === null &&
+            // ... and is accepted (we do not want to give open apps the wrong impression!)
+            $application->offer_accepted_at !== null
         ) {
             $physicalChairs = $application->physical_chairs ?? -1;
             // ... and the chair count is valued (i.e. not in "unplanned" state) ...
