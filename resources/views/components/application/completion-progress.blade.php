@@ -6,10 +6,10 @@
                 <span class="visually-hidden-focusable">Progress (click for details): </span>
                 <div class="progress w-100 me-3" style="height: 2.5em;">
                     <div class="progress-bar{{ $completion->isCompleted() ? '' : ' text-bg-warning' }}" role="progressbar"
-                         style="width: {{ $completion->weightedPercent }}%; font-weight: bold;"
+                         style="width: {{ $completion->weightedPercent }}%; font-weight: bold; overflow: visible;"
                          aria-valuenow="{{ $completion->progress }}" aria-valuemin="0" aria-valuemax="{{ $completion->maxProgress }}"
                     >
-                        {{ $completion->weightedPercent }} % ({{ $completion->progress }} / {{ $completion->maxProgress }})
+                        <span style="min-width: 10em;">{{ $completion->weightedPercent }} % ({{ $completion->progress }} / {{ $completion->maxProgress }})</span>
                     </div>
                 </div>
             </button>
