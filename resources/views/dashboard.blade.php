@@ -39,7 +39,7 @@
                     <b>{{ Carbon\Carbon::parse(config('convention.assistant_end_date'))->format('d.m.Y H:i') }}</b>.
                 </p>
             @endif
-            @if ($application->type === \App\Enums\ApplicationType::Dealer && Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture())
+            @if (($application?->isActive() ?? false) && $application->type === \App\Enums\ApplicationType::Dealer && Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->isFuture())
                 <p class="lead mb-4">
                     <span class="badge text-bg-warning">New:</span> Please adjust the number of physical chairs you need for your dealership until
                     <b>{{ Carbon\Carbon::parse(config('convention.physical_chairs_end_date'))->format('d.m.Y H:i') }}</b>.<br>
