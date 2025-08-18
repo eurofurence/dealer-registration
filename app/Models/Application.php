@@ -302,12 +302,11 @@ class Application extends Model
                 $message = 'Added one chair to your table.';
                 break;
             case -1:
-                $message = 'Removed one chair to your table.';
+                $message = 'Removed one chair from your table.';
                 break;
             default:
                 $message = sprintf(
-                    '%s %d chairs to your table.',
-                    $delta < 0 ? 'Removed' : 'Added',
+                    $delta < 0 ? 'Removed %d chairs from your table.' : 'Added %d chairs to your table.',
                     abs($delta)
                 );
                 break;
