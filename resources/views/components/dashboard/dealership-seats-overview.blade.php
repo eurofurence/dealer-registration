@@ -59,8 +59,12 @@
             </p>
             <form method="POST" action="{{ route('applications.invitees.change-chairs') }}">
                 @csrf
-                <button name="change_by" value="1" class="btn btn-sm btn-outline-primary" @disabled($seats['physical_chairs'] >= $seats['table'])>Add chair</button>
-                <button name="change_by" value="-1" class="btn btn-sm btn-outline-danger" @disabled($seats['physical_chairs'] <= 0)>Remove chair</button>
+                @if($seats['physical_chairs'] < $seats['table'])
+                    <button name="change_by" value="1" class="btn btn-sm btn-outline-primary">Add chair</button>
+                @endif
+                @if($seats['physical_chairs'] > 0)
+                    <button name="change_by" value="-1" class="btn btn-sm btn-outline-danger">Remove chair</button>
+                @endif
             </form>
             @if(Session::exists('physical-chair-change'))
                 @php($pcc = Session::get('physical-chair-change'))
