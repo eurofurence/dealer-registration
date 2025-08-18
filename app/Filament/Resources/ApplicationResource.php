@@ -404,7 +404,9 @@ class ApplicationResource extends Resource
                                 $record->canceled_at === null) {
                                 if ($record->physical_chairs < 0) {
                                     // Directly apply full default if not set yet
-                                    $numberOfDealersAndShares = $record->shares()->count() + 1;
+                                    // For EF29: Number of Shares + the main dealer + Assistants!
+                                    $numberOfDealersAndShares = $record->shares()->count() + 1 + $record->assistants()->count();
+                                    // Note: Our function will limit the number to the number of maximum seats
                                     $result = $record->setPhysicalChairsTo($numberOfDealersAndShares);
                                 } else {
                                     // Else, just apply the fix-and-adjust to make sure none are out of bounds
