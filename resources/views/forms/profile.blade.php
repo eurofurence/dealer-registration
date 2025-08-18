@@ -61,12 +61,12 @@
 
                         <img id='image_thumbnail_preview' class="mx-auto my-2" data-bs-toggle="modal"
                             data-bs-target="#imageThumbnailModal"
-                            src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
-                            style="height: 100px;">
+                            src="{{ $profile?->image_thumbnail ? Storage::disk('public')->url("$profile?->image_thumbnail") : Vite::asset('resources/assets/no_image.webp') }}" alt=""
+                            style="height: 100px; aspect-ratio: 1; object-fit: cover;">
                         <img id='image_thumbnail_preview_cropped' class="mx-auto my-2 ms-2" data-bs-toggle="modal"
                              data-bs-target="#imageThumbnailModal"
-                             src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}" alt=""
-                             style="height: 100px; border-radius: 50px; outline: 4px solid rgb(0 0 0 / 50%); outline-offset: -4px;">
+                             src="{{ $profile?->image_thumbnail ? Storage::disk('public')->url("$profile?->image_thumbnail") : Vite::asset('resources/assets/no_image.webp') }}" alt=""
+                             style="height: 100px; aspect-ratio: 1; object-fit: cover; border-radius: 50px; outline: 4px solid rgb(0 0 0 / 50%); outline-offset: -4px;">
 
                         <!-- Modal -->
                         <div class="modal fade" id="imageThumbnailModal" tabindex="-1"
@@ -79,7 +79,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <img id='image_thumbnail_preview_large' class="mx-auto d-block w-100"
-                                            src="{{ Storage::disk('public')->url("$profile?->image_thumbnail") }}"
+                                            src="{{ $profile?->image_thumbnail ? Storage::disk('public')->url("$profile?->image_thumbnail") : Vite::asset('resources/assets/no_image.webp') }}"
                                             alt="">
                                     </div>
                                     <div class="modal-footer">
@@ -189,7 +189,7 @@
                         @enderror
                         <img id='image_artist_preview' class="mx-auto mb-2" data-bs-toggle="modal"
                             data-bs-target="#imageArtistModal"
-                            src="{{ Storage::disk('public')->url("$profile?->image_artist") }}" alt=""
+                            src="{{ $profile?->image_artist ? Storage::disk('public')->url("$profile?->image_artist") : Vite::asset('resources/assets/no_image.webp') }}" alt=""
                             style="height: 100px; aspect-ratio: 1; object-fit: cover;">
 
                         <!-- Modal -->
@@ -204,7 +204,7 @@
                                     <div class="modal-body">
                                         <img id='image_artist_preview_large' class="mx-auto d-block w-100"
                                             style="aspect-ratio: 1; object-fit: cover; max-height: 75vh;"
-                                            src="{{ Storage::disk('public')->url("$profile?->image_artist") }}"
+                                            src="{{ $profile?->image_artist ? Storage::disk('public')->url("$profile?->image_artist") : Vite::asset('resources/assets/no_image.webp') }}"
                                             alt="">
                                     </div>
                                     <div class="modal-footer">
@@ -249,7 +249,7 @@
                         @enderror
                         <img id='image_art_preview' class="mx-auto mb-2" data-bs-toggle="modal"
                             data-bs-target="#imageArtModal"
-                            src="{{ Storage::disk('public')->url("$profile?->image_art") }}" alt=""
+                            src="{{ $profile?->image_art ? Storage::disk('public')->url("$profile?->image_art") : Vite::asset('resources/assets/no_image.webp') }}" alt=""
                             style="height: 100px; aspect-ratio: 40/45; object-fit: cover;">
 
                         <!-- Modal -->
@@ -263,7 +263,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <img id='image_art_preview_large' class="mx-auto d-block w-100"
-                                            src="{{ Storage::disk('public')->url("$profile?->image_art") }}"
+                                            src="{{ $profile?->image_art ? Storage::disk('public')->url("$profile?->image_art") : Vite::asset('resources/assets/no_image.webp') }}"
                                             style="aspect-ratio: 40/45; object-fit: cover; max-height: 75vh;"
                                             alt="">
                                     </div>
