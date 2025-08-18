@@ -90,7 +90,7 @@ class ProfileCompletionEvaluator
 
             // "Keywords"
             $expectCharsAtLeast = 1;
-            $keywordCount = count($profile?->keywords);
+            $keywordCount = count($profile?->keywords ?? []);
             $this->addStep(new ProfileCompletionStep(
                 'keywords', 'Set Keywords',
                 description: "You should tick all keywords that match what you offer, so people find you.",
