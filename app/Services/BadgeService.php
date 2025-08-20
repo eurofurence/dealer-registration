@@ -328,7 +328,7 @@ class BadgeService
             ],
             $params['strokewidth'] ?? 0,
             $params['wordspacing'] ?? 0,
-            $params['leding'] ?? 0,
+            $params['leading '] ?? 0,
             $params['rise'] ?? 0,
             $params['jlast'] ?? true,
             $params['fill'] ?? true,
