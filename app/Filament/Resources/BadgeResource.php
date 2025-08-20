@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Enums\ApplicationStatus;
 use App\Enums\ApplicationType;
-use App\Enums\BadgeResult;
 use App\Filament\Resources\BadgeResource\Pages;
 use App\Models\Application;
 use App\Services\BadgeService;
@@ -185,6 +184,7 @@ class BadgeResource extends Resource
         return [
             'index' => Pages\ListBadges::route('/'),
             'create' => Pages\PrintBadge::route('/create'),
+            'settings' => Pages\BadgeSettings::route('/settings'),
         ];
     }
 }
