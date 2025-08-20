@@ -4,8 +4,6 @@ namespace App\Filament\Resources\BadgeResource\Pages;
 
 use App\Filament\Resources\BadgeResource;
 use App\Services\BadgeService;
-use App\Http\Controllers\BadgeController;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use Livewire\Component;
