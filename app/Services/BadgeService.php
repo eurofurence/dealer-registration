@@ -42,13 +42,10 @@ class BadgeService
         $pdf->setTitle('Dealers\' Den Badges');
 
         if (!defined('K_PATH_FONTS')) {
-            define('K_PATH_FONTS', resource_path('badges/'));
+            define('K_PATH_FONTS', Storage::disk('local')->path('badges/'));
         }
-        try {
-            // @TODO Make configurable and/or load from storage
-            new \Com\Tecnick\Pdf\Font\Import(resource_path('badges/badge-font.ttf'));
-        } catch (\Com\Tecnick\Pdf\Font\Exception) {
-            // Font already loaded
+        if (!Storage::disk('local')->exists('badges/badgefont.json')) {
+            new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
         }
 
         $this->title_dealer_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 16);
@@ -66,7 +63,7 @@ class BadgeService
         $this->reg_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 16);
 
         // @TODO Make configurable and/or load from storage
-        $this->background_image = $pdf->image->add(resource_path('badges/badge-background.png'));
+        $this->background_image = $pdf->image->add(Storage::disk('local')->path('badges/badge-background'));
 
         $pdf->setDefaultCellPadding(0, 0, 0, 0);
         $this->pdf = $pdf;
