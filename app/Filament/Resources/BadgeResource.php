@@ -112,6 +112,10 @@ class BadgeResource extends Resource
                         return ucfirst($state->value);
                     })
                     ->sortable(),
+                Tables\Columns\TextColumn::make('table_number')
+                    ->sortable()
+                    ->searchable()
+                    ->disabled(fn($record) => $record->type === ApplicationType::Assistant),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
             ])
