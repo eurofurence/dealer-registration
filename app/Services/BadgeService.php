@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class BadgeService
 {
-    const PAGE_WIDTH = 2112;
-    const PAGE_HEIGHT = 1324;
+    const PAGE_WIDTH = 2020;
+    const PAGE_HEIGHT = 1296;
     const PAGE_DPI = 600;
     private $title_dealer_font = null;
     private $title_assistant_font = null;
@@ -48,24 +48,25 @@ class BadgeService
             new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
         }
 
-        $this->title_dealer_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 16);
-        $this->title_assistant_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 8);
-        $this->title_goh_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 10);
+        $this->title_dealer_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 18);
+        $this->title_assistant_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 13);
+        $this->title_goh_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 14);
 
-        $this->table_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 12);
+        $this->table_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 18);
 
-        $this->dealership_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 12);
-        $this->dealership_font_small = $pdf->font->insert($pdf->pon, 'badge-font', '', 10);
-        $this->dealership_font_tiny = $pdf->font->insert($pdf->pon, 'badge-font', '', 8);
-        $this->dealership_font_verytiny = $pdf->font->insert($pdf->pon, 'badge-font', '', 8);
+        $this->dealership_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 11);
+        $this->dealership_font_small = $pdf->font->insert($pdf->pon, 'badge-font', '', 9);
+        $this->dealership_font_tiny = $pdf->font->insert($pdf->pon, 'badge-font', '', 7);
+        $this->dealership_font_verytiny = $pdf->font->insert($pdf->pon, 'badge-font', '', 5);
         $this->share_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 10);
 
-        $this->reg_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 16);
+        $this->reg_font = $pdf->font->insert($pdf->pon, 'badge-font', '', 18);
 
         // @TODO Make configurable and/or load from storage
         $this->background_image = $pdf->image->add(Storage::disk('local')->path('badges/badge-background'));
 
         $pdf->setDefaultCellPadding(0, 0, 0, 0);
+        $pdf->setDefaultCellMargin(0, 0, 0, 0);
         $this->pdf = $pdf;
     }
 
@@ -175,36 +176,43 @@ class BadgeService
 
     private function addBadgeType(Tcpdf $pdf, string $badgeTypeString): void
     {
-        if ($badgeTypeString == ApplicationType::Assistant) {
+        if ($badgeTypeString == ApplicationType::Assistant->value) {
             // Type: Assistant
             $pdf->page->addContent($this->title_assistant_font['out']);
             $badgeType = $this->getTextCell(
                 $pdf,
                 "Assistant",
-                5.25,
-                14.5,
-                25.75,
-                5.5
+                $this->pixelsToMm(1290),
+                $this->pixelsToMm(447),
+                $this->pixelsToMm(790),
+                $this->pixelsToMm(259),
+                [
+                    'valign' => 'C',
+                    'halign' => 'C',
+                ]
             );
             $pdf->page->addContent($badgeType);
         } else {
             $title = ucwords($badgeTypeString);
-            if ($badgeTypeString == ApplicationType::Share) {
+            if ($badgeTypeString == ApplicationType::Share->value) {
                 $title = 'Dealer';
             }
             if ($badgeTypeString == 'goh') {
-                $title = 'Guest of Honor';
-                $pdf->page->addContent($this->title_goh_font['out']);
+                $title = 'GoH';
+                $pdf->page->addContent($this->title_dealer_font['out']);
             } else {
                 $pdf->page->addContent($this->title_dealer_font['out']);
             }
             $badgeType = $this->getTextCell(
                 $pdf,
                 $title,
-                5.25,
-                14.5,
-                25.75,
-                6.0
+                $this->pixelsToMm(1166 - 20),
+                $this->pixelsToMm(457 + 18),
+                $this->pixelsToMm(790),
+                $this->pixelsToMm(259),
+                [
+                    'halign' => 'C',
+                ]
             );
             $pdf->page->addContent($badgeType);
         }
@@ -216,10 +224,14 @@ class BadgeService
         $badgeType = $this->getTextCell(
             $pdf,
             'S',
-            5.0,
-            50.0,
-            3.0,
-            3.0
+            $this->pixelsToMm(1980 - 28),
+            $this->pixelsToMm(1251 - 72),
+            $this->pixelsToMm(80),
+            $this->pixelsToMm(80),
+            [
+                'halign' => 'C',
+                'valign' => 'C',
+            ]
         );
         $pdf->page->addContent($badgeType);
     }
@@ -230,10 +242,13 @@ class BadgeService
         $table = $this->getTextCell(
             $pdf,
             strtoupper($tableNumber),
-            17.5,
-            22.5,
-            6.0,
-            4.0
+            $this->pixelsToMm(1166 - 20),
+            $this->pixelsToMm(763 + 16),
+            $this->pixelsToMm(790),
+            $this->pixelsToMm(259),
+            [
+                'halign' => 'C',
+            ]
         );
         $pdf->page->addContent($table);
     }
@@ -244,37 +259,51 @@ class BadgeService
         $regId = $this->getTextCell(
             $pdf,
             filter_var($regIdString, FILTER_SANITIZE_NUMBER_INT),
-            5.25,
-            48.5,
-            20.0,
-            6.0
+            $this->pixelsToMm(1980 - 520),
+            $this->pixelsToMm(25 + 16),
+            $this->pixelsToMm(500),
+            $this->pixelsToMm(130),
+            [
+                'halign' => 'R',
+            ]
         );
         $pdf->page->addContent($regId);
     }
 
     private function addDisplayname(Tcpdf $pdf, string $displayNameString): void
     {
-        if (strlen($displayNameString) <= 20) {
+        $displayNameLength = strlen($displayNameString);
+        $factor = 1.0;
+        if ($displayNameLength <= 26) {
+            // Foo Bar Baz Fiz Fuz Quc Fa
             $pdf->page->addContent($this->dealership_font['out']);
-        } elseif (strlen($displayNameString) <= 30) {
+            $factor = 0.63;
+        } elseif ($displayNameLength <= 36) {
+            // Foo Bar Baz Fiz Fuz Quc Far Fii Foo
             $pdf->page->addContent($this->dealership_font_small['out']);
-        } elseif (strlen($displayNameString) <= 40) {
-            $pdf->page->addContent($this->dealership_font_tiny['out']);
+            $factor = 0.5;
         } else {
-            $pdf->page->addContent($this->dealership_font_verytiny['out']);
+            // Foo Bar Baz Fiz Fuz Quc Far Foo Fii F
+            $pdf->page->addContent($this->dealership_font_tiny['out']);
+            $factor = 0.4;
         }
-        $displayName = $this->getTextCell(
-            $pdf,
+
+        // Dummy text line so the BB works
+        $displayName = $pdf->getTextLine($displayNameString, 0, 10);
+        $pdf->page->addContent($displayName);
+        $bb = $pdf->getLastBBox();
+
+        // This factor is a kludge...
+        // TCPDF has some weird and fucky way of calculating the bounding box
+        // Which does not work...
+        $width = $this->mmToPixels($bb['w'] * $factor);
+        $posX = floor(100 + ((1840 - $width) / 2));
+        $pdf->page->popContent();
+
+        $displayName = $pdf->getTextLine(
             $displayNameString,
-            35.0,
-            49.0,
-            50.0,
-            4.0,
-            [
-                'offset' => 1.5,
-                'halign' => 'L',
-                'clip' => true,
-            ]
+            $this->pixelsToMm($posX),
+            $this->pixelsToMm(1160 + 12),
         );
         $pdf->page->addContent($displayName);
     }
@@ -292,6 +321,15 @@ class BadgeService
     private function pixelsToMm(int $dimension, int $dpi = 600): float
     {
         return $dimension / ($dpi / 25.4);
+    }
+
+    private function mmToPixels(int $dimension, int $dpi = 600): float
+    {
+        return $dimension * ($dpi / 25.4);
+    }
+    private function pixelsToPt(int $dimension): float
+    {
+        return $dimension * (72 / 96);
     }
 
     private function getTextCell(
