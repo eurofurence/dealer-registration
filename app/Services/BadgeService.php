@@ -106,20 +106,21 @@ class BadgeService
         // Fallback to empty string, this might be more noticeable than just a ??/???
         $this->addTableNumber($this->pdf, $tableNumber ?? "");
         $this->addRegId($this->pdf, $application->user->reg_id ?? "N/A");
-        // KLUDGE: display_name can be empty and depends on the type
-        $displayName = $application->user->name;
+
+        // Default to the application's display name
+        $displayName = $application->display_name;
+
+        // If the application type is assistant, grab the parent application for the display name
         if ($application->type == ApplicationType::Assistant) {
-            // Get the parent application and use it's display name
             $parentApplication = $application->parent()->first();
-            $displayName = $parentApplication->user->name;
-            if (!empty($displayName)) {
-                $displayName = $parentApplication->display_name;
-            }
-        } else {
-            if (!empty($application->display_name)) {
-                $displayName = $application->display_name;
-            }
+            $displayName = $parentApplication->display_name;
         }
+
+        // If the display name is still empty, fallback to the user's name
+        if (empty($displayName)) {
+            $displayName = $application->user->name;
+        }
+
         $this->addDisplayname($this->pdf, $displayName);
     }
 
