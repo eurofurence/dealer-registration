@@ -96,8 +96,15 @@ class BadgeService
         if ($application->type == ApplicationType::Share) {
             $this->addShareIndicator($this->pdf);
         }
-        // @TODO tableNumber returns null
-        $this->addTableNumber($this->pdf, $application->tableNumber ?? "");
+
+        if ($application->type === ApplicationType::Dealer) {
+            $tableNumber = $application?->table_number;
+        } else {
+            $tableNumber = $application?->parent?->table_number;
+        }
+
+        // Fallback to empty string, this might be more noticeable than just a ??/???
+        $this->addTableNumber($this->pdf, $tableNumber ?? "");
         $this->addRegId($this->pdf, $application->user->reg_id ?? "N/A");
         // KLUDGE: display_name can be empty and depends on the type
         $displayName = $application->user->name;
