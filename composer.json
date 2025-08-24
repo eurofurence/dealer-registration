@@ -20,7 +20,8 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-path-prefixing": "^3.28",
         "league/oauth2-client": "^2.8",
-        "sentry/sentry-laravel": "^4.11"
+        "sentry/sentry-laravel": "^4.11",
+        "tecnickcom/tc-lib-pdf": "^8.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14.10",
