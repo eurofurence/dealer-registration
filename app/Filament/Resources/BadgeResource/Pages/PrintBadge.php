@@ -18,17 +18,17 @@ class PrintBadge extends CreateRecord
         return [
             Action::make('create')->action(function (Component $livewire) {
                 $data = $livewire->data;
-                $type = 'Custom';
+                $type = 'custom';
                 if (array_key_exists('badge_type', $data) && !is_null($data['badge_type'])) {
                     $type = $data['badge_type'];
                 }
-                if (array_key_exists('badge_type_custom', $data) && !is_null($data['badge_type_custom'])) {
+                if ($type == 'custom' && array_key_exists('badge_type_custom', $data) && !is_null($data['badge_type_custom'])) {
                     $type = $data['badge_type_custom'];
                 }
                 $regId = $data['reg_id'];
                 $displayName = $data['display_name'];
                 $tableNumber = null;
-                if ($data['has_table']) {
+                if ($data['has_table'] && array_key_exists('table_number', $data) && !is_null($data['table_number'])) {
                     $tableNumber = $data['table_number'];
                 }
                 $shareIndicator = $data['has_share'];
