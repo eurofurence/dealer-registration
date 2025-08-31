@@ -194,7 +194,7 @@ class ProfileCompletionEvaluator
             }
             $this->maxProgress = floor($maxProgress);
             $this->weightedMaxProgress = floor($weightedMaxProgress);
-            $this->weightedPercent = floor(100*$weightedProgress) / $weightedMaxProgress;
+            $this->weightedPercent = floor(100*$weightedProgress / max(1,$weightedMaxProgress));
             $this->progress = floor($progress);
             $this->weightedProgress = floor($weightedProgress);
         }
