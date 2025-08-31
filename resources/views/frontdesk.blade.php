@@ -433,6 +433,7 @@
                                         @else
                                             n/a
                                         @endif
+                                        <div>Phyiscal Chairs: <b>{{ $application->parent?->phyiscal_chairs ?? $application->physical_chairs }}</b></div>
                                     </div>
                                 </div>
                             </div>
