@@ -579,7 +579,9 @@ class Application extends Model
                 'canceled_at',
                 'profiles.*',
                 'profile_keywords.keywords',
-                'profile_keywords.categories'
+                'profile_keywords.categories',
+                't2.seats AS physical_chairs_default',
+                'physical_chairs AS physical_chairs_requested'
             )
             ->get();
 
