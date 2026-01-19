@@ -15,7 +15,7 @@ class TableTypeSeeder extends Seeder
             "id" => 1,
             "seats" => 1,
             "spaces" => 1,
-            "price" => 5000,
+            "price" => 5500,
             "name" => "Half (65cm x 65cm)",
             "package" => "dealer-half",
         ]);
@@ -25,7 +25,7 @@ class TableTypeSeeder extends Seeder
             "id" => 2,
             "seats" => 2,
             "spaces" => 1,
-            "price" => 10000,
+            "price" => 11000,
             "name" => "Full (130cm x 65cm) [recommended]",
             "package" => "dealer-full",
         ]);
@@ -35,7 +35,7 @@ class TableTypeSeeder extends Seeder
             "id" => 3,
             "seats" => 3,
             "spaces" => 1,
-            "price" => 15000,
+            "price" => 16500,
             "name" => "Full Plus (195cm x 65cm)",
             "package" => "dealer-fullplus",
         ]);
@@ -45,7 +45,7 @@ class TableTypeSeeder extends Seeder
             "id" => 4,
             "seats" => 4,
             "spaces" => 1,
-            "price" => 20000,
+            "price" => 22000,
             "name" => "Double Length (260cm x 65cm)",
             "package" => "dealer-double",
         ]);
@@ -55,7 +55,7 @@ class TableTypeSeeder extends Seeder
             "id" => 5,
             "seats" => 2,
             "spaces" => 1,
-            "price" => 20000,
+            "price" => 22000,
             "name" => "Double Width (130cm x 130cm)",
             "package" => "dealer-double",
         ]);
@@ -65,7 +65,7 @@ class TableTypeSeeder extends Seeder
             "id" => 6,
             "seats" => 4,
             "spaces" => 1,
-            "price" => 40000,
+            "price" => 44000,
             "name" => "Quad (260cm x 130cm)",
             "package" => "dealer-quad",
         ]);
