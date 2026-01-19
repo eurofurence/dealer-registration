@@ -1,0 +1,11 @@
+{
+    "name": "DD-Reg Laravel Dev Container",
+    "dockerComposeFile": "compose.yaml",
+/*    "runArgs": [
+        "--userns=keep-id"
+    ],*/
+    "service": "app",
+    // "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,Z",
+    "workspaceFolder": "/workspace",
+    "remoteUser": "vscode"
+}
