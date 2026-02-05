@@ -43,21 +43,21 @@ class ProfileResource extends Resource
                     Forms\Components\Fieldset::make('Images')->inlineLabel()->columns(2)->schema([
                         Forms\Components\FileUpload::make('image_thumbnail')
                             ->image()
-                            ->imageResizeMode('force')
-                            ->imageResizeTargetWidth('60')
-                            ->imageResizeTargetHeight('60'),
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('400')
+                            ->imageResizeTargetHeight('400'),
                         Forms\Components\Textarea::make('short_desc')
                             ->maxLength(1024),
                         Forms\Components\FileUpload::make('image_artist')
                             ->image()
-                            ->imageResizeMode('force')
+                            ->imageResizeMode('cover')
                             ->imageResizeTargetWidth('400')
                             ->imageResizeTargetHeight('400'),
                         Forms\Components\Textarea::make('artist_desc')
                             ->maxLength(2048),
                         Forms\Components\FileUpload::make('image_art')
                             ->image()
-                            ->imageResizeMode('force')
+                            ->imageResizeMode('cover')
                             ->imageResizeTargetWidth('400')
                             ->imageResizeTargetHeight('450'),
                         Forms\Components\Textarea::make('art_desc')

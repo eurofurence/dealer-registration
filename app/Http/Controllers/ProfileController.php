@@ -40,7 +40,7 @@ class ProfileController extends Controller
 
         // Keep old images if no new data is sent with the request
         if ($request->hasFile('image_thumbnail')) {
-            $profileData["image_thumbnail"] = ProfileController::storeImage($request, "image_thumbnail", 60, 60);
+            $profileData["image_thumbnail"] = ProfileController::storeImage($request, "image_thumbnail", 400, 400);
         }
         if ($request->hasFile('image_artist')) {
             $profileData["image_artist"] = ProfileController::storeImage($request, "image_artist", 400, 400);
