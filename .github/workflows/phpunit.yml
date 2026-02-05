@@ -10,7 +10,7 @@ jobs:
   phpunit-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: shivammathur/setup-php@cf4cade2721270509d5b1c766ab3549210a39a2a
+      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1
         with:
           php-version: "8.3"
           extensions: gd
@@ -21,7 +21,7 @@ jobs:
           password: "dealers"
           auto-start: "true"
       - run: mysql -uroot -h127.0.0.1 -e "CREATE DATABASE dealers;"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.dist', '.env');"
       - name: Install Dependencies
