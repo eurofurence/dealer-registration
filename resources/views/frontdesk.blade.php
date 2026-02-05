@@ -402,6 +402,13 @@
                                                         href="#"><img
                                                             src="{{ Vite::asset('resources/assets/more-power.gif') }}"
                                                             alt="More Power" id="more-power"></a></button>
+                                                <button type="button" @class([
+                                                    'btn',
+                                                    'fs-4',
+                                                    'check-button',
+                                                    'btn-primary' => $application->needs_logistics,
+                                                    'btn-secondary' => !$application->needs_logistics,
+                                                ])>Logistics</button>
                                             </div>
                                             <div class="mb-3 fs-3">
                                                 <span>Categories:</span>

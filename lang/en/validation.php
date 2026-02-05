@@ -17,6 +17,9 @@ return [
         'merchandise' => [
             'required_unless' => 'Please add a description of the merchandise you plan to offer.'
         ],
+        'resale_description' => [
+            'required_if_declined' => 'Please provide a description of the items you plan to resell unless you have indicated that you will not be reselling any items.'
+        ],
         'denType' => [
             'required_if' => 'Please select a location.'
         ],
