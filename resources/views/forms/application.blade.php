@@ -166,7 +166,6 @@
                         </div>
                     </div>
                 </div>
-                <!--- Test Begin -->
                 <div class="row mb-3">
                     <label for="resale_description"
                         class="col-sm-2 col-form-label required fw-bold" id="resale_label">Resale Items</label>
@@ -195,7 +194,6 @@
                         </div>
                     </div>
                 </div>
-                <!--- Test End -->
             @endif
 
             @if ($applicationType === \App\Enums\ApplicationType::Dealer)
