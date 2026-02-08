@@ -2,6 +2,16 @@
     input#additionalSpaceRequest:not(:checked)~#additionalSpaceRequestText {
         display: none;
     }
+    #resale_description_container:has(~div>input#no_resale:checked) {
+        display: none;
+    }
+    #resale_label:has(~div>div>input#no_resale:checked) {
+        padding-top: 0 !important;
+        transition: padding-top 0.2s ease-out;
+    }
+    #resale_label:has(~div>div>input#no_resale:not(:checked)) {
+        transition: padding-top 0.2s ease-out;
+    }
 </style>
 <div class="accordion-item">
     <h2 class="accordion-header">
@@ -156,6 +166,34 @@
                         </div>
                     </div>
                 </div>
+                <div class="row mb-3">
+                    <label for="resale_description"
+                        class="col-sm-2 col-form-label required fw-bold" id="resale_label">Resale Items</label>
+                    <div class="col-sm-10">
+                        <div id="resale_description_container">
+                            <input type="text" name="resale_description"
+                                value="{{ old('_token') ? old('resale_description') : $application?->resale_description }}"
+                                class="form-control @error('resale_description') is-invalid @enderror" aria-required="true"
+                                id="resale_description" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
+                            @error('resale_description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div id="resale_descriptionHelp" class="form-text">
+                                To help us with planning, please briefly describe wich products you plan to resell and where they originated from (manufacturer or license holder).
+                                No items may be offered that infringe upon the rights of third parties, including unlicensed third-party intellectual property.
+                            </div>
+                        </div>
+                        <div>
+                        <input type="hidden" name="no_resale" value="0">
+                        <input class="form-check-input @error('no_resale') is-invalid @enderror" name="no_resale"
+                        @checked(old('_token') ? old('no_resale') : (Route::is('applications.edit') ? empty($application?->resale_description) : false)) @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast()) type="checkbox"
+                                id="no_resale" value="1">
+                            <label class="form-check-label" for="no_resale">
+                                I do not intend to sell, in whole or in part, items in the Dealers' Den that were not designed or produced by myself (e.g. as an authorized reseller).
+                            </label>
+                        </div>
+                    </div>
+                </div>
             @endif
 
             @if ($applicationType === \App\Enums\ApplicationType::Dealer)
@@ -282,7 +320,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="row mb-1">
                     <div class="col-sm-10 offset-sm-2">
                         <div class="form-check">
                             <input class="form-check-input" name="power" @checked(old('_token') ? old('power') : $application?->is_power === true)
@@ -296,6 +334,21 @@
                                 Dealers' Den for low-power devices (i.e. laptop or phone charger), please select
                                 this option
                                 to let us know about your increased energy needs.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-10 offset-sm-2">
+                        <div class="form-check">
+                            <input class="form-check-input" name="needs_logistics" @checked(old('_token') ? old('needs_logistics') : $application?->needs_logistics === true)
+                                type="checkbox" id="needs_logistics" @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast())>
+                            <label class="form-check-label" for="needs_logistics">
+                                <b>Assistance from the Logistics Department is needed</b>
+                            </label>
+                            <div id="needs_logisticsHelp" class="form-text">
+                                If you anticipate the need for special logistics support (e.g. delivery of equipment), please select this option.
+                                The details of your request will be reviewed and arranged directly with our logistics team at a later time.
                             </div>
                         </div>
                     </div>

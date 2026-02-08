@@ -37,6 +37,7 @@ class Application extends Model
     protected $casts = [
         "type" => ApplicationType::class,
         "is_power" => "boolean",
+        "needs_logistics" => "boolean",
         "is_afterdark" => "boolean",
         "is_wallseat" => "boolean",
         "canceled_at" => "datetime",
@@ -559,6 +560,7 @@ class Application extends Model
                 'applications.website AS app_website',
                 'table_number',
                 'merchandise',
+                'resale_description',
                 'invite_code_shares',
                 'invite_code_assistants',
                 'additional_space_request',
@@ -566,6 +568,7 @@ class Application extends Model
                 'comment',
                 'is_afterdark',
                 'is_power',
+                'needs_logistics',
                 'is_wallseat',
                 't1.name AS table_type_requested',
                 't2.name AS table_type_assigned',

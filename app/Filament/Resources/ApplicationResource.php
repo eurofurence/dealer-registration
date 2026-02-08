@@ -38,13 +38,18 @@ class ApplicationResource extends Resource
                     Forms\Components\TextInput::make('website')
                         ->maxLength(255),
 
-                    Forms\Components\Grid::make()->columns()->schema([
-                        Forms\Components\TextInput::make('merchandise')
-                            ->maxLength(65535),
-                        Forms\Components\Fieldset::make('Checks')->columnSpan(1)->schema([
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Grid::make(1)->columnSpan(1)->schema([
+                            Forms\Components\TextInput::make('merchandise')
+                                ->maxLength(65535),
+                            Forms\Components\TextInput::make('resale_description')
+                                ->maxLength(65535),
+                        ]),
+                        Forms\Components\Fieldset::make('Checks')->columnSpan(1)->extraAttributes(['class' => 'h-full flex flex-col justify-between'])->schema([
                             Forms\Components\Toggle::make('is_afterdark')->label('Afterdark'),
                             Forms\Components\Toggle::make('is_power')->label('Power'),
                             Forms\Components\Toggle::make('is_wallseat')->label('Wallseat'),
+                            Forms\Components\Toggle::make('needs_logistics')->label('Logistics'),
                         ]),
                     ]),
 
@@ -213,6 +218,11 @@ class ApplicationResource extends Resource
                     ->label('Add. Space')
                     ->default(false)
                     ->boolean(),
+                Tables\Columns\IconColumn::make('resale_description')
+                    ->label('Resells')
+                    ->default(false)
+                    ->boolean()
+                    ->tooltip(fn (Application $record): string => $record->resale_description ?? 'Does not resell items'),
                 Tables\Columns\IconColumn::make('comment')
                     ->default(false)
                     ->boolean(),
@@ -226,6 +236,10 @@ class ApplicationResource extends Resource
                     ->boolean(),
                 Tables\Columns\IconColumn::make('is_wallseat')
                     ->label('Wallseat')
+                    ->sortable()
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('needs_logistics')
+                    ->label('Logistics')
                     ->sortable()
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -247,6 +261,12 @@ class ApplicationResource extends Resource
                 Tables\Filters\Filter::make('additional_space_request')
                     ->query(fn(Builder $query): Builder => $query->whereNotNull('additional_space_request'))
                     ->label('Has additional space request'),
+                Tables\Filters\Filter::make('needs_logistics')
+                    ->query(fn(Builder $query): Builder => $query->where('needs_logistics', '=', '1'))
+                    ->label('Needs logistics'),
+                Tables\Filters\Filter::make('resale_description')
+                    ->query(fn(Builder $query): Builder => $query->whereNull('resale_description'))
+                    ->label('Doesn\'t resell items'),
                 Tables\Filters\Filter::make('table_assigned')
                     ->query(fn(Builder $query): Builder => $query->whereNotNull('offer_sent_at'))
                     ->label('Table assigned'),

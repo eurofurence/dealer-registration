@@ -27,6 +27,7 @@ class ApplicationFactory extends Factory
             'comment' => $this->faker->text(),
             'is_afterdark' => $this->faker->boolean(),
             'is_power' => $this->faker->boolean(),
+            'needs_logistics' => $this->faker->boolean(),
             'is_wallseat' => $this->faker->boolean(),
             'waiting_at' => Carbon::now(),
             'offer_sent_at' => Carbon::now(),

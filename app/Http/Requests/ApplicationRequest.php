@@ -47,6 +47,11 @@ class ApplicationRequest extends FormRequest
                 "min:3",
                 "max:4096",
             ],
+            "resale_description" => [
+                "exclude_if:applicationType,assistant",
+                "required_if_declined:no_resale",
+                "max:4096",
+            ],
             "denType" => [
                 "required_if:applicationType,dealer",
                 "exclude_unless:applicationType,dealer",
@@ -67,6 +72,10 @@ class ApplicationRequest extends FormRequest
                 "nullable",
             ],
             "power" => [
+                "exclude_unless:applicationType,dealer",
+                "nullable",
+            ],
+            "needs_logistics" => [
                 "exclude_unless:applicationType,dealer",
                 "nullable",
             ],
