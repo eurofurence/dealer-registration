@@ -49,7 +49,7 @@
                             accept="image/jpeg, image/png" data-file-size-limit="{{ 1*1024*1024 }}"
                             data-image-preview-targets="image_thumbnail_preview,image_thumbnail_preview_cropped,image_thumbnail_preview_large">
                         <div id="image_thumbnailHelp" class="form-text">Upload an image to be shown next to your name in
-                            the dealer list. This image should have a size of 60&times;60 pixels (max file size is 1
+                            the dealer list. This image should have a size of 400&times;400 pixels (max file size is 1
                             MB).<br>
                             <b>Please note:</b> This image will also be shown cropped to a circle in some places, so make sure the relevant content is visible!
                         </div>
