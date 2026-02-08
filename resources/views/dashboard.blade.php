@@ -144,7 +144,8 @@
 
                         @default
                             <p class="alert alert-danger text-center">
-                                <strong>We were unable to find an EF registration for your account!</strong><br>
+                                <strong>We were unable to find an EF registration for your account!</strong><br><br>
+                                <em><b>If you already have registered</b>, please check again later and only reach out to us if the issue persists for a few days or it is urgent.</em><br><br>
                                 @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())
                                     @if ($application->type === \App\Enums\ApplicationType::Assistant)
                                         Please make sure to <em>register and pay for your for this year's Eurofurence before
