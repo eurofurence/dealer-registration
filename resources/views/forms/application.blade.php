@@ -184,9 +184,9 @@
                             </div>
                         </div>
                         <div class="form-check">
-                        <input type="hidden" name="no_resale" value="0">
-                        <input class="form-check-input @error('no_resale') is-invalid @enderror" name="no_resale"
-                        @checked(old('_token') ? old('no_resale') : (Route::is('applications.edit') ? empty($application?->resale_description) : false)) @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast()) type="checkbox"
+                            <input type="hidden" name="no_resale" value="0">
+                            <input class="form-check-input @error('no_resale') is-invalid @enderror" name="no_resale"
+                            @checked(old('_token') ? old('no_resale') : (Route::is('applications.edit') ? empty($application?->resale_description) : false)) @disabled(Carbon\Carbon::parse(config('convention.reg_end_date'))->isPast()) type="checkbox"
                                 id="no_resale" value="1">
                             <label class="form-check-label" for="no_resale">
                                 I do not intend to sell, in whole or in part, items in the Dealers' Den that were not designed or produced by myself (e.g. as an authorized reseller).
