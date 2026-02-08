@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/devcontainers/php:8.3-bookworm
+
+# Install Node.js 22 via nvm
+RUN bash -c "source /usr/local/share/nvm/nvm.sh && nvm install 22 && nvm use 22 && nvm alias default 22"
+
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN install-php-extensions @composer bcmath gd intl opcache pcntl pdo_mysql redis swoole zip
+
+WORKDIR /workspace
+RUN chown vscode:vscode /workspace
