@@ -24,7 +24,7 @@
         "tecnickcom/tc-lib-pdf": "^8.1"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.14.10",
+        "barryvdh/laravel-debugbar": "^4.0.7",
         "fakerphp/faker": "^1.24.1",
         "kitloong/laravel-migrations-generator": "^7.0",
         "laravel/pint": "^1.20",
