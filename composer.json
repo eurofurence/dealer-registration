@@ -16,7 +16,7 @@
         "laravel/horizon": "^5.30.2",
         "laravel/octane": "^2.6.1",
         "laravel/sanctum": "^4.0.8",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0.2",
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-path-prefixing": "^3.28",
         "league/oauth2-client": "^2.8",
