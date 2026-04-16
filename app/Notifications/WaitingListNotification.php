@@ -38,11 +38,3 @@ class WaitingListNotification extends Notification implements ShouldQueue
         return [];
     }
 }
-
-->line('This year, the selection process was incredibly difficult due to the sheer number of applications we received. We made a strong effort to strike a balance between applicants from previous years\' waiting lists, new faces, and returning dealers, while also ensuring a diverse and well-rounded range of offerings.')
-
-->line('Please note that not being selected is in no way a reflection of your skills as an artist or dealer, nor does it mean your application was considered insufficient. The overall quality of applications far exceeded the number of tables we have available.')
-
-->line('For future events, we intend to place greater emphasis on factors such as how often applicants have participated in the past and how frequently they have been allocated their requested table space.')
-
-->line('We would also like to highlight that, due to the venue move, the Artist Alley will be expanded. Dedicated staff members will be available on-site during specific “office hours” to assist participants. More detailed plans and information will be published on our website soon.')
