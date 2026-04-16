@@ -16,13 +16,17 @@ tspin := `command -v tspin || true`
 default:
   just --list
 
+# run Sail commands
+sail *ARGS:
+  {{sail_path}} {{ARGS}}
+
 # bring Sail up (make sure to run `dev` in a separate shell for Vite)
-up:
-  {{sail_path}} up
+up *ARGS:
+  {{sail_path}} up {{ARGS}}
 
 # rebuild Sail images without caching
-build:
-  {{sail_path}} build --no-cache
+build *ARGS:
+  {{sail_path}} build --no-cache {{ARGS}}
 
 # run PHP commands on Sail
 php *ARGS:

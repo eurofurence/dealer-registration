@@ -69,7 +69,15 @@ class TableTypeSeeder extends Seeder
             "name" => "Quad (260cm x 130cm)",
             "package" => "dealer-quad",
         ]);
-
-
+        TableType::firstOrCreate([
+            "id" => 7,
+        ], [
+            "id" => 7,
+            "seats" => 3,
+            "spaces" => 1,
+            "price" => 33000,
+            "name" => "Triple (195cm x 130cm)",
+            "package" => "dealer-triple",
+        ]);
     }
 }
