@@ -1,4 +1,4 @@
-FROM php:8.3-alpine AS base
+FROM php:8.5-alpine AS base
 WORKDIR /app
 
 ENV COMPOSER_MEMORY_LIMIT=-1
@@ -24,7 +24,7 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 ######################################################
 # NodeJS Stage
 ######################################################
-FROM node:22 AS vite
+FROM node:24-alpine AS vite
 WORKDIR /app
 ######################################################
 # Step 4 | Install Node.js packages
