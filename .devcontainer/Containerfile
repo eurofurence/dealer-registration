@@ -1,8 +1,24 @@
-FROM mcr.microsoft.com/devcontainers/php:8.3-bookworm
+FROM mcr.microsoft.com/devcontainers/php:8.5-trixie
+
+# Install just
+RUN apt-get update \
+    && </dev/null DEBIAN_FRONTEND=noninteractive \
+        apt-get --yes install --no-install-recommends just \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install tailspin
+RUN wget -O /tmp/tailspin.tar.gz https://github.com/bensadeh/tailspin/releases/download/6.0.0/tailspin-x86_64-unknown-linux-musl.tar.gz \
+    && if [ ! "$(sha256sum /tmp/tailspin.tar.gz | awk '{print $1}')" = "cb96d5cb1160cc4679c67a4c465d8e232688f34882776b5a8ea2a7a312f0e066" ]; then \
+        exit 1; \
+    fi \
+    && tar -xf /tmp/tailspin.tar.gz -C /usr/bin \
+    && chmod +x /usr/bin/tspin
 
 # Install Node.js 22 via nvm
 RUN bash -c "source /usr/local/share/nvm/nvm.sh && nvm install 22 && nvm use 22 && nvm alias default 22"
 
+# Install required PHP extensions
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN install-php-extensions @composer bcmath gd intl opcache pcntl pdo_mysql redis swoole zip
 
