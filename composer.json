@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.5",
-        "filament/filament": "^3.2.136",
+        "filament/filament": "^4.10.2",
         "guzzlehttp/guzzle": "^7.9.2",
         "intervention/image": "^3.11.1",
         "laravel/framework": "^11.41.3",
