@@ -148,7 +148,7 @@
                                                                 style="font-size:12px;color:#8f8d8d;">Eurofurence e.V. - Am Kielshof 21a - 51105 Köln</span><br/><span
                                                                 style="font-size:12px;color:#8f8d8d;">Vereinsregister AG Köln, Nr. 19784</span><br/><span
                                                                 style="font-size:12px;color:#8f8d8d;">1. Vorsitzender: Sven Tegethoff</span><br/><br/><span
-                                                                style="font-size:12px;color:#8f8d8d;">Legal information according to §5 TMG obtainable at <a
+                                                                style="font-size:12px;color:#8f8d8d;">Legal information according to §5 DDG obtainable at <a
                                                                     href="https://www.eurofurence.de/index.php?impressum"
                                                                     rel="noopener" style="color:#8f8d8d;"
                                                                     target="_blank"
