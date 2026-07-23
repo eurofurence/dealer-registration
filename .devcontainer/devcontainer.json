@@ -4,6 +4,13 @@
 /*    "runArgs": [
         "--userns=keep-id"
     ],*/
+    "forwardPorts": [
+        8000, // Laravel
+        5173, // Vite
+        "minio:9000", // MinIO
+        "minio:8900", // MinIO Console
+        "mailpit:8025"  // Mailpit
+    ],
     "service": "app",
     // "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,Z",
     "workspaceFolder": "/workspace",
