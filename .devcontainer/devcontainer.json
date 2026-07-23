@@ -4,6 +4,16 @@
 /*    "runArgs": [
         "--userns=keep-id"
     ],*/
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "laravel.vscode-laravel",
+                "bmewburn.vscode-intelephense-client",
+                "ryannaddy.laravel-artisan",
+                "DEVSENSE.composer-php-vscode"
+            ]
+        }
+    },
     "forwardPorts": [
         8000, // Laravel
         5173, // Vite
