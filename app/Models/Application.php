@@ -556,7 +556,7 @@ class Application extends Model
                 'users.reg_id AS reg_id',
                 'type AS app_type',
                 'parent_id',
-                'display_name',
+                DB::raw('COALESCE(NULLIF(display_name, \'\'), users.name) AS display_name'),
                 'applications.website AS app_website',
                 'table_number',
                 'merchandise',
@@ -610,7 +610,7 @@ class Application extends Model
             ->select(
                 'applications.id AS Reg No.',
                 'users.name AS Nick',
-                'applications.display_name AS Display Name',
+                DB::raw("COALESCE(NULLIF(applications.display_name, ''), users.name) AS 'Display Name'"),
                 DB::raw("'' as 'Merchandise'"),
                 DB::raw("CASE WHEN attends_thu = 1 THEN 'X' ELSE '' END AS 'Attends Thu'"),
                 DB::raw("CASE WHEN attends_fri = 1 THEN 'X' ELSE '' END AS 'Attends Fri'"),
