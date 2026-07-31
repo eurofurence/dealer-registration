@@ -29,20 +29,25 @@ class BadgeService
     public function __construct()
     {
         $pdf = new Tcpdf(
-            'mm',    // Use millimetres as unit,
-            true,    // Unicode document,
-            false,   // Embed full fonts,
-            true,    // Use stream compression,
-            'pdfa3', // Conform to PDF/A-1,
-            null,    // Don't use encryption,
+            unit: 'mm',    // Use millimetres as unit,
+            isunicode: true,    // Unicode document,
+            subsetfont: false,   // Embed full fonts,
+            compress: true,    // Use stream compression,
+            mode: 'pdfa3', // Conform to PDF/A-3,
+            objEncrypt: null,    // Don't use encryption,
         );
         $pdf->setCreator('Eurofurence Dealers\' Den Registration');
         $pdf->setAuthor('Admin');
         $pdf->setSubject('Dealers\' Den Badges');
         $pdf->setTitle('Dealers\' Den Badges');
+        $pdf->initClassObjects(fileOptions: [
+                'allowedPaths' => array_merge(
+                    $pdf->defaultFileAllowedPaths(),
+                    [Storage::disk('local')->path('badges')])
+            ]);
 
         if (!defined('K_PATH_FONTS')) {
-            define('K_PATH_FONTS', Storage::disk('local')->path('badges/'));
+            define('K_PATH_FONTS', Storage::disk('local')->path('badges'));
         }
         if (!Storage::disk('local')->exists('badges/badgefont.json')) {
             new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
