@@ -120,8 +120,14 @@ class BadgeResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('dealers')
-                    ->query(fn(Builder $query): Builder => $query->where('type', 'dealer'))
+                    ->query(fn(Builder $query): Builder => $query->where('type', ApplicationType::Dealer))
                     ->label(__('Only Dealerships')),
+                Tables\Filters\Filter::make('shares')
+                    ->query(fn(Builder $query): Builder => $query->where('type', ApplicationType::Share))
+                    ->label(__('Only Shares')),
+                Tables\Filters\Filter::make('assistants')
+                    ->query(fn(Builder $query): Builder => $query->where('type', ApplicationType::Assistant))
+                    ->label(__('Only Assistants')),
                 Tables\Filters\SelectFilter::make('status')
                     ->options(array_combine(array_column(ApplicationStatus::cases(), 'value'), array_column(ApplicationStatus::cases(), 'name')))
                     ->query(function (Builder $query, array $data) {
