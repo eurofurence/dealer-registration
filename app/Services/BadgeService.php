@@ -36,16 +36,21 @@ class BadgeService
             isunicode: true,    // Unicode document,
             subsetfont: false,   // Embed full fonts,
             compress: true,    // Use stream compression,
-            mode: 'pdfa3', // Conform to PDF/A-1,
+            mode: 'pdfa3', // Conform to PDF/A-3,
             objEncrypt: null,    // Don't use encryption,
         );
         $pdf->setCreator('Eurofurence Dealers\' Den Registration');
         $pdf->setAuthor('Admin');
         $pdf->setSubject('Dealers\' Den Badges');
         $pdf->setTitle('Dealers\' Den Badges');
+        $pdf->initClassObjects(fileOptions: [
+                'allowedPaths' => array_merge(
+                    $pdf->defaultFileAllowedPaths(),
+                    [Storage::disk('local')->path('badges')])
+            ]);
 
         if (!defined('K_PATH_FONTS')) {
-            define('K_PATH_FONTS', Storage::disk('local')->path('badges/'));
+            define('K_PATH_FONTS', Storage::disk('local')->path('badges'));
         }
         if (!Storage::disk('local')->exists('badges/badgefont.json')) {
             new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
