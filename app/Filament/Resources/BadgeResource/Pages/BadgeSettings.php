@@ -13,10 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Resources\Pages\Page;
-use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BadgeSettings extends Page implements HasForms, HasActions
@@ -80,6 +77,33 @@ class BadgeSettings extends Page implements HasForms, HasActions
     {
         // Force processing of the uploaded files
         $this->form->getState();
+
+
+        if (Storage::disk('local')->exists('badges/badgefont.json')) {
+            // Delete the old processed font
+            Storage::disk('local')->delete('badgefont.ctg.z');
+            Storage::disk('local')->delete('badgefont.z');
+            Storage::disk('local')->delete('badgefont.json');
+        }
+
+        // Try to import the font immediately, this makes font errors more apparent
+        try {
+            new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
+        }
+        catch (\Com\Tecnick\File\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title("Font file not found, server side error? ".$e->getMessage())
+                ->send();
+                return;
+        }
+        catch (\Com\Tecnick\Pdf\Font\Exception $e) {
+            Notification::make()
+                ->danger()
+                ->title("Failed to import font, parser reports: ".$e->getMessage())
+                ->send();
+                return;
+        }
 
         Notification::make()
             ->success()
