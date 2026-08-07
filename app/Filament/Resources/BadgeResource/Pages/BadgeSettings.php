@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BadgeResource\Pages;
 
 use App\Filament\Resources\BadgeResource;
+use Com\Tecnick\Pdf\Tcpdf;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Contracts\HasForms;
@@ -88,7 +89,30 @@ class BadgeSettings extends Page implements HasForms, HasActions
 
         // Try to import the font immediately, this makes font errors more apparent
         try {
-            new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
+            if (!defined('K_PATH_FONTS')) {
+                // Since the library is bad at combining path elements, ensure path has a final slash
+                $path = Storage::disk('local')->path('badges');
+                if (substr($path, -1) !== '/') {
+                    $path .= '/';
+                }
+                define('K_PATH_FONTS', $path);
+            }
+            $pdf = new Tcpdf(
+                unit: 'mm',    // Use millimetres as unit,
+                isunicode: true,    // Unicode document,
+                subsetfont: false,   // Embed full fonts,
+                compress: true,    // Use stream compression,
+                mode: 'pdfa3', // Conform to PDF/A-3,
+                objEncrypt: null,    // Don't use encryption,
+            );
+            $pdf->initClassObjects(fileOptions: [
+                'allowedPaths' => array_merge(
+                    $pdf->defaultFileAllowedPaths(),
+                    [Storage::disk('local')->path('badges')])
+            ]);
+
+            $font_file = Storage::disk('local')->path('badges/badge-font');
+            new \Com\Tecnick\Pdf\Font\Import($font_file);
         }
         catch (\Com\Tecnick\File\Exception $e) {
             Notification::make()

@@ -50,7 +50,12 @@ class BadgeService
             ]);
 
         if (!defined('K_PATH_FONTS')) {
-            define('K_PATH_FONTS', Storage::disk('local')->path('badges'));
+            // Since the library is bad at combining path elements, ensure path has a final slash
+            $path = Storage::disk('local')->path('badges');
+            if (substr($path, -1) !== '/') {
+                $path .= '/';
+            }
+            define('K_PATH_FONTS', $path);
         }
         if (!Storage::disk('local')->exists('badges/badgefont.json')) {
             new \Com\Tecnick\Pdf\Font\Import(Storage::disk('local')->path('badges/badge-font'));
