@@ -81,9 +81,9 @@ class BadgeSettings extends Page implements HasForms, HasActions
 
         if (Storage::disk('local')->exists('badges/badgefont.json')) {
             // Delete the old processed font
-            Storage::disk('local')->delete('badgefont.ctg.z');
-            Storage::disk('local')->delete('badgefont.z');
-            Storage::disk('local')->delete('badgefont.json');
+            Storage::disk('local')->delete('badges/badgefont.json');
+            Storage::disk('local')->delete('badges/badgefont.ctg.z');
+            Storage::disk('local')->delete('badges/badgefont.z');
         }
 
         // Try to import the font immediately, this makes font errors more apparent
