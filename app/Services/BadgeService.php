@@ -16,6 +16,7 @@ class BadgeService
     private $background_image = null;
     private $pdf = null;
 
+    // These are in points (pt)
     private $font_sizes = [
         'title_dealer' => 14,
         'title_assistant' => 12,
@@ -25,7 +26,7 @@ class BadgeService
         'dealership_small' => 9,
         'dealership_tiny' => 9,
         'dealership_verytiny' => 7,
-        'share' => 6,
+        'share' => 5,
         'regid' => 14,
     ];
 
@@ -241,10 +242,10 @@ class BadgeService
         $badgeType = $this->getTextCell(
             $pdf,
             text: 'S',
-            pos_x: 82.7,
-            pos_y: 51.8,
-            width: 1.7,
-            height: 1.7,
+            pos_x: 82.5,
+            pos_y: 51.0,
+            width: 1.5,
+            height: 1.5,
             params: [
                 'halign' => 'C',
                 'valign' => 'C',
@@ -276,8 +277,8 @@ class BadgeService
         $regId = $this->getTextCell(
             $pdf,
             text: filter_var($regIdString, FILTER_SANITIZE_NUMBER_INT),
-            pos_x: 67.2,
-            pos_y: 1,
+            pos_x: 66.7,
+            pos_y: 1.5,
             width: 17.3,
             height: 3.9,
             params: [
