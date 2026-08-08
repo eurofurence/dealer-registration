@@ -1,0 +1,28 @@
+{
+    "name": "DD-Reg Laravel Dev Container",
+    "dockerComposeFile": "compose.yaml",
+/*    "runArgs": [
+        "--userns=keep-id"
+    ],*/
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "laravel.vscode-laravel",
+                "bmewburn.vscode-intelephense-client",
+                "ryannaddy.laravel-artisan",
+                "DEVSENSE.composer-php-vscode"
+            ]
+        }
+    },
+    "forwardPorts": [
+        8000, // Laravel
+        5173, // Vite
+        "minio:9000", // MinIO
+        "minio:8900", // MinIO Console
+        "mailpit:8025"  // Mailpit
+    ],
+    "service": "app",
+    // "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,Z",
+    "workspaceFolder": "/workspace",
+    "remoteUser": "vscode"
+}
