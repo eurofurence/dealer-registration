@@ -202,7 +202,7 @@
                     <p>
                         Please choose your preferred location and table size in the Dealers' Den. You can
                         customize your
-                        Dealership Package with additional options. This information will be used to assign your
+                        dealership package with additional options. This information will be used to assign your
                         table.
                     </p>
                 </div>
@@ -266,7 +266,7 @@
                                         shares and/or assistants from your dealership!
                                     </i></b><br>
                             @endif
-                            Please select the Dealership package that best suits your needs for selling your
+                            Please select the dealership package that best suits your needs for selling your
                             wares. We
                             kindly ask that you avoid requesting more space than necessary, as packages larger
                             than Full

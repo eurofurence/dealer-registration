@@ -232,7 +232,7 @@
                                 @if ($application->type === \App\Enums\ApplicationType::Dealer)
                                     Cancel Registration
                                 @else
-                                    Leave Dealership
+                                    Leave dealership
                                 @endif
                             </a>
                         @endif
@@ -266,12 +266,12 @@
             <div class="col-lg-6 d-flex">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        <h5 class="card-title display-6">Apply for a Dealership</h5>
+                        <h5 class="card-title display-6">Apply for a dealership</h5>
                         <p class="card-text lead">As a Dealers’ Den dealership owner, you are responsible for managing your
                             space. While you may choose to share your table with other dealers if space permits, you will be
                             the primary point of contact for your business.</p>
                         <a href="{{ route('applications.create') }}" class="btn btn-lg btn-primary">Submit your
-                            Dealership application</a>
+                            dealership application</a>
                     </div>
                 </div>
             </div>
@@ -282,7 +282,7 @@
                 <div class="card mb-4">
                     <form action="{{ route('invitation.join') }}" method="post">
                         <div class="card-body text-center">
-                            <h5 class="card-title display-6">Join an existing Dealership</h5>
+                            <h5 class="card-title display-6">Join an existing dealership</h5>
                             <p class="card-text lead">
                                 You have been invited by an existing dealership to
                                 @if (Carbon\Carbon::parse(config('convention.reg_end_date'))->isFuture())

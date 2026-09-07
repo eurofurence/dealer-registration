@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Remove {{ ucfirst($invitee->type->value) }} from your Dealership
+    Remove {{ ucfirst($invitee->type->value) }} from your dealership
 @endsection
 @section('content')
     <div class="">
@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="px-4 py-5 my-5 text-center">
-                        <h1 class="display-5 fw-bold">You are removing <span class="text-nowrap text-primary">{{ $invitee->user->name }}</span> from your Dealership!</h1>
+                        <h1 class="display-5 fw-bold">You are removing <span class="text-nowrap text-primary">{{ $invitee->user->name }}</span> from your dealership!</h1>
                         <div class="col-lg-6 mx-auto">
                             <p class="lead mb-4">
                                 This action will cause them to be completely removed as a {{ ucfirst($invitee->type->value) }} from your dealership.<br>
@@ -29,7 +29,7 @@
                                     Stop! Take me back!
                                 </a>
                                 <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">
-                                    Yes, remove this {{ ucfirst($invitee->type->value) }} from my Dealership
+                                    Yes, remove this {{ ucfirst($invitee->type->value) }} from my dealership
                                 </button>
                             </div>
                         </div>

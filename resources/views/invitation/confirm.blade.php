@@ -2,7 +2,7 @@
 @section('content')
     <div class="">
         <div class="mx-auto">
-            <h1 class="text-center">Join an existing Dealership</h1>
+            <h1 class="text-center">Join an existing dealership</h1>
             <p class="text-center lead">
                 You were invited by
                 <strong>{{ $invitingApplication->getFullName() }}</strong>

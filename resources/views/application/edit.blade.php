@@ -16,7 +16,7 @@
                 @if ($application->type === \App\Enums\ApplicationType::Dealer)
                     Cancel Registration
                 @else
-                    Leave Dealership
+                    Leave dealership
                 @endif
             </a>
         </div>

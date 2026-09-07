@@ -48,10 +48,10 @@
                                     You may choose to apply for a dealership of your own or join another dealership after you left.
                                 </p>
                                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                                    <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Leave Dealership
+                                    <button type="submit" class="btn btn-danger btn-lg px-4 gap-3">Leave dealership
                                     </button>
                                     <a href="{{ route('dashboard') }}"
-                                       class="btn btn-outline-secondary btn-lg px-4">Stay in Dealership</a>
+                                       class="btn btn-outline-secondary btn-lg px-4">Stay in dealership</a>
                                 </div>
                             </div>
                         @endif
