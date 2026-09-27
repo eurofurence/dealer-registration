@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Expression;
 
 class BadgeResource extends Resource
 {
@@ -111,10 +112,34 @@ class BadgeResource extends Resource
                         return ucfirst($state->value);
                     })
                     ->sortable(),
+                // To handle that assistant/share applications do not necessarily have a table
+                // number, we need to do some convoluted joins so searches work as expected.
                 Tables\Columns\TextColumn::make('table_number')
-                    ->sortable()
-                    ->searchable()
-                    ->disabled(fn($record) => $record->type === ApplicationType::Assistant),
+                    ->sortable(query: fn (Builder $query, string $direction): Builder =>
+                        $query
+                            ->leftJoinSub(
+                                new \Illuminate\Database\Query\Builder($query->getConnection())
+                                    ->from('applications')
+                                    ->select([
+                                        'table_number as parent_application_table_number',
+                                        'id as parent_application_id'
+                                    ]),
+                                'parent_application',
+                                'parent_id',
+                                '=',
+                                'parent_application_id'
+                            )
+                            ->select()
+                            ->addSelect(new Expression('COALESCE(table_number, parent_application_table_number) AS coalesced_table_number'))
+                            ->orderBy('coalesced_table_number', $direction)
+                    )
+                    ->searchable(query: fn (Builder $query, string $search): Builder =>
+                        $query
+                            ->orWhere('table_number', 'LIKE', '%'. $search .'%')
+                            ->orWhereRelation('parent', fn (Builder $query): Builder =>
+                                $query->where('table_number', 'LIKE', '%'. $search .'%')
+                            )
+                    ),
                 Tables\Columns\TextColumn::make('display_name')
                     ->searchable(),
             ])
