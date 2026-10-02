@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ApplicationType;
 use App\Models\Application;
 use Com\Tecnick\Pdf\Tcpdf;
+use Com\Tecnick\Pdf\TextFitMode;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
@@ -231,6 +232,7 @@ class BadgeService
             params: [
                 'halign' => 'C',
                 'valign' => 'C',
+                'fit' => TextFitMode::ShrinkFont,
             ]
         );
         $pdf->page->addContent($badgeType);
@@ -266,6 +268,7 @@ class BadgeService
             height: 8.5,
             params: [
                 'halign' => 'C',
+                'fit' => TextFitMode::ShrinkFont,
             ]
         );
         $pdf->page->addContent($table);
@@ -300,7 +303,8 @@ class BadgeService
             height: 5.1,
             params: [
                 'halign' => 'C',
-                'valign' => 'C'
+                'valign' => 'C',
+                'fit' => TextFitMode::ShrinkFont,
             ]
         );
         $pdf->page->addContent($displayName);
@@ -364,6 +368,7 @@ class BadgeService
             drawcell: $params['drawcell'] ?? false,
             forcedir: $params['forcedir'] ?? '',
             shadow: $params['shadow'] ?? null,
+            fit: $params['fit'] ?? TextFitMode::Off,
         );
     }
 }
